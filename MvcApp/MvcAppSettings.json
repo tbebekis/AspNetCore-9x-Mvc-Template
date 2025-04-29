@@ -1,0 +1,28 @@
+{
+    "DefaultCultureCode": "en-US",
+    "DefaultCurrencyCode": "EUR",
+    "DefaultCurrencySymbol": "€",
+    "MoneyFormat": "€ 0.00",
+
+    "UserCookie": {
+        "IsEssential": true,
+        "HttpOnly": true,
+        "SameSite": "Strict",
+        "ExpirationHours": -1
+    },
+
+    "Http": {
+        "StaticFilesCacheControl": "no-store,no-cache",
+        "UserCookieExpirationHours": -1
+    },
+
+    "HSTS": {
+        "MaxAgeHours": 8680,
+        "Preload": true,
+        "IncludeSubDomains": true,
+        "ExcludedHosts": [
+            "example.com",
+            "www.example.com"
+        ]
+    }
+}

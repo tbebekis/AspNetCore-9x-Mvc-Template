@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <!-- <Nullable>enable</Nullable> -->
+        
+        <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
+        <CopyRefAssembliesToPublishDirectory>true</CopyRefAssembliesToPublishDirectory>
+        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+        <PreserveCompilationContext>true</PreserveCompilationContext>
+
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+        <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+
+        <BaseOutputPath>$(SolutionDir)\Bin</BaseOutputPath>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\tp\tp.csproj" />
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,53 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <!-- <Nullable>enable</Nullable> -->
+        <ImplicitUsings>enable</ImplicitUsings>
+        <BaseOutputPath>$(SolutionDir)\BinMvc</BaseOutputPath>
+    </PropertyGroup>
+
+    <!--  Disable the default behavior of appending the target framework and runtime identifier to the output path. -->
+    <PropertyGroup>
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+        <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    </PropertyGroup>
+
+    <!--  Disable the default behavior of compiling views on publish. 
+    SEE: https://yangzhongke8.medium.com/how-to-prevent-asp-net-core-mvc-from-compile-cshtml-view-when-deploying-fad4d7592b7e
+    SEE: https://www.reddit.com/r/aspnetcore/comments/snjs02/how_to_prevent_aspnet_core_mvc_from_compile/ -->
+    <PropertyGroup>
+        <MvcRazorCompileOnPublish>false</MvcRazorCompileOnPublish>
+        <RazorCompileOnBuild>false</RazorCompileOnBuild>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <!-- Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation is needed if we are to have Views not embedded into assembly -->
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="9.0.4" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.4" />          
+        <PackageReference Include="Microsoft.Extensions.FileProviders.Abstractions" Version="9.0.4" />
+        <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="9.0.4" />
+        <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="9.0.4" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <!-- For the CopyToOutputDirectory to work just right click on the project | Build Dependencies | Project Dependencies 
+             and add all Plugin projects as dependencies.
+             Plugin projects have as their output directory the Plugins folder.
+             So Plugins must be built first.
+             -->
+        <None Include="Plugins\**" CopyToOutputDirectory="PreserveNewest" />
+        <None Include="Plugins\**" CopyToPublishDirectory="PreserveNewest" />
+    </ItemGroup>    
+
+    <ItemGroup>
+        <ProjectReference Include="..\MvcApp.Library\MvcApp.Library.csproj" />
+        <ProjectReference Include="..\tp.Web\tp.Web.csproj" />
+        <ProjectReference Include="..\tp\tp.csproj" />
+    </ItemGroup>    
+
+    <ItemGroup>
+      <Folder Include="Plugins\" />
+    </ItemGroup>
+
+</Project>

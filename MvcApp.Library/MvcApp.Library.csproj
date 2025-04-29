@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <!-- <Nullable>enable</Nullable> -->
+        <BaseOutputPath>$(SolutionDir)\BinMvc</BaseOutputPath>
+    </PropertyGroup>
+
+    <!--  Disable the default behavior of appending the target framework and runtime identifier to the output path. -->
+    <PropertyGroup>
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+        <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+        <PackageReference Include="Microsoft.Extensions.FileProviders.Abstractions" Version="9.0.4" />
+        <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="9.0.4" />
+        <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="9.0.4" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\tp.Web\tp.Web.csproj" />
+        <ProjectReference Include="..\tp\tp.csproj" />
+    </ItemGroup>
+
+</Project>
