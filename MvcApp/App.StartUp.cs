@@ -24,7 +24,7 @@ namespace MvcApp
             if (App.AppContext == null)
             {
                 App.AppContext = new AppContext();                   
-                Lib.Initialize(App.AppContext);                
+                Lib.Initialize(App.AppContext, App.AppSettings);                
                 App.InitializePlugins();
             }
         }

@@ -1,14 +1,15 @@
-﻿namespace MvcApp.Library
+﻿namespace MvcApp
 {
     /// <summary>
-    /// Represents a user or an api client application of a HTTP request
+    /// Since this is an MVC application, the Requestor is a user or something like a <see cref="HttpClient"/> requesting an MVC resource, using user credentials.
     /// </summary>
-    public class Requestor : IClaimListProvider
+    internal class UserRequestor : IRequestor, IUserClaimsProvider
     {
         // ● private
-        static Requestor fDefault;
+        static IRequestor fDefault;
 
         // ● constants
+        public const string SDefaultId = "00000000-0000-0000-0000-000000000000";
         /// <summary>
         /// A claim type for a private claim. 
         /// Designates the level of a user, i.e. Admin, User, Guest, Service, etc.
@@ -134,14 +135,20 @@
         /// </summary>
         public bool IsBlocked { get; set; }
 
-        static public string DefaultId => @"1540A5CB-F425-4DF8-8C9B-6404709819A0";
-        static public Requestor Default
+        /// <summary>
+        /// The id of the default requestor
+        /// </summary>
+        static public string DefaultId => SDefaultId;
+        /// <summary>
+        /// The default requestor
+        /// </summary>
+        static public IRequestor Default
         {
             get
             {
                 if (fDefault == null)
                 {
-                    fDefault = new Requestor();
+                    fDefault = new UserRequestor();
                     fDefault.Id = DefaultId;
                     fDefault.AccountId = "Default";
                     fDefault.Name = "Default";

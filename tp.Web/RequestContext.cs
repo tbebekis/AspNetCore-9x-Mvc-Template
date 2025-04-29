@@ -1,9 +1,10 @@
-﻿namespace MvcApp.Library
+﻿namespace tp.Web
 {
     /// <summary>
     /// Represents a context regarding the current HTTP request.
+    /// <para><strong>NOTE</strong>: Whatever information is intended to have the lifetime of the HTTP request should be added in this object.</para>
     /// </summary>
-    public abstract class RequestContext
+    public abstract class RequestContext: IRequestContext
     {
         // ● construction
         /// <summary>
@@ -45,7 +46,7 @@
         /// <summary>
         /// The user or api client of the current request
         /// </summary>
-        public virtual Requestor Requestor { get; set; }
+        public virtual IRequestor Requestor { get; set; }
         /// <summary>
         /// True when the request is authenticated.
         /// </summary>

@@ -1,9 +1,9 @@
-﻿namespace MvcApp.Library
+﻿namespace tp.Web
 {
     /// <summary>
-    /// Constructs a list of claims
+    /// Constructs the list of user claims
     /// </summary>
-    public interface IClaimListProvider
+    public interface IUserClaimsProvider
     {
         /// <summary>
         /// Creates and returns a claim list regarding this instance

@@ -5,10 +5,11 @@
     /// </summary>
     public class PluginDef
     {
-
+        // ● private
         string fContentRootUrl;
         string fWebRootUrl;
 
+        // ● construction
         /// <summary>
         /// Constructor
         /// </summary>
@@ -17,6 +18,29 @@
             this.PluginFolderPath = PluginFolderPath;
         }
 
+        // ● public
+        /// <summary>
+        /// Adds Plugin view locations to the internal list of the <see cref="ViewLocationExpander"/>.
+        /// </summary>
+        public void AddPluginViewLocations()
+        {
+            string PluginFolder = this.PluginFolderPath.Replace(Lib.BinPath, string.Empty)
+                .TrimStart('\\')
+                .TrimEnd('\\')
+                .TrimStart('/')
+                .TrimEnd('/')
+                .Replace('\\', '/');
+
+            PluginFolder = '/' + PluginFolder;
+
+            string Location = "PLUGIN_FOLDER/Views/{1}/{0}.cshtml".Replace("PLUGIN_FOLDER", PluginFolder);
+            ViewLocationExpander.AddViewLocation(Location);
+
+            Location = "PLUGIN_FOLDER/Views/Shared/{0}.cshtml".Replace("PLUGIN_FOLDER", PluginFolder);
+            ViewLocationExpander.AddViewLocation(Location);
+        }
+
+        // ● properties
         /// <summary>
         /// The plugin assembly name, e.g. <c>"Plugin.MyPlugin.dll"</c>.
         /// <para><strong>WARNING:</strong> The assembly name must have the form <c>Plugin.PLUGIN_NAME.dll</c> and must be unique.</para>

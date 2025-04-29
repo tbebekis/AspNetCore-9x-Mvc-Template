@@ -1,4 +1,4 @@
-﻿namespace MvcApp.Library
+﻿namespace tp.Web
 {
     /// <summary>
     /// A location expander. It adds the views locations in the view search locations of the <see cref="RazorViewEngine"/>.
@@ -25,18 +25,14 @@
             return viewLocations;
         }
         /// <summary>
-        /// More or less useless. 
-        /// <para>It is used in adding values to the <see cref="ViewLocationExpanderContext.Values"/> dictionary 
-        /// in order to be available when the  <see cref="ExpandViewLocations(ViewLocationExpanderContext, IEnumerable{string})"/> method is called. </para>
+        /// Invoked by a <see cref="RazorViewEngine"/> to determine the values that would be consumed by this instance
+        /// of <see cref="IViewLocationExpander"/>. The calculated values are used to determine if the view location
+        /// has changed since the last time it was located.
         /// </summary>
+        /// <param name="context">The <see cref="ViewLocationExpanderContext"/> for the current view location
+        /// expansion operation.</param>
         public void PopulateValues(ViewLocationExpanderContext context)
         {
-            /*
-            if (!IsNonThemeableArea(context.AreaName)) // some areas, such as Admin, may be not themeable
-            {
-                context.Values[SThemeKey] = Theme;
-            } 
-             */
         }
 
         /// <summary>
@@ -63,31 +59,9 @@
         /// </summary>
         static public void AddViewLocation(string Location)
         {
-            if (!LocationList.ContainsText(Location))
+            string S = LocationList.FirstOrDefault(s => string.Compare(s, Location, true) == 0);
+            if (string.IsNullOrWhiteSpace(S))
                 LocationList.Add(Location);
-        }
-        /// <summary>
-        /// Adds Plugin view locations to the internal list.
-        /// </summary>
-        static public void AddPluginViewLocations(PluginDef Def)
-        { 
-            string PluginFolder =  Def.PluginFolderPath.Replace(Lib.BinPath, string.Empty)
-                .TrimStart('\\')
-                .TrimEnd('\\')
-                .TrimStart('/')
-                .TrimEnd('/')
-                .Replace('\\', '/');
-
-            PluginFolder = '/' + PluginFolder;
-
-            string Location = "PLUGIN_FOLDER/Views/{1}/{0}.cshtml".Replace("PLUGIN_FOLDER", PluginFolder);
-            AddViewLocation(Location);
-
-            Location = "PLUGIN_FOLDER/Views/Shared/{0}.cshtml".Replace("PLUGIN_FOLDER", PluginFolder);
-            AddViewLocation(Location);
-
-             
- 
         }
     }
 }

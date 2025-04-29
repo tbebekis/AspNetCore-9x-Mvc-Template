@@ -30,10 +30,7 @@
         /// The <see cref="IWebHostEnvironment"/>
         /// </summary>
         public IWebHostEnvironment WebHostEnvironment => App.WebHostEnvironment;
-        /// <summary>
-        /// Application settings
-        /// </summary>
-        public AppSettings AppSettings => App.AppSettings;
+
 
         // ● properties
         /// <summary>
@@ -55,6 +52,11 @@
         /// <summary>
         /// True when the application is running in development mode
         /// </summary>
-        public bool InDevMode { get; }
+        public bool InDevMode => App.InDevMode;
+
+        /// <summary>
+        /// The default requestor
+        /// </summary>
+        public IRequestor DefaultRequestor => UserRequestor.Default;
     }
 }

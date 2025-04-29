@@ -8,7 +8,7 @@
     {
         // ● private
         List<Claim> UserClaimList;
-        Requestor fRequestor;
+        IRequestor fRequestor;
         string fCultureCode;
 
         string GetCookieAuthScheme => Lib.SCookieAuthScheme;
@@ -17,9 +17,9 @@
         /// Returns a user from database found under a specified Id, if any, else null.
         /// <para>If the user is found, then it sets the cookie too.</para>
         /// </summary>
-        Requestor GetRequestor(string Id)
+        IRequestor GetRequestor(string Id)
         {
-            Requestor Result = null;
+            IRequestor Result = null;
  
             if (!string.IsNullOrWhiteSpace(Id))
             {
@@ -44,7 +44,7 @@
         /// <summary>
         /// Sign-in. Authenticates a specified, already validated, Visitor
         /// </summary>
-        public async Task SignInAsync(Requestor R, bool IsPersistent, bool IsImpersonation)
+        public async Task SignInAsync(IRequestor R, bool IsPersistent, bool IsImpersonation)
         {
             // await Task.CompletedTask;
             this.IsImpersonation = IsImpersonation;
@@ -80,14 +80,14 @@
         /// The current Requestor (the session Requestor)
         /// <para>NOTE: Setting or unsetting the Requestor, sets or unsets the Requestor cookie too.</para>
         /// </summary>
-        public override Requestor Requestor
+        public override IRequestor Requestor
         {
             get
             {
                 if (fRequestor == null)
                 {
-                    string Id = Requestor.GetRequestorId(UserClaimList);  // we have Requestor.Id stored in ClaimTypes.NameIdentifier claim
-                    fRequestor = !string.IsNullOrWhiteSpace(Id) ? GetRequestor(Id) : Requestor.Default;
+                    string Id = UserRequestor.GetRequestorId(UserClaimList);  // we have Requestor.Id stored in ClaimTypes.NameIdentifier claim
+                    fRequestor = !string.IsNullOrWhiteSpace(Id) ? GetRequestor(Id) : UserRequestor.Default;
                 }
 
                 return fRequestor;
@@ -97,7 +97,7 @@
                 // right after a logout
                 if (value == null)
                 {
-                    fRequestor = Requestor.Default;
+                    fRequestor = UserRequestor.Default;
                 }
                 // right after the login
                 else
@@ -116,7 +116,7 @@
             {
                 if (string.IsNullOrWhiteSpace(fCultureCode))
                 {
-                    fCultureCode = Requestor.GetRequestorCultureCode(UserClaimList);
+                    fCultureCode = UserRequestor.GetRequestorCultureCode(UserClaimList);
                     fCultureCode = !string.IsNullOrWhiteSpace(fCultureCode) ? fCultureCode : App.AppSettings.DefaultCultureCode;
                 }
 
@@ -151,7 +151,7 @@
         /// </summary>
         public bool IsImpersonation
         {
-            get { return Requestor.GetRequestorIsImpersonation(UserClaimList); }   
+            get { return UserRequestor.GetRequestorIsImpersonation(UserClaimList); }   
             private set {  Session.Set<bool>("IsImpersonation", value);  }
         }
 

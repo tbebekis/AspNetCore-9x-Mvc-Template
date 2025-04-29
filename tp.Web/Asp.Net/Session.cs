@@ -1,11 +1,11 @@
-﻿namespace MvcApp.Library
+﻿namespace tp.Web
 {
     /// <summary>
     /// Provides access to session variables (entries)
     /// </summary>
     static public class Session
     {
-        /* private */
+        // ● private
         /// <summary>
         /// Returns a value stored in session, found under a specified key or a default value if not found.
         /// </summary>
@@ -41,13 +41,13 @@
         }
 
 
-        /* public */
+        // ● public
         /// <summary>
         /// Returns the session object
         /// </summary>
         static public ISession GetSession()
         {
-            return Lib.AppContext.GetHttpContext().Session;
+            return WLib.WebContext.GetHttpContext().Session;
         }
 
         /// <summary>
@@ -92,8 +92,7 @@
             Remove(Key);
             return Result;
         }
-
-
+ 
         /// <summary>
         /// Returns a string stored in session, found under a specified key or null if not found.
         /// <para>NOTE: Key is NOT case sensitive.</para>
@@ -213,7 +212,7 @@
             return Session.Pop<List<string>>("ErrorList");
         }
 
-        /* properties */
+        // ● properties
         /// <summary>
         /// Provides acces to request variables.
         /// <para>This dictionary is used to store data while processing a single request. The dictionary's contents are discarded after a request is processed.</para>
@@ -222,12 +221,10 @@
         { 
             get 
             {
-                HttpContext HttpContext = Lib.AppContext.GetHttpContext();
+                HttpContext HttpContext = WLib.WebContext.GetHttpContext();
                 return HttpContext != null ? HttpContext.Items : new Dictionary<object, object>();
             } 
         }
-
-
         /// <summary>
         /// Gets or sets the current culture code, e.g. "en-US", of the session.
         /// <para>Represents a language this application supports, i.e. provides localized resources for.</para>
@@ -237,7 +234,7 @@
             get
             {
                 string Result = Get<string>("CultureCode", null);
-                return Result != null ? Result : Lib.AppContext.AppSettings.DefaultCultureCode; //"en-US";
+                return Result != null ? Result : "en-US";
             }
             set
             {

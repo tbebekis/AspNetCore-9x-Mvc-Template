@@ -1,4 +1,4 @@
-﻿namespace MvcApp.Library
+﻿namespace tp.Web
 {
     /// <summary>
     /// A slightly better (I hope) <see cref="TagBuilder"/> that supports nested tags.
@@ -189,7 +189,7 @@
             HtmlTag Div = HtmlTag.Div();
             Div.Attribute("style", "background-color: red");
             Div.Attribute("title", "this is a hint");
-            Div.Add(HtmlTag.Label("AntyxSoft"));
+            Div.Add(HtmlTag.Label("HtmlTag"));
             Div.Add(HtmlTag.TextBox().Class("class1 class2"));
 
             TagBuilder TextDiv = new TagBuilder("div");

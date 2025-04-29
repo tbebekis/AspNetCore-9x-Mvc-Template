@@ -99,7 +99,38 @@ namespace tp
             return A.IsSameText(B);
         }
 
-        /* to/from Base64 */
+        // ● files and folders
+        /// <summary>
+        /// Returns true if a specified path is a directory
+        /// </summary>
+        static public bool IsDirectory(string FolderPath)
+        {
+            return Directory.Exists(FolderPath);
+        }
+        /// <summary>
+        /// Deletes a folder
+        /// <para>Waits until the directory is actually deleted and not just marked as deleted</para>
+        /// </summary>
+        static public void DeleteFolder(string FolderPath)
+        {
+            Directory.Delete(FolderPath, true);
+            int MaxIterations = 10;
+            int Counter = 0;
+
+            // wait until the directory is actually deleted
+            // and not just marked as deleted
+            while (Directory.Exists(FolderPath))
+            {
+                Counter += 1;
+
+                if (Counter > MaxIterations)
+                    return;
+
+                Thread.Sleep(250);
+            }
+        }
+
+        // ● to/from Base64  
         /// <summary>
         /// Encodes Value into a Base64 string using the specified Enc.
         /// If End is null, the Encoding.Unicode is used.

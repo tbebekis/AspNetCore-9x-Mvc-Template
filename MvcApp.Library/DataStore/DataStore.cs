@@ -2,12 +2,18 @@
 {
     static public partial class DataStore
     {
+
+        static public void Initialize()
+        {
+
+        }
+
         /// <summary>
         /// Returns a user from database found under a specified Id, if any, else null.
         /// </summary>
-        static public Requestor GetRequestor(string Id)
+        static public IRequestor GetRequestor(string Id)
         {
-            return Requestor.Default;
+            return Lib.AppContext.DefaultRequestor;
         }
     }
 }

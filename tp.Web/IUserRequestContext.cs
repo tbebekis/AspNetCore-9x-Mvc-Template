@@ -1,4 +1,4 @@
-﻿namespace MvcApp.Library
+﻿namespace tp.Web
 {
     /// <summary>
     /// A user request context (with cookies authentication)
@@ -9,7 +9,7 @@
         /// <summary>
         /// Sign-in. Authenticates a specified, already validated, Visitor
         /// </summary>
-        Task SignInAsync(Requestor V, bool IsPersistent, bool IsImpersonation);
+        Task SignInAsync(IRequestor V, bool IsPersistent, bool IsImpersonation);
         /// <summary>
         /// Sign-out.
         /// </summary>

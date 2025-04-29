@@ -1,36 +1,13 @@
-﻿namespace MvcApp.Library
+﻿namespace tp.Web
 {
 
     /// <summary>
-    /// Represents this library
+    /// Represents the web application context.
+    /// <para>There is a single instance of this object, which is assigned to the <see cref="WLib.WebContext"/> property.</para>
     /// </summary>
-    static public partial class Lib
+    public interface IWebContext
     {
- 
-        /// <summary>
-        /// Initializes the library
-        /// </summary>
-        static public void Initialize(IAppContext AppContext, AppSettings AppSettings)
-        {
-            if (Lib.AppContext == null)
-            {
-                Lib.AppContext = AppContext;                  
-                Lib.AppSettings = AppSettings;
-            }
-        }
- 
-        static public bool IsWindows()
-        {
-            return Environment.OSVersion.Platform == PlatformID.Win32NT 
-                || Environment.OSVersion.Platform == PlatformID.Win32Windows 
-                || Environment.OSVersion.Platform == PlatformID.WinCE;
-        }
-        static public bool IsLinux()
-        {
-            return Environment.OSVersion.Platform == PlatformID.Unix;
-        }
- 
-        // ● IAppContext related
+        // ● methods
         /// <summary>
         /// Returns a service specified by a type argument. If the service is not registered an exception is thrown.
         /// <para>WARNING: "Scoped" services can NOT be resolved from the "root" service provider. </para>
@@ -41,49 +18,38 @@
         /// <para>SEE: https://www.milanjovanovic.tech/blog/using-scoped-services-from-singletons-in-aspnetcore</para>
         /// <para>SEE: https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection-guidelines#scoped-service-as-singleton</para>
         /// </summary>
-        static public T GetService<T>(IServiceScope Scope = null)
-        {
-            return AppContext.GetService<T>(Scope);
-        }
+        T GetService<T>(IServiceScope Scope = null);
+
         /// <summary>
         /// Returns the current <see cref="HttpContext"/>
         /// </summary>
-        static public HttpContext GetHttpContext() => AppContext.GetHttpContext();
+        HttpContext GetHttpContext();
 
+        // ● properties
         /// <summary>
         /// The <see cref="IWebHostEnvironment"/>
         /// </summary>
-        static public IWebHostEnvironment WebHostEnvironment => AppContext.WebHostEnvironment;
+        IWebHostEnvironment WebHostEnvironment { get; }     
  
         /// <summary>
         /// The physical "root path", i.e. the root folder of the application
         /// <para> e.g. C:\MyApp</para>
         /// </summary>
-        static public string ContentRootPath => AppContext.ContentRootPath;
+        string ContentRootPath { get; }
         /// <summary>
         /// The physical "web root" path, i.e. the path to the "wwwroot" folder
         /// <para>e.g. C:\MyApp\wwwwroot</para>
         /// </summary>
-        static public string WebRootPath => AppContext.WebRootPath;
+        string WebRootPath { get; }
         /// <summary>
         /// The physical path of the output folder
         /// <para>e.g. C:\MyApp\bin\Debug\net9.0\  </para>
         /// </summary>
-        static public string BinPath => AppContext.BinPath;
+        string BinPath { get; }
 
         /// <summary>
         /// True when the application is running in development mode
         /// </summary>
-        static public bool InDevMode => AppContext.InDevMode;
-
-        // ● properties
-        /// <summary>
-        /// The context of this application
-        /// </summary>
-        static public IAppContext AppContext { get; private set; }
-        /// <summary>
-        /// Application settings, coming from appsettings.json
-        /// </summary>
-        static public AppSettings AppSettings { get; private set; }
+        bool InDevMode { get; }
     }
 }

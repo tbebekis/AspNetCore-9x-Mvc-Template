@@ -25,7 +25,7 @@
         /// </summary>
         public void AddViewLocations()
         {
-            ViewLocationExpander.AddPluginViewLocations(Descriptor);
+            Descriptor.AddPluginViewLocations();
         }
 
         /// <summary>

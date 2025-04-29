@@ -1,6 +1,7 @@
 ﻿global using System.Text;
 global using System.Diagnostics;
 global using System.Reflection;
+global using System.Globalization;
 global using System.Runtime.Loader;
 global using System.Security.Claims;
 

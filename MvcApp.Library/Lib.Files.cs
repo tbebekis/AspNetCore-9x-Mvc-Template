@@ -5,31 +5,7 @@
     /// </summary>
     static public partial class Lib
     {
-
-        static public bool IsDirectory(string PhysicalPath)
-        {
-            return Directory.Exists(PhysicalPath);
-        }
-
-        static public void DeleteFolder(string FolderPath)
-        {
-            Directory.Delete(FolderPath, true);
-            int MaxIterations = 10;
-            int Counter = 0;
-
-            // wait until the directory is actually deleted
-            // and not just marked as deleted
-            while (Directory.Exists(FolderPath))
-            {
-                Counter += 1;
-
-                if (Counter > MaxIterations)
-                    return;
-
-                Thread.Sleep(250);
-            }
-        }
-
+ 
         /// <summary>
         /// Converts a physical path to a virtual path.
         /// <para><c>C:\MyApp\folder</c> becomes <c>~/folder</c></para>

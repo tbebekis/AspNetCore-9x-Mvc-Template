@@ -30,7 +30,7 @@
                 if (fUserRequestContext != null && context.Principal.Identity.IsAuthenticated)
                 {
                     Claim Claim = context.Principal.FindFirst(ClaimTypes.NameIdentifier); // we have Requestor.Id stored in ClaimTypes.NameIdentifier claim
-                    Requestor Requestor = fUserRequestContext.Requestor;
+                    IRequestor Requestor = fUserRequestContext.Requestor;
 
                     // it is the Id claim and must be there
                     if (Claim != null && Requestor != null)
@@ -45,14 +45,14 @@
                         }
 
                         // check for a culture change
-                        Claim = context.Principal.FindFirst(Requestor.SCultureCodeClaimType); 
+                        Claim = context.Principal.FindFirst(UserRequestor.SCultureCodeClaimType); 
                         string CultureCode = Claim != null ? Claim.Value : App.AppSettings.DefaultCultureCode;
 
                         // if the culture has changed then create a new principal with the updated claims
                         // and replace the old principal
                         if (CultureCode != Session.CultureCode)
                         {
-                            Claim = context.Principal.FindFirst(Requestor.SIsImpersonationClaimType);
+                            Claim = context.Principal.FindFirst(UserRequestor.SIsImpersonationClaimType);
                             bool IsImpersonation = Claim != null ? Convert.ToBoolean(Claim.Value) : false;
                             ClaimsPrincipal Principal = Requestor.CreateUserPrincipal(GetCookieAuthScheme(), IsImpersonation);
                             context.ReplacePrincipal(Principal);

@@ -1,4 +1,4 @@
-﻿namespace MvcApp.Library
+﻿namespace tp
 {
     /// <summary>
     /// The level of a user, i.e. Guest, Admin, User, etc.
@@ -24,11 +24,11 @@
         /// </summary>
         Admin = 4,
         /// <summary>
-        /// A client application making API calls
+        /// Any client application making API calls
         /// </summary>
         ClientApp = 8,
         /// <summary>
-        /// A service application
+        /// A service client application making API calls
         /// </summary>
         Service = 0x100,
 

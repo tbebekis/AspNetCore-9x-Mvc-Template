@@ -1,10 +1,10 @@
-﻿namespace MvcApp.Library
+﻿namespace tp.Web
 {
     /// <summary>
     /// Generates unique Ids for HTML elements.
     /// <para>WARNING: HTML element id is case-sensitive.</para>
     /// </summary>
-    static internal class ElementIdGenerator
+    static public class ElementIdGenerator
     {
         static readonly System.Threading.Lock syncLock = new ();     
 

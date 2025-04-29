@@ -38,7 +38,7 @@
              -->
         <None Include="Plugins\**" CopyToOutputDirectory="PreserveNewest" />
         <None Include="Plugins\**" CopyToPublishDirectory="PreserveNewest" />
-    </ItemGroup>    
+    </ItemGroup>   
 
     <ItemGroup>
         <ProjectReference Include="..\MvcApp.Library\MvcApp.Library.csproj" />
@@ -48,6 +48,7 @@
 
     <ItemGroup>
       <Folder Include="Plugins\" />
-    </ItemGroup>
+    </ItemGroup>   
+
 
 </Project>
