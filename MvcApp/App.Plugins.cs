@@ -107,7 +107,7 @@
         {
             foreach (IMvcAppPlugin Plugin in PluginList)
             {
-                Plugin.Initialize();
+                Plugin.Initialize(AppContext);
                 Plugin.AddViewLocations();
             }
         }

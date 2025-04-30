@@ -27,7 +27,6 @@
         /// </summary>
         public HttpContext GetHttpContext() => App.GetHttpContext();
 
-΄
 
         // ● properties
         /// <summary>
