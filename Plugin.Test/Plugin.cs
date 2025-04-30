@@ -1,9 +1,11 @@
-﻿namespace Plugin.Test
+﻿using tp.Web;
+
+namespace Plugin.Test
 {
     /// <summary>
     /// Represents this plugin
     /// </summary>
-    public class Plugin: IAppPlugin
+    public class Plugin: IMvcAppPlugin
     {
 
         /// <summary>
@@ -12,13 +14,15 @@
         public Plugin()
         {
             TestLib.Plugin = this;
+            
         }
 
         /// <summary>
         /// Initializes the plugin
         /// </summary>
-        public void Initialize()
+        public void Initialize(IWebContext AppContext)
         {
+            TestLib.AppContext = AppContext;
         }
         /// <summary>
         /// Use the <c>static</c> <see cref="ViewLocationExpander.AddViewLocation(string)"/> method to add locations.
@@ -31,6 +35,6 @@
         /// <summary>
         /// The plugin descriptor
         /// </summary>
-        public PluginDef Descriptor { get; set; }
+        public MvcAppPluginDef Descriptor { get; set; }
     }
 }

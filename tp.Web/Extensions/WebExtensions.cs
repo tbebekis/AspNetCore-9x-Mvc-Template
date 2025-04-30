@@ -168,9 +168,7 @@
 
             return default(T);
         }
-
-
-
+ 
         static HashSet<Type> IntegerTypeSet = new HashSet<Type>
         {
             typeof(Byte),

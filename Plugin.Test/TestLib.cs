@@ -1,4 +1,6 @@
-﻿namespace Plugin.Test
+﻿
+
+namespace Plugin.Test
 {
     static public partial class TestLib
     {
@@ -12,7 +14,12 @@
         {
             return Plugin.Descriptor.GetStaticFileUrl(FilePath);
         }
+        static public void AddResourceProviders()
+        {
+            // AppContext.AddResourceProvider()
+        }
 
-        static public IAppPlugin Plugin { get; internal set; }
+        static public IMvcAppPlugin Plugin { get; internal set; }
+        static public IWebContext AppContext { get; internal set; }
     }
 }

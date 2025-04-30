@@ -5,6 +5,7 @@
     /// </summary>
     static internal partial class App
     {
+ 
 
         /// <summary>
         /// Returns a <see cref="IServiceProvider"/>.
@@ -41,6 +42,7 @@
         /// </summary>
         static public HttpContext GetHttpContext() => HttpContextAccessor.HttpContext;
 
+
         // ● properties
         /// <summary>
         /// Application settings, coming from appsettings.json
@@ -49,7 +51,7 @@
         /// <summary>
         /// The application context
         /// </summary>
-        static public IAppContext AppContext { get; private set; }
+        static public IMvcAppContext AppContext { get; private set; }
         /// <summary>
         /// This <see cref="IServiceProvider"/> is the root service provider and is assigned in <see cref="AppStartUp.AddMiddlewares(WebApplication)"/>
         /// <para><strong>WARNING</strong>: do <strong>NOT</strong> use this service provider to resolve "Scoped" services.</para>

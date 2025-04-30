@@ -43,6 +43,11 @@ namespace MvcApp
             // ● custom services 
             builder.Services.AddScoped<IUserRequestContext, UserRequestContext>();
 
+            
+
+            // ● HttpContext
+            builder.Services.AddHttpContextAccessor();      // singleton
+
             // ● Cookie Authentication
             AuthenticationBuilder AuthBuilder = builder.Services.AddAuthentication(Lib.SCookieAuthScheme);
  
@@ -66,9 +71,6 @@ namespace MvcApp
 
             builder.Services.AddScoped<UserCookieAuthEvents>();
 
-            // ● HttpContext
-            builder.Services.AddHttpContextAccessor();      // singleton
-
             // ● Session
             builder.Services.AddSession(options => {
                 options.Cookie.Name = $"{Assembly.GetEntryAssembly().GetName().Name}.SessionCookie";    // cookie name
@@ -76,6 +78,33 @@ namespace MvcApp
                 options.Cookie.IsEssential = true;  // Make the session cookie essential
                 //options.IdleTimeout = TimeSpan.FromSeconds(10);
             });
+
+            // ● Localization
+            builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+
+            // ● Request Localization
+            // https://www.codemag.com/Article/2009081/A-Deep-Dive-into-ASP.NET-Core-Localization
+            builder.Services.Configure((RequestLocalizationOptions options) => {
+
+                var Provider = new CustomRequestCultureProvider(async (HttpContext) => {
+                    await Task.Yield();
+                    IRequestContext RequestContext = GetService<IUserRequestContext>();
+                    return new ProviderCultureResult(RequestContext.CultureCode);
+                });
+
+                var Cultures = Lib.GetSupportedCultures();
+                options.DefaultRequestCulture = new RequestCulture(App.AppSettings.DefaultCultureCode);
+                options.SupportedCultures = Cultures;
+                options.SupportedUICultures = Cultures;
+                options.RequestCultureProviders.Insert(0, Provider);
+            });
+
+
+
+            // ● IHttpClientFactory
+            builder.Services.AddHttpClient();
+
+
 
             // ● MVC
             IMvcBuilder MvcBuilder = builder.Services.AddControllersWithViews();
@@ -155,6 +184,13 @@ namespace MvcApp
 
             // ● endpoint resolution middlware
             app.UseRouting();
+
+            // ● Request Localization 
+            // UseRequestLocalization initializes a RequestLocalizationOptions object. 
+            // On every request the list of RequestCultureProvider in the RequestLocalizationOptions is enumerated 
+            // and the first provider that can successfully determine the request culture is used.
+            // SEE: https://docs.microsoft.com/en-us/aspnet/core/fundamentals/localization#localization-middleware
+            app.UseRequestLocalization();
 
 
             // ● static files - wwwroot

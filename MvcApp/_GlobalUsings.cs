@@ -11,7 +11,8 @@ global using Newtonsoft.Json.Converters;
 global using Newtonsoft.Json.Linq;
 global using Newtonsoft.Json.Serialization;
 
-//global using Microsoft.AspNetCore.Http;
+ 
+global using Microsoft.AspNetCore.Localization;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 global using Microsoft.AspNetCore.Mvc.Razor;
@@ -25,7 +26,8 @@ global using Microsoft.AspNetCore.CookiePolicy;
 
 global using Microsoft.Extensions.Options;
 global using Microsoft.Extensions.FileProviders;
- 
+global using Microsoft.Extensions.Localization;
+
 global using tp;
 global using tp.Web;
 

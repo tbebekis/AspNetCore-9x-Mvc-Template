@@ -3,7 +3,7 @@
     /// <summary>
     /// Plugin Definition
     /// </summary>
-    public class PluginDef
+    public class MvcAppPluginDef
     {
         // ● private
         string fContentRootUrl;
@@ -13,7 +13,7 @@
         /// <summary>
         /// Constructor
         /// </summary>
-        public PluginDef(string PluginFolderPath)
+        public MvcAppPluginDef(string PluginFolderPath)
         {
             this.PluginFolderPath = PluginFolderPath;
         }

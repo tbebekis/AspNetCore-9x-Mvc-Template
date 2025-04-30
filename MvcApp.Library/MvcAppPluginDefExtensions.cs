@@ -3,7 +3,7 @@
     /// <summary>
     /// Plugin Definition extensions
     /// </summary>
-    static public class PluginDefExtensions
+    static public class MvcAppPluginDefExtensions
     {
         /// <summary>
         /// Returns the content root url to the plugin folder, <strong>without leading slash</strong>.
@@ -12,7 +12,7 @@
         /// <para>becomes: </para>
         /// <para><c>Plugins/Plugin.Test</c></para>
         /// </summary>
-        static public string GetContentRootUrl(this PluginDef Def)
+        static public string GetContentRootUrl(this MvcAppPluginDef Def)
         {
             string Result = Def.PluginFolderPath.Replace(Lib.BinPath, string.Empty)
                                       .TrimStart('\\')
@@ -28,7 +28,7 @@
         /// <para>e.g. <c>~/Plugins/PLUGIN_NAME/wwwroot/css/plugin.css</c></para>
         /// <para>where FilePath is <c>css/plugin.css</c></para>
         /// </summary>
-        static public string GetStaticFileUrl(this PluginDef Def, string FilePath)
+        static public string GetStaticFileUrl(this MvcAppPluginDef Def, string FilePath)
         {
             // <link rel="stylesheet" href="~/Plugins/PLUGIN_NAME/wwwroot/css/plugin.css" />
             string Result = $"{Def.WebRootUrl}/{FilePath}";

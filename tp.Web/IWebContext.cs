@@ -5,7 +5,7 @@
     /// Represents the web application context.
     /// <para>There is a single instance of this object, which is assigned to the <see cref="WLib.WebContext"/> property.</para>
     /// </summary>
-    public interface IWebContext
+    public interface IWebContext: IAppContext
     {
         // ● methods
         /// <summary>

@@ -28,6 +28,7 @@ global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.FileProviders;
 global using Microsoft.Extensions.Configuration;
+global using Microsoft.Extensions.Localization;
 
 global using Newtonsoft.Json;
 global using Newtonsoft.Json.Converters;

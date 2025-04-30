@@ -4,7 +4,7 @@
 public void ConfigureServices(IServiceCollection services)
 {  
     services.AddControllersWithViews();  
-    services.AddLocalization(opt => { opt.ResourcesPath = "Resources";  });
+     builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 }
 
 List<CultureInfo> supportedCultures = new List<CultureInfo>
@@ -29,3 +29,10 @@ services.Configure<RequestLocalizationOptions>(options => {
     options.SupportedCultures = supportedCultures;    
     options.SupportedUICultures = supportedCultures; 
 });
+
+
+    internal static void AddLocalizationServices(IServiceCollection services)
+    {
+        services.TryAddSingleton<IStringLocalizerFactory, ResourceManagerStringLocalizerFactory>();
+        services.TryAddTransient(typeof(IStringLocalizer<>), typeof(StringLocalizer<>));
+    }

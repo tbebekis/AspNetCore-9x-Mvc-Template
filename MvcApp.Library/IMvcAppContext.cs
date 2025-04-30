@@ -4,7 +4,7 @@
     /// Represents this application's context
     /// <para>There is a single instance of this object, which is assigned to the <see cref="Lib.AppContext"/> property.</para>
     /// </summary>
-    public interface IAppContext: IWebContext
+    public interface IMvcAppContext: IWebContext
     {
         /// <summary>
         /// The default requestor

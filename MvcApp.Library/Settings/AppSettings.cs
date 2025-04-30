@@ -1,7 +1,7 @@
 ﻿namespace MvcApp.Library
 {
-    public class AppSettings: AppSettingsBase
-    {               
+    public class AppSettings : AppSettingsBase
+    {
 
         const string SFileName = "MvcAppSettings.json";
 
@@ -34,7 +34,7 @@
         /// </summary>
         public string DefaultCurrencyCode
         {
-            get => !string.IsNullOrWhiteSpace(fDefaultCurrencyCode) ? fDefaultCurrencyCode : Lib .SDefaultCurrencyCode;       // "EUR";
+            get => !string.IsNullOrWhiteSpace(fDefaultCurrencyCode) ? fDefaultCurrencyCode : Lib.SDefaultCurrencyCode;       // "EUR";
             set => fDefaultCurrencyCode = value;
         }
         /// <summary>
@@ -53,6 +53,11 @@
             get => !string.IsNullOrWhiteSpace(fMoneyFormat) ? fMoneyFormat : $"{DefaultCurrencySymbol} 0.00";
             set => fMoneyFormat = value;
         }
+        /// <summary>
+        /// List of supported cultures
+        /// </summary>
+        public List<string> SupportedCultures { get; set; } = new List<string>() { "en-US", "el-GR" };
+
 
         /// <summary>
         /// User cookie settings

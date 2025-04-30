@@ -3,12 +3,13 @@
     /// <summary>
     /// Represents a plugin
     /// </summary>
-    public interface IAppPlugin
+    public interface IMvcAppPlugin
     {
+ 
         /// <summary>
         /// Initializes the plugin
         /// </summary>
-        void Initialize();
+        public void Initialize(IWebContext AppContext)
 
         /// <summary>
         /// Use the <c>static</c> <see cref="ViewLocationExpander.AddViewLocation(string)"/> method to add locations.
@@ -17,6 +18,6 @@
         /// <summary>
         /// The plugin descriptor
         /// </summary>
-        PluginDef Descriptor { get; set; }
+        MvcAppPluginDef Descriptor { get; set; }
     }
 }

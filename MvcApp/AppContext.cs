@@ -4,8 +4,9 @@
     /// Represents the web application context
     /// <para>There is a single instance of this class, which is assigned to the <see cref="Lib.AppContext"/> property.</para>
     /// </summary>
-    internal class AppContext : IAppContext
+    internal class AppContext : IMvcAppContext
     {
+        
         // ● public
         /// <summary>
         /// Returns a service specified by a type argument. If the service is not registered an exception is thrown.
@@ -25,14 +26,15 @@
         /// Returns the current <see cref="HttpContext"/>
         /// </summary>
         public HttpContext GetHttpContext() => App.GetHttpContext();
- 
+
+΄
+
+        // ● properties
         /// <summary>
         /// The <see cref="IWebHostEnvironment"/>
         /// </summary>
         public IWebHostEnvironment WebHostEnvironment => App.WebHostEnvironment;
-
-
-        // ● properties
+ 
         /// <summary>
         /// The physical "root path", i.e. the root folder of the application
         /// <para> e.g. C:\MyApp</para>

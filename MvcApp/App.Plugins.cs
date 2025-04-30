@@ -24,7 +24,7 @@
             // load the plugin definition
             CleanPluginFolder(PluginFolderPath);
             string PluginDefFilePath = Path.Combine(PluginFolderPath, "plugin-def.json");
-            PluginDef Def = new PluginDef(PluginFolderPath);
+            MvcAppPluginDef Def = new MvcAppPluginDef(PluginFolderPath);
  
             Json.LoadFromFile(Def, PluginDefFilePath);
 
@@ -64,7 +64,7 @@
                     // load the plugin definition
                     CleanPluginFolder(PluginFolderPath);
                     string PluginDefFilePath = Path.Combine(PluginFolderPath, "plugin-def.json");
-                    PluginDef Def = new PluginDef(PluginFolderPath);
+                    MvcAppPluginDef Def = new MvcAppPluginDef(PluginFolderPath);
 
                     Json.LoadFromFile(Def, PluginDefFilePath);
 
@@ -84,35 +84,35 @@
 
             // create plugins
             List<Type> ImplementorClassTypes;
-            foreach (PluginDef Def in PluginDefList)
+            foreach (MvcAppPluginDef Def in PluginDefList)
             {
                 // load the assembly and the application part for that assembly
                 Def.PluginAssembly = Assembly.LoadFrom(Def.PluginAssemblyFilePath);
                 ApplicationPart Part = new AssemblyPart(Def.PluginAssembly);
                 PartManager.ApplicationParts.Add(Part);
 
-                ImplementorClassTypes = TypeFinder.FindImplementorClasses(typeof(IAppPlugin), Def.PluginAssembly);
+                ImplementorClassTypes = TypeFinder.FindImplementorClasses(typeof(IMvcAppPlugin), Def.PluginAssembly);
                 if (ImplementorClassTypes.Count == 0)
                     Sys.Throw($"Plugin: {Def.Id} does not implement IAppPlugin");
 
                 if (ImplementorClassTypes.Count > 1)
                     Sys.Throw($"Plugin: {Def.Id} implements more than one IAppPlugin");
 
-                IAppPlugin Plugin = (IAppPlugin)Activator.CreateInstance(ImplementorClassTypes[0]);
+                IMvcAppPlugin Plugin = (IMvcAppPlugin)Activator.CreateInstance(ImplementorClassTypes[0]);
                 Plugin.Descriptor = Def;
                 PluginList.Add(Plugin);
             }
         }
         static void InitializePlugins()
         {
-            foreach (IAppPlugin Plugin in PluginList)
+            foreach (IMvcAppPlugin Plugin in PluginList)
             {
                 Plugin.Initialize();
                 Plugin.AddViewLocations();
             }
         }
  
-        static public List<PluginDef> PluginDefList { get; private set; } = new List<PluginDef>();
-        static public List<IAppPlugin> PluginList { get; } = new List<IAppPlugin>();  
+        static public List<MvcAppPluginDef> PluginDefList { get; private set; } = new List<MvcAppPluginDef>();
+        static public List<IMvcAppPlugin> PluginList { get; } = new List<IMvcAppPlugin>();  
     }
 }

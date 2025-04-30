@@ -1,6 +1,6 @@
 ﻿namespace MvcApp.Library
 {
-    public interface IAppStartup
+    public interface IMvcAppStartup
     {
         void ConfigureServices(IServiceCollection services);
         void ConfigureMiddlewares(IApplicationBuilder application);
