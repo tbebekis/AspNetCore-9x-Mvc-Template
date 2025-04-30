@@ -1,15 +1,38 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="@Lib.AppContext.Culture.Name">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - MvcApp</title>
-    <script type="importmap"></script>
+ 
+    <link href="~/tp/css/tp-Globals.css" rel="stylesheet" />
+    <link href="~/tp/css/tp.css" rel="stylesheet" />
+    <link href="~/css/site.css" rel="stylesheet" />
+    @*
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/MvcApp.styles.css" asp-append-version="true" />
+    *@
+
+    <script src="~/tp/js/tp.js"></script>
 </head>
 <body>
+    <div class="tp-BodyInterior">
+        @await Html.PartialAsync("_Layout.Header")
+        <content class="page-content">
+            @RenderBody()
+        </content>         
+        @await Html.PartialAsync("_Layout.Footer")
+ 
+        @* 
+        <section id="CommonHtmlContainer" style="display: none;">
+            @await Html.PartialAsync("Layout.Common")
+        </section>
+        
+        @await Html.PartialAsync("Layout.MessageList")
+        *@
+    </div>
+    @* 
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
@@ -46,5 +69,7 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+    *@
+
 </body>
 </html>

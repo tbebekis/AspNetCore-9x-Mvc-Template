@@ -51,5 +51,13 @@
         /// True when the application is running in development mode
         /// </summary>
         bool InDevMode { get; }
+
+        /// <summary>
+        /// The <see cref="CultureInfo"/> culture of the current request.
+        /// <para>CAUTION: The culture of each HTTP Request is set by a lambda in ConfigureServices().
+        /// This property here uses that setting to return its value.
+        /// </para>
+        /// </summary>
+        CultureInfo Culture { get; }
     }
 }

@@ -6,7 +6,6 @@
     /// </summary>
     internal class AppContext : IMvcAppContext
     {
-        
         // ● public
         /// <summary>
         /// Returns a service specified by a type argument. If the service is not registered an exception is thrown.
@@ -59,5 +58,29 @@
         /// The default requestor
         /// </summary>
         public IRequestor DefaultRequestor => UserRequestor.Default;
+        /// <summary>
+        /// The <see cref="CultureInfo"/> culture of the current request.
+        /// <para>CAUTION: The culture of each HTTP Request is set by a lambda in ConfigureServices().
+        /// This property here uses that setting to return its value.
+        /// </para>
+        /// </summary>
+        public CultureInfo Culture
+        {
+            get
+            {
+                CultureInfo Result = CultureInfo.GetCultureInfo("en-US");
+
+                HttpContext HttpContext = GetHttpContext();
+                if (HttpContext != null)
+                {
+                    IRequestCultureFeature Feature = HttpContext.Features.Get<IRequestCultureFeature>();
+                    if (Feature != null)
+                        Result = Feature.RequestCulture.Culture;
+                }
+                    
+                return Result;      
+
+            }
+        }
     }
 }
