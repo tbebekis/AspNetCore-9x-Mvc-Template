@@ -4,6 +4,10 @@
     /// <summary>
     /// Represents the web application context.
     /// <para>There is a single instance of this object, which is assigned to the <see cref="WLib.WebContext"/> property.</para>
+    /// <para>This object provides access to the current <see cref="HttpContext"/>, 
+    /// the registered Services, 
+    /// the <see cref="IWebHostEnvironment"/>, 
+    /// the <see cref="CultureInfo"/> or the current <see cref="HttpRequest"/>, etc.</para>
     /// </summary>
     public interface IWebContext: IAppContext
     {

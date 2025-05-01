@@ -1,4 +1,50 @@
 ﻿/*=======================================================================================
+                                   Variables
+ ----------------------------------------------------------------------------------------
+ The developer may redefined the following variables at will.
+ =======================================================================================*/
+
+:root {
+    /* Font colors */
+    --FontColor: #777;
+    --FontColor1: white;
+    --FontColor2: #444; 
+
+    /* Background colors */
+    --BackColor: white;
+    --BackColor1: black;
+    --BackColor2: #e6e6e6;
+    --BackColor3: #bbb;
+ 
+    --BackGreen: green;
+    --BackRed: red;
+
+    --NotificationColor: #4bb07a;
+    --SuccessColor: #4bb07a;
+    --ErrorColor: #e4444c;
+    --InfoColor: #ff9;
+    --HoverColor: #FFD200;
+    --DisabledColor: var(--BackColor2);
+    --SelectedColor: lightgoldenrodyellow; 
+    --SelectedListItemColor: lightblue;
+    --MarkColor: var(--BackGreen);
+    --FocusColor: #4ab2f1;
+ 
+    /* Misc colors */
+    --ShadowColor: rgba(0,0,0,0.25);
+ 
+    /* Miscs */
+    --GridDropTargetOutline: var(--SelectedColor) double thick;
+    --ControlBorder: 1px solid #ccc;
+    --ButtonPadding: 0 5px;
+    --TextPadding: 2px 4px;
+ 
+    --ControlLineHeight: 1.5em; 
+
+}
+
+
+/*=======================================================================================
                                Global selectors
  =======================================================================================*/
 
@@ -58,7 +104,7 @@ button,
 input,
 textarea,
 select {
-    border: var(--Border);
+    border: var(--ControlBorder);
     padding: var(--TextPadding);
 }
 
@@ -122,7 +168,7 @@ button:-moz-focusring,
 
 fieldset {
   padding: 0.35em 0.75em 0.625em;   /* Correct the padding in Firefox. */
-  border: var(--Border);
+  border: var(--ControlBorder);
 }
 
 /**
@@ -306,3 +352,146 @@ script {
     align-items: center;   
 }
 
+
+
+/*=======================================================================================
+                                tp-CtrlRow and tp-CheckBoxRow
+ =======================================================================================*/
+
+
+/*---------------------------------------------------------------------------------------
+// tp-CtrlRow - label text and control
+// --------------------------------------------------------------------------------------
+
+<div class="tp-Row tp-CtrlRow" id="control_row_Name">
+	<div class="tp-CText">
+		<label for="Name">TITLE GOES HERE</label>
+		<span class="tp-RequiredMark">*</span>
+	</div>
+	<div class="tp-Ctrl">
+		<input class="tp-TextBox" id="Name" name="Name" type="text" value="" data-setup="{ DataField:'UserName', .... } >
+	</div>
+</div>
+// --------------------------------------------------------------------------------------
+// tp-CheckBoxRow
+// --------------------------------------------------------------------------------------
+<div class="tp-Row tp-CheckBoxRow">
+	<label class="tp-CheckBox">
+		<span style="display: none;">*</span>
+		<span class="tp-Text">TEXT GOES HERE</span>
+		<input name="SAME_NAME" type="checkbox" value="1">
+		<span class="checkmark"></span> 
+	</label>
+    <input name="SAME_NAME" type="hidden" value="0">
+</div>
+---------------------------------------------------------------------------------------*/
+ 
+.tp-RequiredMark {
+    color: red;
+    font-weight: bolder;
+    padding: 0 3px;
+}
+
+.tp-CtrlRow input[type=text], 
+.tp-CtrlRow input[type=email], 
+.tp-CtrlRow input[type=password], 
+.tp-CtrlRow input[type=number], 
+.tp-CtrlRow input[type=date], 
+.tp-CtrlRow input[type=tel], 
+.tp-CtrlRow select {
+     height: 2.2em;
+}
+
+.tp-CtrlRow,
+.tp-CheckBoxRow {
+    position: relative;
+    display: flex; 
+    padding: 0 4px 0 0;
+}
+
+.tp-CtrlRow {
+    flex-wrap: wrap;
+    align-items: flex-start;    
+    gap: 2px;    
+    row-gap: 2px;
+} 
+
+/* the text container */ 
+.tp-CtrlRow > .tp-CText {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    flex-grow: 1;
+}
+
+/* the control container */ 
+.tp-CtrlRow > .tp-Ctrl {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* the actual control */ 
+.tp-CtrlRow > .tp-Ctrl > *:first-child {
+    width: 100%;
+} 
+
+/* grid control row */
+.tp-GridCtrlRow {
+    position: relative;
+    display: flex;
+    margin-top: 8px;
+    padding: 0 10px 0 15px
+}
+ 
+.tp-CtrlRow > .tp-CText {
+    justify-content: end;
+}
+
+/*=======================================================================================
+                                        Miscs
+ =======================================================================================*/
+
+.tp-NoBrowserAppearance {
+    appearance: none;  
+}
+
+.tp-Bold {
+    font-weight: bold;
+}
+
+.tp-TextCenter {
+    text-align: center;
+}
+
+.tp-TextRight {
+    text-align: right;
+}
+
+input[type=number] {
+    text-align: right;
+}
+
+.tp-UnSelectable {
+    user-select: none;
+}
+
+.tp-Selectable {
+    user-select: text;
+} 
+
+.tp-Disabled {
+    pointer-events: none;
+} 
+
+.tp-CancelTransition {
+    transition: none !important;
+}
+
+.tp-Shadow {
+    box-shadow: 5px 5px 16px 0 rgba(0,0,0,0.25);
+}
+
+.tp-HasErrors {
+    border-color: var(--ErrorColor);
+}

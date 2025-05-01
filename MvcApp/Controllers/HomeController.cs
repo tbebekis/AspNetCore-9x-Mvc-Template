@@ -2,11 +2,8 @@ namespace MvcApp.Controllers
 {
     public class HomeController : ControllerMvc
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController()
         {
-            _logger = logger;
         }
 
         [AllowAnonymous]
@@ -15,9 +12,15 @@ namespace MvcApp.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
+        [HttpGet("/login", Name = "Login"), AllowAnonymous]
+        public IActionResult Login()
         {
-            return View();
+            if (UserContext.IsAuthenticated)
+                return RedirectToRoute("Home");
+
+            CredentialsModel M = new CredentialsModel();
+
+            return View("Login", M);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true), AllowAnonymous]

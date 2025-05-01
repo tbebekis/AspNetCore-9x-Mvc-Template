@@ -26,6 +26,11 @@
 
     <ItemGroup>
         <ProjectReference Include="..\tp\tp.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Attributes\" />
+      <Folder Include="TagHelpers\" />
     </ItemGroup>    
 
 </Project>

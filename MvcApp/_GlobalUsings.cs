@@ -3,6 +3,8 @@ global using System.Diagnostics;
 global using System.Reflection;
 global using System.Globalization;
 global using System.Runtime.Loader;
+global using System.ComponentModel;
+global using System.ComponentModel.DataAnnotations;
 global using System.Security.Claims;
 
 global using Microsoft.Net.Http.Headers;

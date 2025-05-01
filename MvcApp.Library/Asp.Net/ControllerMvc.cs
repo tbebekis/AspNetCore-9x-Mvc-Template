@@ -8,6 +8,12 @@
     [Authorize(AuthenticationSchemes = Lib.SCookieAuthScheme)]
     public class ControllerMvc : Controller
     {
+        IUserRequestContext fUserContext;
+
+        /// <summary>
+        /// The context regarding the current HTTP request (current visitor, selected warehouse, etc.)
+        /// </summary>
+        protected IUserRequestContext UserContext => fUserContext ?? (fUserContext = Lib.GetService<IUserRequestContext>());
 
         /* methods */
         /// <summary>

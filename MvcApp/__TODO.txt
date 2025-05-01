@@ -1,2 +1,3 @@
 ﻿Session
 Session Cookie
+Cache

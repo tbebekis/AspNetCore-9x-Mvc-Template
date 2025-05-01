@@ -432,3 +432,91 @@ max-width 	Rules applied for any browser width less than the value defined in th
     .xxl-33  { width: var(--p-33 ); }
     .xxl-66  { width: var(--p-66 ); }
 }
+
+
+/*=======================================================================================
+                              Width in Pixels 
+ =======================================================================================*/
+
+.px50  { width:  50px; }
+.px100 { width: 100px; }
+.px150 { width: 150px; }
+.px200 { width: 200px; }
+
+/*=======================================================================================
+                                   tp-Hide   
+ =======================================================================================*/
+
+.tp-Hide {
+    display: none !important;
+}
+
+@media (max-width: 576px) {
+    .xs0, .tp-Hide-xs {
+        display: none !important;
+    }
+}
+
+@media (min-width: 577px) and (max-width: 768px) {
+    .sm0, .tp-Hide-sm {
+        display: none !important;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 992px) {
+    .md0, .tp-Hide-md {
+        display: none !important;
+    }
+}
+
+@media (min-width: 993px) and (max-width: 1200px) {
+    .lg0, .tp-Hide-lg {
+        display: none !important;
+    }
+}
+
+@media (min-width: 1201px) and (max-width: 1400px) {
+    .xl0, .tp-Hide-xl {
+        display: none !important;
+    }
+}
+
+@media (min-width: 1401px) {
+    .xxl0, .tp-Hide-xxl {
+        display: none !important;
+    }
+}
+ 
+/*=======================================================================================
+                                   tp-Limiter   
+ =======================================================================================*/
+ 
+.tp-Limiter {
+    position: relative;
+    margin: 0 auto !important;
+    padding: 0 8px; 
+} 
+
+@media (max-width: 600px) {
+    .tp-Limiter { width: 100%; } 
+}
+
+@media (min-width: 601px) {
+    .tp-Limiter { width: 100%; } 
+}
+
+@media (min-width: 993px) {
+    .tp-Limiter { width: 970px } 
+}
+ 
+@media (min-width: 1201px) {
+    .tp-Limiter { width: 1170px; } 
+}
+
+@media (min-width: 1301px) {
+    .tp-Limiter { width: 1270px; } 
+}
+
+@media (min-width: 1600px) {
+    .tp-Limiter { width: 1470px; } 
+}

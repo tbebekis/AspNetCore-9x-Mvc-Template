@@ -108,7 +108,7 @@
                 }
             }
         }
-
+ 
         /// <summary>
         /// Removes all css classes from a specified tag
         /// </summary>
