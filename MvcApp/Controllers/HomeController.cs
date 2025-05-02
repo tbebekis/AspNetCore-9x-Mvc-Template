@@ -1,3 +1,6 @@
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
+
 namespace MvcApp.Controllers
 {
     public class HomeController : ControllerMvc
@@ -70,10 +73,18 @@ namespace MvcApp.Controllers
         [HttpPost, AllowAnonymous]
         public IActionResult SetLanguage(string CultureCode, string ReturnUrl = "")
         {
+ 
             Response.Cookies.Append(
                 CookieRequestCultureProvider.DefaultCookieName,
                 CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(CultureCode)),
-                new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) }
+                new CookieOptions 
+                {
+                    Secure = true,
+                    SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Strict,
+                    HttpOnly = true,
+                    IsEssential = true,
+                    Expires = DateTimeOffset.UtcNow.AddYears(1) 
+                }
             );
 
             if (!string.IsNullOrWhiteSpace(ReturnUrl))
