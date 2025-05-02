@@ -6,12 +6,11 @@
     /// </summary>
     internal class UserRequestContext : RequestContext, IUserRequestContext
     {
-        // ● private
-        List<Claim> UserClaimList;
+        // ● private          
         IRequestor fRequestor;
-        string fCultureCode;
 
         string GetCookieAuthScheme => Lib.SCookieAuthScheme;
+        List<Claim> UserClaimList => this.HttpContext.User.Claims.ToList();
 
         /// <summary>
         /// Returns a user from database found under a specified Id, if any, else null.
@@ -23,7 +22,7 @@
  
             if (!string.IsNullOrWhiteSpace(Id))
             {
-                Result = DataStore.GetRequestor(Id);
+                Result = DataStore.GetRequestorById(Id);
             }  
 
             return Result;
@@ -36,8 +35,8 @@
         /// </summary>
         public UserRequestContext(IHttpContextAccessor HttpContextAccessor)
             : base(HttpContextAccessor)
-        {
-            UserClaimList = this.HttpContext.User.Claims.ToList();   
+        {           
+            bool xxx = IsAuthenticated;
         }
 
         // ● public 
@@ -107,33 +106,9 @@
             }
 
         }
+ 
         /// <summary>
-        /// The culture (language) of the current request specified as a culture code (en-US, el-GR)
-        /// </summary>
-        public override string CultureCode
-        {
-            get
-            {
-                if (string.IsNullOrWhiteSpace(fCultureCode))
-                {
-                    fCultureCode = UserRequestor.GetRequestorCultureCode(UserClaimList);
-                    fCultureCode = !string.IsNullOrWhiteSpace(fCultureCode) ? fCultureCode : App.AppSettings.DefaultCultureCode;
-                }
-
-                return fCultureCode;
-            }
-            set
-            {
-                if (!Sys.IsSameText(fCultureCode, value))
-                {
-                    fCultureCode = value;
-                    Session.CultureCode = fCultureCode;
-                }
-            }
-        }
-
-        /// <summary>
-        /// True when the user is authenticated with the cookie authentication scheme.
+        /// True when the current user/requestor is authenticated with the cookie authentication scheme.
         /// </summary>
         public override bool IsAuthenticated
         {

@@ -9,25 +9,7 @@ html {
     font-size: 16px;
   }
 }
-
-.site-header {
-    background-color: lightsteelblue;
-    min-height: 40px;
-}
  
-.site-footer {
-    background-color: lightsteelblue;
-    min-height: 40px;
-}
-
-.page-content {
-    position: relative;
-    display: flex;
-    flex-grow: 1;
-    width: 100%;
-}
-
-
 html {
     /* To make use of full height of page*/
     min-height: 100%;
@@ -38,3 +20,126 @@ body {
     margin: 0;
 }
  
+button {
+    font-size: 13px;
+}
+
+/*---------------------------------------------------------------------------------------
+  header
+---------------------------------------------------------------------------------------*/
+
+header {
+    background-color: var(--Color1);
+    min-height: 40px;
+}
+
+.header-zone {
+    display: flex;
+    align-items: center;
+    padding: var(--Page-Padding);    
+    color: var(--White);
+    font-weight: var(--SemiBold);
+    min-height: 30px;
+}
+
+.header-zone-border {
+    border-top: 1px solid var(--Gray);
+}
+
+/*---------------------------------------------------------------------------------------
+  footer
+---------------------------------------------------------------------------------------*/
+footer {
+    background-color: var(--Black);
+    min-height: 40px;
+}
+
+/*---------------------------------------------------------------------------------------
+  page
+---------------------------------------------------------------------------------------*/
+
+.page {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: var(--Page-Padding);
+    min-height: 800px;
+    flex-grow: 1;
+}
+
+.page-content {
+    position: relative;
+    display: flex;
+    flex-grow: 1;
+    width: 100%;
+}
+
+.page .page-caption {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin: 30px 0;
+}
+
+.page .page-caption .page-title {
+    position: relative;
+    display: flex;
+    font-size: 28px;
+    font-weight: var(--HeavyBold);
+    flex-grow: 1;
+}
+
+.field-group {
+    position: relative;
+    margin: 0 0 30px 0;
+    width: 100%;
+}
+
+.field-group > .caption {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.field-group > .caption > .title {
+    font-size: 22px;
+    font-weight: var(--HeavyBold);
+    margin: 0 0 25px 0;
+}
+
+.form-buttons {
+    position: relative;
+    display: flex;
+    justify-content: flex-end;
+    margin: 0 0 30px 0;
+    gap: 0.5em;
+}
+
+.form-buttons .btn-submit {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--Yellow);
+    height: 4em;
+    padding: 0 2.8em;
+}
+
+.form-buttons .btn-submit:hover {
+    background-color: var(--Black);
+    color: var(--White);
+}
+
+a.button { 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--Yellow);
+    height: 5em;
+    padding: 0 2.8em;
+}
+
+a.button:hover {
+    background-color: var(--Black);
+    color: var(--White);
+}

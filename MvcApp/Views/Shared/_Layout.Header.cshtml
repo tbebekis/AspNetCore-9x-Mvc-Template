@@ -1,2 +1,19 @@
-﻿<header class="site-header">
+﻿<header>
+    <div class="header-zone"></div>
+    <div class="header-zone header-zone-border">           
+        <div class="tp-FlexFill"></div> @* fill *@
+
+        @if (!Lib.AppContext.IsAuthenticated)
+        {
+            <a class="login" href="/login">
+                <span class="tp-Hide-sm tp-Hide-xs">@L("Login")</span>
+            </a>
+        }
+        else
+        {
+            <a class="logout" href="/logout">
+                <span class="tp-Hide-sm tp-Hide-xs">@L("Logout")</span>
+            </a>
+        }
+    </div>
 </header>

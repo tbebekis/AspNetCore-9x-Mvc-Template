@@ -10,16 +10,6 @@
     /// </summary>
     public interface IRequestor
     {
-        // ● public
-        /// <summary>
-        /// Creates and returns a claim list regarding this instance.
-        /// <para>Claims are stored in the user cookie.</para>
-        /// </summary>
-        List<Claim> GetUserClaimList(string AuthenticationScheme, bool IsImpersonation = false);
-        /// <summary>
-        /// Creates and returns a <see cref="ClaimsPrincipal"/> along with a claim list
-        /// </summary>
-        ClaimsPrincipal CreateUserPrincipal(string AuthenticationScheme, bool IsImpersonation = false);
 
         // ● properties
         /// <summary>

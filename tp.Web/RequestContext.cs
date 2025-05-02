@@ -15,14 +15,7 @@
             this.HttpContext = HttpContextAccessor.HttpContext;
         }
 
-        // ● public
-        /// <summary>
-        /// Returns the <see cref="CultureInfo"/> object of the current request according to <see cref="CultureCode"/>, i.e. en-US, el-GR, etc.
-        /// </summary>
-        public virtual CultureInfo GetCulture()
-        {
-            return CultureInfo.GetCultureInfo(CultureCode);
-        }
+ 
 
         // ● properties
         /// <summary>
@@ -36,12 +29,7 @@
         /// <summary>
         /// The query string as a collection of key-value pairs
         /// </summary>
-        public IQueryCollection Query => Request.Query;
-
-        /// <summary>
-        /// The culture (language) of the current request specified as a culture code (en-US, el-GR)
-        /// </summary>
-        public abstract string CultureCode { get; set; }
+        public IQueryCollection Query => Request.Query;   
 
         /// <summary>
         /// The user or api client of the current request

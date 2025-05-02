@@ -5,30 +5,46 @@
  =======================================================================================*/
 
 :root {
+    --Black: black;
+    --White: white;
+
+    --Gray: #9E9E9E;
+    --LightGray: #F1F1F1;
+
+    --Red: #F44336;
+    --Green: #4CAF50;
+    --Blue: #2196F3;
+    --Yellow: #FFEB3B;
+
+    --Pink: #E91E63;
+    --Teal: #009688;
+    --Indigo: #3F51B5;
+    --Brown: #795548;
+
+    --Orange: #FE9700;
+    --Cyan: #00BCD4;
+    --Purple: #9C27B0;
+    --Lime: #CDDC39;
+    --Khaki: #F0E68C;
+
+    --Color1: var(--Blue);  /* Primary - blue */
+    --Color2: #00b7fc;      /* Secondary - blue */     
+
     /* Font colors */
-    --FontColor: #777;
-    --FontColor1: white;
-    --FontColor2: #444; 
+    --FontColor: #777777;
+    --FontColor2: #444444; 
 
     /* Background colors */
-    --BackColor: white;
-    --BackColor1: black;
-    --BackColor2: #e6e6e6;
-    --BackColor3: #bbb;
- 
-    --BackGreen: green;
-    --BackRed: red;
-
-    --NotificationColor: #4bb07a;
-    --SuccessColor: #4bb07a;
-    --ErrorColor: #e4444c;
-    --InfoColor: #ff9;
-    --HoverColor: #FFD200;
-    --DisabledColor: var(--BackColor2);
+    --NotificationColor: var(--Green);
+    --SuccessColor: var(--Green);
+    --ErrorColor: var(--Red);
+    --InfoColor: var(--Yellow);
+    --HoverColor: var(--Yellow);
+    --DisabledColor: var(--LightGray);
     --SelectedColor: lightgoldenrodyellow; 
     --SelectedListItemColor: lightblue;
     --MarkColor: var(--BackGreen);
-    --FocusColor: #4ab2f1;
+    --FocusColor:var(--Blue);
  
     /* Misc colors */
     --ShadowColor: rgba(0,0,0,0.25);
@@ -40,6 +56,9 @@
     --TextPadding: 2px 4px;
  
     --ControlLineHeight: 1.5em; 
+
+    --SemiBold: 400;
+    --HeavyBold: 800;
 
 }
 

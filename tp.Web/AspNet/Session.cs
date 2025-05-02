@@ -225,25 +225,7 @@
                 return HttpContext != null ? HttpContext.Items : new Dictionary<object, object>();
             } 
         }
-        /// <summary>
-        /// Gets or sets the current culture code, e.g. "en-US", of the session.
-        /// <para>Represents a language this application supports, i.e. provides localized resources for.</para>
-        /// </summary>
-        static public string CultureCode
-        {
-            get
-            {
-                string Result = Get<string>("CultureCode", null);
-                return Result != null ? Result : "en-US";
-            }
-            set
-            {
-                if (value != null)
-                {
-                    Set("CultureCode", value);
-                }
-            }
-        }
+ 
 
     }
 }

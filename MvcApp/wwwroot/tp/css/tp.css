@@ -497,26 +497,111 @@ max-width 	Rules applied for any browser width less than the value defined in th
     padding: 0 8px; 
 } 
 
-@media (max-width: 600px) {
+@media (max-width: 576px) {
     .tp-Limiter { width: 100%; } 
 }
 
-@media (min-width: 601px) {
+@media (min-width: 577px) and (max-width: 768px) {
     .tp-Limiter { width: 100%; } 
 }
 
-@media (min-width: 993px) {
+@media (min-width: 769px) and (max-width: 992px) {
     .tp-Limiter { width: 970px } 
 }
  
-@media (min-width: 1201px) {
+@media (min-width: 993px) and (max-width: 1200px) {
     .tp-Limiter { width: 1170px; } 
 }
 
-@media (min-width: 1301px) {
+@media (min-width: 1201px) and (max-width: 1400px) {
     .tp-Limiter { width: 1270px; } 
 }
 
-@media (min-width: 1600px) {
+@media (min-width: 1401px) {
     .tp-Limiter { width: 1470px; } 
+}
+
+
+
+
+
+
+
+ 
+/*=======================================================================================
+                                 Responsive Variables   
+ =======================================================================================*/
+/* XSmall */
+:root {
+    --Page-Padding: 0 3%;
+    --DialogBox-Width: 90vw;
+}
+
+
+/* Small */
+@media all and (min-width: 576px) {
+    :root {
+        --Page-Padding: 0 3.4%;
+        --DialogBox-Width: 60vw;
+    } 
+}
+
+/* Medium */
+@media all and (min-width: 992px) {
+    :root {
+        --Page-Padding: 0 7%;
+        --DialogBox-Width: 50vw;
+    }  
+}
+
+/* Large */
+@media all and (min-width: 1200px) {
+    :root {
+        --Page-Padding: 0 9.4%;
+        --DialogBox-Width: 35vw;
+    } 
+}
+
+/*-----------------------------------------------------------------*/
+
+@media (max-width: 576px) {
+    :root {
+        --Page-Padding: 0 3%;
+        --DialogBox-Width: 90vw;
+    }
+}
+
+@media (min-width: 577px) and (max-width: 768px) {
+    :root {
+        --Page-Padding: 0 3.4%;
+        --DialogBox-Width: 60vw;
+    } 
+}
+
+@media (min-width: 769px) and (max-width: 992px) {
+    :root {
+        --Page-Padding: 0 3.4%;
+        --DialogBox-Width: 45vw;
+    } 
+}
+
+@media (min-width: 993px) and (max-width: 1200px) {
+    :root {
+        --Page-Padding: 0 9.4%;
+        --DialogBox-Width: 35vw;
+    } 
+}
+
+@media (min-width: 1201px) and (max-width: 1400px) {
+    :root {
+        --Page-Padding: 0 9.4%;
+        --DialogBox-Width: 35vw;
+    } 
+}
+
+@media (min-width: 1401px) {
+    :root {
+        --Page-Padding: 0 9.4%;
+        --DialogBox-Width: 35vw;
+    } 
 }

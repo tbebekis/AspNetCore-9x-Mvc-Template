@@ -105,6 +105,23 @@
             return new string[0];
         }
 
+        /// <summary>
+        /// Returns the value of a claim, if any, or a default value.
+        /// </summary>
+        static public T GetClaimValue<T>(IEnumerable<Claim> Claims, string ClaimType, T DefaultValue = default(T))
+        {
+            Claim Claim = Claims.Where(c => c.Type == ClaimType).FirstOrDefault();
+            return GetClaimValue(Claim, DefaultValue);
+        }
+        /// <summary>
+        /// Returns the value of a claim, if not null, else returns a default value.
+        /// </summary>
+        static public T GetClaimValue<T>(Claim Claim, T DefaultValue = default(T))
+        {
+             return Claim != null? (T)Convert.ChangeType(Claim.Value, typeof(T)) : DefaultValue;
+        }
+ 
+
 
         /// <summary>
         /// Returns a localized string based on a specified resource key, e.g. Customer, and the culture code of the current request, e.g. el-GR

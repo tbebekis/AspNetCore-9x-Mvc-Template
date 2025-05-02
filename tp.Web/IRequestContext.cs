@@ -5,12 +5,7 @@
     /// <para><strong>NOTE</strong>: Whatever information is intended to have the lifetime of the HTTP request should be added in this object.</para>
     /// </summary>
     public interface IRequestContext
-    {
-        // ● methods
-        /// <summary>
-        /// Returns the <see cref="CultureInfo"/> object of the current request according to <see cref="CultureCode"/>
-        /// </summary>
-        CultureInfo GetCulture();
+    {  
 
         // ● properties
         /// <summary>
@@ -26,10 +21,7 @@
         /// </summary>
         IQueryCollection Query { get; }
 
-        /// <summary>
-        /// The culture (language) of the current request specified as a culture code (en-US, el-GR)
-        /// </summary>
-        string CultureCode { get; set; }
+ 
         /// <summary>
         /// The user or api client of the current request
         /// </summary>

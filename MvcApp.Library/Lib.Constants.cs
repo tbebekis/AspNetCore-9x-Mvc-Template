@@ -21,3 +21,4 @@
         public const string SCookieAuthScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     }
 }
+ 

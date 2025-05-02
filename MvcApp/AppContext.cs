@@ -58,6 +58,13 @@
         /// The default requestor
         /// </summary>
         public IRequestor DefaultRequestor => UserRequestor.Default;
+
+        /// <summary>
+        /// True when the current user/requestor is authenticated with the cookie authentication scheme.
+        /// </summary>
+        public bool IsAuthenticated => GetService<IUserRequestContext>().IsAuthenticated;
+
+
         /// <summary>
         /// The <see cref="CultureInfo"/> culture of the current request.
         /// <para>CAUTION: The culture of each HTTP Request is set by a lambda in ConfigureServices().
@@ -82,5 +89,7 @@
 
             }
         }
+    
+    
     }
 }

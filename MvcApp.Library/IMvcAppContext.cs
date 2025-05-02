@@ -10,5 +10,9 @@
         /// The default requestor
         /// </summary>
         IRequestor DefaultRequestor { get; }
+        /// <summary>
+        /// True when the current user/requestor is authenticated
+        /// </summary>
+        bool IsAuthenticated { get; }
     }
 }

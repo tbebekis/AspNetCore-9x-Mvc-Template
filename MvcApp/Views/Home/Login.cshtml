@@ -1,7 +1,7 @@
 ﻿@model CredentialsModel
 
 @{
-    Layout = "Layout";
+    //Layout = "Layout";
 
     var Settings = Lib.AppSettings;  
 
@@ -20,37 +20,28 @@
 
     <div class="login-form-container">
         <form class="login-form " asp-controller="Home" asp-action="Login" asp-route-ReturnUrl="@ReturnUrl" method="post">
-
-            <div class="Row">
-                <div class="Col field-group">
+            <div class="tp-Row">
+                <div class="tp-Col field-group">
                     <tp-input asp-for="UserId" />
                     <tp-input asp-for="Password" />
                 </div>
             </div>
-
             <div class="form-buttons">
-                @* <a class="button btn-forgot-password" href='@Url.RouteUrl("PasswordRecovery")'>@L("ForgotPasswordQuestion")</a> *@
                 <button class="btn-submit btn-login" type="submit">@L("Login")</button>
             </div>
         </form>
     </div>
 
-    @if (WSys.IsDevMode)
-    {
-        <div class="tp-FlexFill">
-        </div>
-
-        <div style="display: flex; align-items: center; height: 50px; font-weight: 800; font-size: 22px; ">
-            <a href="/demos">Demos</a>
-        </div>
-    }
+ 
 
 
 </div>
 
 <script>
-    tp.Ready(() => {
-        let Container = tp('.login-form');
-        tp.CreateContainerControls(Container);        
-    });    
+/*
+         tp.Ready(() => {
+            let Container = tp('.login-form');
+            tp.CreateContainerControls(Container);
+        });
+*/  
 </script>
