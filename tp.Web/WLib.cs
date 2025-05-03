@@ -1,4 +1,6 @@
-﻿namespace tp.Web
+﻿using Microsoft.AspNetCore.Http.Features;
+
+namespace tp.Web
 {
     static public partial class WLib
     {
@@ -34,8 +36,27 @@
         /// </summary>
         static public IQueryCollection GetQuery() => GetHttpRequest().Query;
 
-        /* query string */
+        // ● Url
+        /// <summary>
+        /// Returns the relative Url of a request, along with the Query String, url-encoded.
+        /// <note>SEE: https://stackoverflow.com/questions/28120222/get-raw-url-from-microsoft-aspnet-http-httprequest </note>
+        /// </summary>
+        static public string GetRelativeRawUrlEncoded(HttpRequest R = null)
+        {
+            R = R ?? GetHttpRequest();
 
+            // use the IHttpRequestFeature   
+            // the returned value is not UrlDecoded
+            string Result = R.HttpContext.Features.Get<IHttpRequestFeature>()?.RawTarget;
+
+            // if empty string, then build the URL manually
+            if (string.IsNullOrEmpty(Result))
+                Result = $"{R.PathBase}{R.Path}{R.QueryString}";
+
+            return Result;
+        }
+
+        // ● query string 
         /// <summary>
         /// Returns a value from query string, if any, else returns a default value.
         /// </summary>
@@ -105,6 +126,7 @@
             return new string[0];
         }
 
+        // ● Claims
         /// <summary>
         /// Returns the value of a claim, if any, or a default value.
         /// </summary>

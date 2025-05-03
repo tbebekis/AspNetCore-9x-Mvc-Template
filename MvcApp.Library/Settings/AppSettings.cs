@@ -10,6 +10,12 @@
         string fDefaultCurrencySymbol;
         string fMoneyFormat;
 
+        protected override void BeforeLoad()
+        {
+            base.BeforeLoad();
+            SupportedCultures.Clear();
+        }
+
         /// <summary>
         /// Constructor
         /// </summary>

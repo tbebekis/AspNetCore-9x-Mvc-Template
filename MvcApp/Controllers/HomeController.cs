@@ -1,6 +1,3 @@
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Options;
-
 namespace MvcApp.Controllers
 {
     public class HomeController : ControllerMvc
@@ -70,7 +67,7 @@ namespace MvcApp.Controllers
             return RedirectToRoute("Home");
         }
 
-        [HttpPost, AllowAnonymous]
+        [Route("/set-language", Name = "SetLanguage"), AllowAnonymous]
         public IActionResult SetLanguage(string CultureCode, string ReturnUrl = "")
         {
  

@@ -35,6 +35,10 @@
         /// Returns the relative Url of this page, along with the Query String, encoded.
         /// </summary>
         public string RelativeUrlEncoded => this.Context.Request.GetEncodedPathAndQuery();
+        /// <summary>
+        /// Returns the relative Url of this page, along with the Query String, encoded.
+        /// </summary>
+        public string RelativeRawUrlEncoded => WLib.GetRelativeRawUrlEncoded(this.Context.Request);
 
         /// <summary>
         /// Return the file path of the view

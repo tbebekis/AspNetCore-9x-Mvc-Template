@@ -4,6 +4,7 @@ html {
   font-size: 14px;
 }
 
+ 
 @media (min-width: 768px) {
   html {
     font-size: 16px;
@@ -24,6 +25,15 @@ button {
     font-size: 13px;
 }
 
+/* https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Forms/Customizable_select
+   https://developer.chrome.com/blog/a-customizable-select
+*/
+select,
+::picker(select) {
+  appearance:  base-select;
+  border-radius: 0;
+}
+
 /*---------------------------------------------------------------------------------------
   header
 ---------------------------------------------------------------------------------------*/
@@ -40,6 +50,7 @@ header {
     color: var(--White);
     font-weight: var(--SemiBold);
     min-height: 30px;
+    gap: 6px;
 }
 
 .header-zone-border {
@@ -141,5 +152,15 @@ a.button {
 
 a.button:hover {
     background-color: var(--Black);
+    color: var(--White);
+}
+
+/*---------------------------------------------------------------------------------------
+ 
+---------------------------------------------------------------------------------------*/
+
+.language-selector {
+    background-color: var(--Color1);
+    border-color: transparent;
     color: var(--White);
 }
