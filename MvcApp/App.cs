@@ -5,7 +5,6 @@
     /// </summary>
     static internal partial class App
     {
- 
 
         /// <summary>
         /// Returns a <see cref="IServiceProvider"/>.

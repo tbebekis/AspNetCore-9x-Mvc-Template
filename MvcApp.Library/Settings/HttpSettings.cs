@@ -7,7 +7,7 @@
     {
         string fStaticFilesCacheControl;
 
-        /* construction */
+        // ● construction
         /// <summary>
         /// Constructor
         /// </summary>
@@ -15,7 +15,7 @@
         {
         }
 
-        /* properties */
+        // ● properties
         /// <summary>
         /// Gets or sets the value of the "Cache-Control" header value for static content.
         /// <para>Leave it empty or null, for no setting at all.</para>

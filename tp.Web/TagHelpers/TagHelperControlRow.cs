@@ -36,7 +36,7 @@
             ComboBox = 4
         }
 
-        /* private */
+        // ● private 
         const string SInput = "tp-input";
         const string SRowId = "asp-row-id";
         const string SRowClass = "asp-row-class";
@@ -95,25 +95,6 @@
             return EditorType.Default;
         }
 
-        /* overrides */
-        /// <summary>
-        /// Creates and assigns the  the main <see cref="HtmlTag"/> containing all output markup.
-        /// </summary>
-        protected override void CreateMainTag()
-        {
-            this.MainTag = new HtmlTag("div");
-        }
- 
-        /* construction */
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public TagHelperControlRow(IHtmlGenerator generator, IHtmlHelper htmlHelper)
-            : base(generator, htmlHelper)
-        {
-        }
-
-
         /// <summary>
         /// Applies property annotation attributes to the specified html attributes dictionary.
         /// <para>Later on that html attributes dictionary entries are merged into the output control html attributes. </para>
@@ -131,9 +112,9 @@
 
             PlaceholderAttribute A2 = PropertyAttributes.OfType<PlaceholderAttribute>().FirstOrDefault();
             if (A != null && !string.IsNullOrWhiteSpace(A2.Text))
-                HtmlAttributes.Add("placeholder", A2.Text);           
+                HtmlAttributes.Add("placeholder", A2.Text);
         }
- 
+
         static bool IsBool(Type PropertyType)
         {
             return PropertyType == typeof(bool);
@@ -146,22 +127,7 @@
         {
             return IsBool(PropertyType) || IsIntBool(PropertyType, PropertyAttributes);
         }
-
-        string MainTagCssClasses
-        {
-            get
-            {
-                bool AsCheckBox = IsCheckBox(PropertyType, PropertyAttributes);
-                string Result = AsCheckBox ? DefaultCheckBoxRowClasses : DefaultRowClasses;
-                if (!string.IsNullOrWhiteSpace(RowClass))
-                    Result += $" {RowClass}";
-
-                return Result;
-            }
-
-        }
-        
-
+ 
         void RenderCheckBox()
         {
             /*   
@@ -197,7 +163,7 @@
 
             // label text
             HtmlTag tagText = Label.Add("span", "tp-Text");
-            tagText.InnerHtml.AppendHtml(InnerText);            
+            tagText.InnerHtml.AppendHtml(InnerText);
 
             Editor.Attribute("id", CheckBoxId);
             Editor.Attribute("name", CheckBoxId);
@@ -226,7 +192,7 @@
         }
         void RenderInput(EditorType Kind)
         {
- 
+
             /*
                 <div class="tp-CtrlRow tp-Row" id="control_row_UserId-2001">
                     <div class="tp-CText">
@@ -271,10 +237,10 @@
                     Editor = Generator.GenerateSelect(ViewContext, For.ModelExplorer, DefaultItem, For.Name, Items, false, null).Clone(); // "select an item"
                     break;
                 case EditorType.Default:
-                    Editor = (HtmlHelper.Editor(For.Name, null) as TagBuilder).Clone();                    
+                    Editor = (HtmlHelper.Editor(For.Name, null) as TagBuilder).Clone();
                     break;
-            }            
- 
+            }
+
             Editor.RemoveClientDataValidationAttributes();
             Editor.RemoveCssClasses();
             Editor.Class(GetInputClasses(Kind));
@@ -290,7 +256,40 @@
             ControlDiv.Add(Editor);
         }
 
-        /* public */
+        string MainTagCssClasses
+        {
+            get
+            {
+                bool AsCheckBox = IsCheckBox(PropertyType, PropertyAttributes);
+                string Result = AsCheckBox ? DefaultCheckBoxRowClasses : DefaultRowClasses;
+                if (!string.IsNullOrWhiteSpace(RowClass))
+                    Result += $" {RowClass}";
+
+                return Result;
+            }
+
+        }
+
+
+        // ● overrides  
+        /// <summary>
+        /// Creates and assigns the  the main <see cref="HtmlTag"/> containing all output markup.
+        /// </summary>
+        protected override void CreateMainTag()
+        {
+            this.MainTag = new HtmlTag("div");
+        }
+
+        // ● construction 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public TagHelperControlRow(IHtmlGenerator generator, IHtmlHelper htmlHelper)
+            : base(generator, htmlHelper)
+        {
+        }
+ 
+        // ● public 
         /// <summary>
         /// Synchronously executes the <see cref="TagHelper"/> with the a specified context and output.
         /// </summary>
@@ -325,7 +324,7 @@
             output.Content.SetHtmlContent(HtmlText);
         }
 
-        /* properties */
+        // ● properties 
         /// <summary>
         /// Optional. Defaults to empty string. The Id of the control row.
         /// </summary>
@@ -342,15 +341,12 @@
         [HtmlAttributeName(SDefaultItem)]
         public string DefaultItem { get; set; }
  
-
-
         /// <summary>
         /// A collection of <see cref="SelectListItem"/> objects used to populate the &lt;select&gt; element with
         /// &lt;optgroup&gt; and &lt;option&gt; elements.
         /// </summary>
         [HtmlAttributeName(SItems)]
         public IEnumerable<SelectListItem> Items { get; set; }
-
         /// <summary>
         /// The editor template
         /// </summary>

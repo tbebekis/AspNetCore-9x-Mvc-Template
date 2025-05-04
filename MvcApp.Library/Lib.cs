@@ -6,7 +6,7 @@
     /// </summary>
     static public partial class Lib
     {
- 
+        // ● public
         /// <summary>
         /// Initializes the library
         /// </summary>

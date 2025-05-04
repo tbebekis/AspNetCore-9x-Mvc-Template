@@ -22,7 +22,7 @@
         /// <summary>
         /// The localized placeholder text
         /// </summary>
-        public string Text { get { return Key; } } // TODO: return localizable string, see NopLabelTagHelper
+        public string Text => WLib.Localize(Key);
         /// <summary>
         /// The class name of the attribute.
         /// <para>NOTE: <see cref="IModelAttribute"/> implementation. </para>

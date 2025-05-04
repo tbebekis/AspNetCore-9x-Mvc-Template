@@ -1,6 +1,4 @@
-﻿using Microsoft.Net.Http.Headers;
-
-namespace tp.Web
+﻿namespace tp.Web
 {
     /// <summary>
     /// Represents this library

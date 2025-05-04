@@ -10,7 +10,7 @@
     {
         static List<string> LocationList = new List<string>();
 
-        /* public */
+        // ● public 
         /// <summary>
         /// This is called by the <see cref="RazorViewEngine"/> when it looks to find a view (any kind of view, i.e. layout, normal view, or partial).
         /// <para>Information about the view, action and controller is passed in the <see cref="ViewLocationExpanderContext"/> parameter.</para>

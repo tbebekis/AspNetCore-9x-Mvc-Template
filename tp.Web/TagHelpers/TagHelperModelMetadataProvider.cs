@@ -1,7 +1,6 @@
 ﻿namespace tp.Web
 {
-
-
+ 
     /// <summary>
     /// A metadata provider that adds custom attributes to a model's metadata.
     /// <para>Those attributes can be retrieved later. For an example see <see cref="TagHelperControlRow"/> </para>

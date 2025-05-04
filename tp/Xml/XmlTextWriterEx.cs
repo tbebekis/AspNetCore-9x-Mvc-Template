@@ -20,18 +20,27 @@
     {
         bool SkipAttribute = false;
 
-        /* construction */
+        // ● construction
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public XmlTextWriterEx(TextWriter writer)
             : base(writer)
         {
             this.Formatting = System.Xml.Formatting.Indented;
         }
 
-        /* overrides */
+        // ● overrides 
+        /// <summary>
+        /// Override
+        /// </summary>
         public override void WriteStartElement(string prefix, string localName, string ns)
         {
             base.WriteStartElement(null, localName, null);
         }
+        /// <summary>
+        /// Override
+        /// </summary>
         public override void WriteStartAttribute(string prefix, string localName, string ns)
         {
             //If the prefix or localname are "xmlns", don't write it.
@@ -45,6 +54,9 @@
                 base.WriteStartAttribute(null, localName, null);
             }
         }
+        /// <summary>
+        /// Override
+        /// </summary>
         public override void WriteString(string text)
         {
             //If we are writing an attribute, the text for the xmlns
@@ -55,6 +67,9 @@
                 base.WriteString(text);
             }
         }
+        /// <summary>
+        /// Override
+        /// </summary>
         public override void WriteEndAttribute()
         {
             //If we skipped the WriteStartAttribute call, we have to
@@ -67,6 +82,9 @@
             //reset the boolean for the next attribute.
             SkipAttribute = false;
         }
+        /// <summary>
+        /// Override
+        /// </summary>
         public override void WriteQualifiedName(string localName, string ns)
         {
             //Always write the qualified name using only the

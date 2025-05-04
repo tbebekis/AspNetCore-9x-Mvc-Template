@@ -2,25 +2,7 @@
 {
     static public partial class DataStore
     {
-
-        /// <summary>
-        /// Returns a user from database found under a specified Id, if any, else null.
-        /// </summary>
-        static public IRequestor GetRequestorById(string Id)
-        {
-            // TODO: Requestor should come from database
-            return Lib.AppContext.DefaultRequestor;
-        }
-        static public AppUser GetUserById(string Id)
-        {
-            // TODO: Requestor should come from database
-            return AppUser.Default;
-        }
-        static public AppUser GetUserByUserId(string UserId)
-        {
-            // TODO: Requestor should come from database
-            return AppUser.Default;
-        }
+        // ● private
         /// <summary>
         /// Validates the password of a user/requestor
         /// </summary>
@@ -41,7 +23,33 @@
             return Hasher.Validate(PlainTextPassword, Base64HashedPassword, Base64SaltKey);
             */
         }
-
+ 
+        // ● public
+        /// <summary>
+        /// Returns a user from database found under a specified Id, if any, else null.
+        /// </summary>
+        static public IRequestor GetRequestorById(string Id)
+        {
+            // TODO: Requestor should come from database
+            return Lib.AppContext.DefaultRequestor;
+        }
+        /// <summary>
+        /// Returns a user from database found under a specified database Id, if any, else null.
+        /// </summary>
+        static public AppUser GetUserById(string Id)
+        {
+            // TODO: Requestor should come from database
+            return AppUser.Default;
+        }
+        /// <summary>
+        /// Returns a user from database found under a specified user Id, if any, else null.
+        /// </summary>
+        static public AppUser GetUserByUserId(string UserId)
+        {
+            // TODO: Requestor should come from database
+            return AppUser.Default;
+        }
+ 
         /// <summary>
         /// Validates the specified credentials and returns a Visitor on success, else null.
         /// </summary>
@@ -90,9 +98,8 @@
 
             return Result;
         }
-    
         /// <summary>
-        /// Returns true if the requestor is impersonating another user
+        /// Returns true if the requestor is impersonating another user, by using a super user password
         /// </summary>
         static public bool GetIsImpersonation(string PlainTextPassword)
         {

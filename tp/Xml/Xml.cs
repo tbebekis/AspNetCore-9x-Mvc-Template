@@ -1,6 +1,4 @@
-﻿using System.Runtime.Serialization;
-
-namespace tp
+﻿namespace tp
 {
     /// <summary>
     /// Xml utility methods

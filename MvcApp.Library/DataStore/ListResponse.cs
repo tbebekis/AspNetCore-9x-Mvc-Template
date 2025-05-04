@@ -1,7 +1,7 @@
 ﻿namespace MvcApp.Library
 {
     /// <summary>
-    /// Data service response for lists.
+    /// A <see cref="DataStoreResponse"/> response for lists of items.
     /// </summary>
     public class ListResponse<T> : DataStoreResponse
     {

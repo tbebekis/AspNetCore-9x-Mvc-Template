@@ -12,13 +12,19 @@ namespace MvcApp
 
     static internal partial class App
     {
-        //static IDisposable AppSettingsChangeToken;
-
+ 
+        /// <summary>
+        /// Static file response callback.
+        /// </summary>
         static void StaticFileResponseProc(StaticFileResponseContext StaticFilesContext)
         {
             StaticFilesContext.Context.Response.Headers.Append(HeaderNames.CacheControl, AppSettings.Http.StaticFilesCacheControl);
         }
 
+        // ● public
+        /// <summary>
+        /// Initializes other libraries and plugins
+        /// </summary>
         static public void Initialize()
         {
             if (App.AppContext == null)
@@ -29,10 +35,7 @@ namespace MvcApp
                 App.InitializePlugins();
             }
         }
-        static void Test()
-        {
  
-        }
 
         /// <summary>
         /// Add services to the container.
@@ -176,7 +179,8 @@ namespace MvcApp
             // Middlewares
             //----------------------------------------------------------------------------------------
 
-           
+            
+
 
             if (!app.Environment.IsDevelopment())
             {
@@ -188,6 +192,7 @@ namespace MvcApp
             {
                 app.UseDeveloperExceptionPage();
             }
+  
 
             /*
             app.UseHttpsRedirection();

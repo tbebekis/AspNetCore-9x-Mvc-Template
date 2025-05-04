@@ -78,7 +78,6 @@
         /// </summary>
         [JsonIgnore]
         public Assembly PluginAssembly { get; set; }
-
  
         /// <summary>
         /// Returns the content root url to the plugin folder.

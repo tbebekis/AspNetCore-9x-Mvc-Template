@@ -6,9 +6,7 @@
     public class AppUser: IRequestor
     {
         static AppUser fDefault;
-
-
-
+ 
         // ● properties
         /// <summary>
         /// Required. 
@@ -59,6 +57,9 @@
         /// </summary>
         public bool IsActivated { get; set; }
 
+        /// <summary>
+        /// Returns the default user. A fake user.
+        /// </summary>
         static public AppUser Default
         {
             get

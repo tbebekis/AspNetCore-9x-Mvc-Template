@@ -1,7 +1,8 @@
-﻿
-
-namespace Plugin.Test
+﻿namespace Plugin.Test
 {
+    /// <summary>
+    /// Represents the test library
+    /// </summary>
     static public partial class TestLib
     {
 
@@ -14,9 +15,13 @@ namespace Plugin.Test
         {
             return Plugin.Descriptor.GetStaticFileUrl(FilePath);
         }
+        
+        /// <summary>
+        /// Add resource providers to <see cref="tp.Res"/> static class.
+        /// </summary>
         static public void AddResourceProviders()
         {
-            // AppContext.AddResourceProvider()
+            // NOTE: use Res.Add() to add a resource provider for this library
         }
 
         static public IMvcAppPlugin Plugin { get; internal set; }

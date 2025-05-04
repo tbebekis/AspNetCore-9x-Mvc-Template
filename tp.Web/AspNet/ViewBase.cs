@@ -5,7 +5,7 @@
     /// </summary>
     public abstract class ViewBase<TModel> : RazorPage<TModel>
     {
-        /* public */
+        // ● public 
         /// <summary>
         /// Returns a localized string based on a specified resource key, e.g. Customer, and the current (Session's) culture code, e.g. el-GR
         /// </summary>
@@ -25,8 +25,8 @@
                 S = string.Format(S, Args);
             return new HtmlString(S);
         }
- 
-        /* properties */
+
+        // ● properties 
         /// <summary>
         /// Returns the absolute Url of this page, along with the Query String, encoded.
         /// </summary>

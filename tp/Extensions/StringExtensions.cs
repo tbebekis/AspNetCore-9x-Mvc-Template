@@ -1,6 +1,4 @@
-﻿using System.Web;
-
-namespace tp
+﻿namespace tp
 {
     static public class StringExtensions
     {

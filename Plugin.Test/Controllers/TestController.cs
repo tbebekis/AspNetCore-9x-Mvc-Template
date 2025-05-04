@@ -7,9 +7,9 @@ namespace Plugin.Test.Controllers
         [HttpGet("/plugin-test-no-layout", Name = "Plugin.Test.NoLayout"), AllowAnonymous]
         public IActionResult Index()
         {
-            //var resourceNames = typeof(DynamicLibController).Assembly.GetManifestResourceNames();
             return View();
         }
+
         [HttpGet("/plugin-test-own-layout", Name = "Plugin.Test.OwnLayout"), AllowAnonymous]
         public IActionResult Index2()
         {

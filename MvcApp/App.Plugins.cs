@@ -1,7 +1,11 @@
 ﻿namespace MvcApp
 {
     static internal partial class App
-    { 
+    {
+        // ● private
+        /// <summary>
+        /// Removes files from a specified plugin folder
+        /// </summary>
         static void CleanPluginFolder(string PluginFolderPath)
         {
             string[] Patterns = {"Plug.WebLib.*", "*.pdb", "*.deps.json" };
@@ -19,32 +23,9 @@
                 }
             }      
         }
-        static void LoadPlugin(ApplicationPartManager PartManager, string PluginFolderPath)
-        {
-            // load the plugin definition
-            CleanPluginFolder(PluginFolderPath);
-            string PluginDefFilePath = Path.Combine(PluginFolderPath, "plugin-def.json");
-            MvcAppPluginDef Def = new MvcAppPluginDef(PluginFolderPath);
- 
-            Json.LoadFromFile(Def, PluginDefFilePath);
-
-            // find plugin assembly file path
-            string PluginAssemblyFilePath;
-            string[] FilePaths = Directory.GetFiles(PluginFolderPath, "Plugin.*.dll");
-            if (FilePaths == null || FilePaths.Length == 0)
-                Sys.Throw($"No Plugin Assembly found in folder: {PluginFolderPath}");
-            PluginAssemblyFilePath = FilePaths[0];
-
-            // load the assembly and the application part for that assembly
-            Assembly PluginAssembly = Assembly.LoadFrom(PluginAssemblyFilePath); 
-            ApplicationPart Part = new AssemblyPart(PluginAssembly);
-            PartManager.ApplicationParts.Add(Part);
-
-            Def.PluginAssembly = PluginAssembly;
-            Def.Id = Path.GetFileName(PluginAssemblyFilePath);
-
-            PluginDefList.Add(Def);
-        }
+        /// <summary>
+        /// Loads plugins
+        /// </summary>
         static void LoadPlugins(ApplicationPartManager PartManager)
         { 
             string RootPluginFolder = Path.Combine(App.BinPath, "Plugins");
@@ -59,8 +40,6 @@
                 FolderName = DI.Name;
                 if (FolderName.StartsWith("Plugin."))
                 {
-                    //LoadPlugin(PartManager, PluginFolderPath);
-
                     // load the plugin definition
                     CleanPluginFolder(PluginFolderPath);
                     string PluginDefFilePath = Path.Combine(PluginFolderPath, "plugin-def.json");
@@ -103,6 +82,9 @@
                 PluginList.Add(Plugin);
             }
         }
+        /// <summary>
+        /// After plugin objects are created, initialize them
+        /// </summary>
         static void InitializePlugins()
         {
             foreach (IMvcAppPlugin Plugin in PluginList)
@@ -111,8 +93,15 @@
                 Plugin.AddViewLocations();
             }
         }
- 
+
+        // ● properties
+        /// <summary>
+        /// List of plugin definitions
+        /// </summary>
         static public List<MvcAppPluginDef> PluginDefList { get; private set; } = new List<MvcAppPluginDef>();
+        /// <summary>
+        /// List of plugins
+        /// </summary>
         static public List<IMvcAppPlugin> PluginList { get; } = new List<IMvcAppPlugin>();  
     }
 }

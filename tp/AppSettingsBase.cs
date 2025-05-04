@@ -71,6 +71,7 @@
             }
         }
 
+        // ● overridables
         /// <summary>
         /// Called just before <see cref="Load()"/> method. Default implementation does nothing.
         /// <para><strong>NOTE: </strong> If this class contains lists, 
@@ -135,7 +136,7 @@
 
         }
 
-
+        // ● public
         /// <summary>
         /// Loads this instance's properties from the disk file
         /// </summary>

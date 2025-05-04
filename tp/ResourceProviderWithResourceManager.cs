@@ -9,7 +9,7 @@
     {
         ResourceManager Manager;
 
-        /* construction */
+        // ● construction
         /// <summary>
         /// Constructor
         /// </summary>
@@ -21,9 +21,8 @@
 
             this.Manager = Manager;  
         }
- 
 
-        /* public */
+        // ● public
         /// <summary>
         /// Returns a resource string for the Key, if any, else null.
         /// <para>NOTE: Culture must be a specific culture (e.g. en-US, el-GR, etc.)</para>

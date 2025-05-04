@@ -1,13 +1,11 @@
-﻿using tp.Web;
-
-namespace Plugin.Test
+﻿namespace Plugin.Test
 {
     /// <summary>
     /// Represents this plugin
     /// </summary>
     public class Plugin: IMvcAppPlugin
     {
-
+        // ● construction
         /// <summary>
         /// Constructor
         /// </summary>
@@ -17,6 +15,7 @@ namespace Plugin.Test
             
         }
 
+        // ● public
         /// <summary>
         /// Initializes the plugin
         /// </summary>
@@ -32,6 +31,7 @@ namespace Plugin.Test
             Descriptor.AddPluginViewLocations();
         }
 
+        // ● properties
         /// <summary>
         /// The plugin descriptor
         /// </summary>

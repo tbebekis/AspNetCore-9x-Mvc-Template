@@ -5,7 +5,7 @@
     /// </summary>
     public class HtmlTag : TagBuilder
     {
-        /* construction */
+        // ● construction
         /// <summary>
         /// Constructor
         /// </summary>
@@ -26,7 +26,7 @@
             this.Class(CssClasses);
         }
 
-        /* public */
+        // ● public 
         /// <summary>
         /// Returns a string representation of this instance
         /// </summary>
@@ -98,7 +98,7 @@
             this.WriteTo(writer, encoder, TagRenderMode);
         }
 
-        /* static */
+        // ● static 
         /// <summary>
         /// Creates and returns a new <see cref="HtmlTag"/>
         /// </summary>
@@ -178,7 +178,7 @@
             return Result;
         }
 
-        /* properties */
+        // ● properties 
         /// <summary>
         /// The list of inner tags
         /// </summary>

@@ -20,13 +20,11 @@
         /// The query string as a collection of key-value pairs
         /// </summary>
         IQueryCollection Query { get; }
-
  
         /// <summary>
         /// The user or api client of the current request
         /// </summary>
         IRequestor Requestor { get; set; }
- 
         /// <summary>
         /// True when the request is authenticated.
         /// </summary>

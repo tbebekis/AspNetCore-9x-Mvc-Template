@@ -1,8 +1,14 @@
 ﻿namespace MvcApp.Library
 {
+
+    /// <summary>
+    /// Application settings.
+    /// <para>Watches for changes in the settings file and reloads this instance.</para>
+    /// <para><strong>NOTE: </strong> If this class contains lists, 
+    /// then override the <see cref="BeforeLoad()"/> method and clean those lists.</para>
+    /// </summary>
     public class AppSettings : AppSettingsBase
     {
-
         const string SFileName = "MvcAppSettings.json";
 
         string fDefaultCultureCode;
@@ -15,7 +21,8 @@
             base.BeforeLoad();
             SupportedCultures.Clear();
         }
-
+ 
+        // ● construction
         /// <summary>
         /// Constructor
         /// </summary>
@@ -63,8 +70,7 @@
         /// List of supported cultures
         /// </summary>
         public List<string> SupportedCultures { get; set; } = new List<string>() { "en-US", "el-GR" };
-
-
+ 
         /// <summary>
         /// User cookie settings
         /// </summary>

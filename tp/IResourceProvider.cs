@@ -33,10 +33,7 @@
         /// </summary>
         object GetImage(string Key, CultureInfo Culture = null);
 
-
-
-
-        /* properties */
+        // ● properties
         /// <summary>
         /// The name of this provider. Must be unique.
         /// </summary>

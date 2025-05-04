@@ -16,7 +16,7 @@
         /// </summary>
         protected Dictionary<string, object> HtmlAttributes = new Dictionary<string, object>();
 
-        /* overrides */
+        // ● overrides 
         /// <summary>
         /// Initializes the helper.
         /// <para>CAUTION: Should be called by the first line in <c>Process()</c> or <c>ProcessAsync()</c> method </para>
@@ -44,9 +44,9 @@
                 Errors = SB.ToString();
             }
         }
-        
-        
-        /* construction */
+
+
+        // ● construction 
         /// <summary>
         /// Constructor
         /// </summary>
@@ -55,7 +55,7 @@
         {
         }
 
-        /* public */
+        // ● public 
         /// <summary>
         /// Initializes the <see cref="ITagHelper"/> with the given <paramref name="context"/>. Additions to
         /// <see cref="TagHelperContext.Items"/> should be done within this method to ensure they're added prior to
@@ -77,7 +77,7 @@
             }
         }
 
-        /* properties */
+        // ● properties  
         /// <summary>
         /// The expression passed to the tag helper. Usually this is a model's property or the full model
         /// </summary>

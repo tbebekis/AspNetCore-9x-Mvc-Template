@@ -39,8 +39,7 @@
             string JsonText = JsonConvert.SerializeObject(Value);
             Instance.SetString(Key, JsonText);
         }
-
-
+ 
         // ● public
         /// <summary>
         /// Returns the session object
@@ -148,8 +147,8 @@
 
             return false;
         }
- 
-        /* error list and success list */
+
+        // ● error list and success list 
         /// <summary>
         /// Returns a <see cref="List{T}"/>    found under a specified key in session variables.
         /// </summary> 

@@ -25,7 +25,7 @@
            return S;
         }
 
-        /* methods */
+        // ●  methods
         /// <summary>
         /// Handles the ReturnUrl parameter
         /// </summary>
@@ -65,7 +65,7 @@
             return true;
         }
 
-        /* actions */
+        // ●  actions 
         /// <summary>
         /// Returns the "not found" view
         /// </summary>
@@ -81,7 +81,7 @@
             return View("_NotYet", Text);
         }
 
-        /* construction */
+        // ● construction
         /// <summary>
         /// Constructor
         /// </summary>

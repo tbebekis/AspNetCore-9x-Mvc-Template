@@ -11,7 +11,6 @@
         [NonSerialized]
         string fValue;
 
-
         // ●  construction
         /// <summary>
         /// Constructor

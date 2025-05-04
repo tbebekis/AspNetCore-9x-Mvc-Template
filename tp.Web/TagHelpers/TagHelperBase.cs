@@ -6,8 +6,8 @@
     /// </summary>
     public abstract class TagHelperBase : TagHelper
     {
-        
-        /* overridables */
+
+        // ● overridables 
         /// <summary>
         /// Creates and assigns the <see cref="MainTag"/> that is the main <see cref="HtmlTag"/> containing all output markup.
         /// </summary>
@@ -39,7 +39,7 @@
             return ViewContext.HttpContext.NextId(Prefix);
         }
 
-        /* construction */
+        // ● construction 
         /// <summary>
         /// Constructor
         /// </summary>
@@ -49,7 +49,7 @@
             this.HtmlHelper = htmlHelper;
         }
 
-        /* public */
+        // ● public  
         /// <summary>
         /// Initializes the <see cref="ITagHelper"/> with the given <paramref name="context"/>. Additions to
         /// <see cref="TagHelperContext.Items"/> should be done within this method to ensure they're added prior to
@@ -75,8 +75,8 @@
             Initialize(context, output);
             return base.ProcessAsync(context, output);
         }
-        
-        /* properties */
+
+        // ● properties  
         /// <summary>
         /// The main <see cref="HtmlTag"/> containing all output markup.
         /// </summary>
