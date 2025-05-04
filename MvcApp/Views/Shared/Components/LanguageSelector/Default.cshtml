@@ -18,4 +18,4 @@
     }
 }
 
-<select class="language-selector" asp-items="@Languages" onchange="tp.NavigateTo(this.value);"></select>
+<select class="language-selector" asp-items="@Languages" onchange="window.location.href = this.value;"></select>

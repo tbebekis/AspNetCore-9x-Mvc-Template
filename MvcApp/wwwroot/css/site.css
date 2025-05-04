@@ -160,7 +160,6 @@ a.button:hover {
 ---------------------------------------------------------------------------------------*/
 
 .language-selector {
-    background-color: var(--Color1);
+    background-color: inherit;
     border-color: transparent;
-    color: var(--White);
 }

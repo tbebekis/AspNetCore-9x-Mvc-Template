@@ -8,9 +8,9 @@
 * @class
 */
 var tp = function (Selector) {
-    if (tp.IsString(Selector)) {
+    if (typeof Selector === 'string') {
         return document.querySelector(Selector);
-    } else if (tp.IsElement(Selector)) {
+    } else if (Selector instanceof Element) {
         return Selector;
     }
 
@@ -1108,6 +1108,444 @@ tp.GetParams = function (Url = null) {
 
 //#endregion
 
+//#region Selecting and finding elements
+
+/**
+Selects and returns a direct or non-direct child element, if any, or null, in a specified parent or the document. <br />
+NOTE: If only a single parameter is passed then it is considered as the element selector to select in the whole document.
+@param {string|Node} ParentElementOrSelector - The parent element where the element is a direct or non-direct child. If not specified (i.e. passed as null) then the document is used.
+@param {string|Node} ElementOrSelector - The child element to select.
+@returns {Element} Returns a child element, if any, or null.
+*/
+tp.Select = function (ParentElementOrSelector, ElementOrSelector) {
+    let Parent = null,
+        el = null;
+
+    if (arguments.length === 2) {
+        Parent = typeof arguments[0] === 'string' ? document.querySelector(arguments[0]) : arguments[0];
+        el = arguments[1];
+    } else if (arguments.length === 1) {
+        Parent = document;
+        el = arguments[0];
+    }
+
+    if (tp.IsNodeSelector(Parent) && typeof el === 'string')
+        el = Parent.querySelector(el);
+
+    if (el instanceof HTMLElement)
+        return el;
+
+    return null;
+
+};
+/**
+Selects and returns a NodeList of all direct or non-direct child elements, in a specified parent, or an empty NodeList.<br />
+NOTE: If only a single parameter is passed then it is considered as the element selectors to select in the whole document.
+@param {string|Node} ParentElementOrSelector -  Optional. The parent element where the elements are direct or non-direct children. If not specified the document is used.
+@param {string} Selectors - A comma separated list of selectors, e.g. input, select, textarea, button
+@returns {NodeList} - Returns a NodeList of all direct or non-direct child elements, or an empty array.
+*/
+tp.SelectAll = function (ParentElementOrSelector, Selectors) {
+    let Parent = null,
+        sSelectors = null;
+
+    if (arguments.length === 2) {
+        Parent = tp.IsString(arguments[0]) ? document.querySelector(arguments[0]) : arguments[0];
+        sSelectors = arguments[1];
+    } else if (arguments.length === 1) {
+        Parent = document;
+        sSelectors = arguments[0];
+    }
+
+    if (tp.IsNodeSelector(Parent) && tp.IsString(sSelectors))
+        return Parent.querySelectorAll(sSelectors);
+
+    return [];
+};
+/**
+Returns the closest ancestor (parent node) of a specified element which matches a specified selector. 
+If there isn't such an ancestor, it returns null.
+@param {Element} el - The element the closest ancestor is to be found.
+@param {string} Selector - A selector for the closest ancestor
+@returns {HTMLElement} - 
+@see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/closest}
+*/
+tp.Closest = function (el, Selector) {
+    var Result = el.closest(Selector);
+    return Result instanceof HTMLElement ? Result : null;
+};
+/**
+Returns the FIRST text node of an element, if any, else null.
+@param {Element} el - The element.
+@returns {any} - Returns the FIRST Text node or null
+*/
+tp.FindTextNode = function (el) {
+    if (tp.IsElement(el) && el.hasChildNodes()) {
+        var List = el.childNodes;
+        for (let i = 0, ln = List.length; i < ln; i++) {
+            if (List[i].nodeType === Node.TEXT_NODE) {
+                return List[i];
+            }
+        }
+    }
+
+    return null;
+};
+/**
+* Returns the index of an element in its parent's children collection, if any, else -1.
+* @param {Element} elParent - The parent element  
+* @param {Element} el - The element to find.
+* @returns {number} Returns the index of the element in its parent, or -1.
+*/
+tp.ChildIndex = function (elParent, el) {
+    if (tp.IsElement(el) && tp.IsElement(elParent)) {
+        var List = elParent.children; // children is an HTMLCollection, it provides no methods at all
+        for (var i = 0, ln = List.length; i < ln; i++) {
+            if (List[i] === el)
+                return i;
+        }
+    }
+
+    return -1;
+};
+/**
+Returns ONLY the direct HTMLElement children of a specified element.
+NOTE: HTMLElement.children property returns an HTMLCollection which is a collection of Element elements.
+That is it filters out any non-Element nodes such as #text or #comment nodes, etc.
+But there is at least one Element, the svg, which is not HTMLElement.
+So it is not always safe to assume that the HTMLElement.children will contain just HTMLElement elements.
+ 
+@param {Element|string} ElementOrSelector - The parent dom element
+@return {HTMLElement[]} Returns an array with the direct HTMLElement children of a specified element
+*/
+tp.ChildHTMLElements = function (ElementOrSelector) {
+    var el = tp.Select(ElementOrSelector);
+    var Result = [];
+
+    if (el instanceof HTMLElement) {
+
+        /*
+        NOTE: HTMLElement.children property returns an HTMLCollection which is a collection of Element elements.
+        That is it filters out any non-Element nodes such as #text or #comment nodes, etc.
+        But there is at least one Element, the svg, which is not HTMLElement.
+        So it is not always safe to assume that the HTMLElement.children will contain just HTMLElement elements.
+        */
+        let List = el.children;
+
+        for (var i = 0, ln = List.length; i < ln; i++) {
+            if (List[i] instanceof HTMLElement) {
+                Result.push(List[i]);
+            }
+        }
+
+    }
+
+    return Result;
+};
+/**
+Returns true when an element is contained directly or indirectly by a parent element.
+@param {Element} Parent - The parent DOM element
+@param {Element} el - The element to check.
+@returns {boolean} -
+*/
+tp.ContainsElement = function (Parent, el) {
+    if (tp.IsValid(Parent) && 'contains' in Parent) {
+        return Parent.contains(el);
+    } else if (tp.IsValid(el)) {
+        var Node = el.parentNode;
+        while (!tp.IsEmpty(Node)) {
+            if (Node === Parent) {
+                return true;
+            }
+            Node = Node.parentNode;
+        }
+    }
+
+    return false;
+};
+/**
+Returns true if the target (sender) of an event is a specified element or any other element contained by the specified element as direct or nested child.
+@param {HTMLElement} el - The container element to check
+@param {EventTarget} target - The sender of the event
+@returns {boolean} Returns a boolean value indicating whether the target is the specified element or is contained by the specified element.
+*/
+tp.ContainsEventTarget = function (el, target) {
+    return el === target || target instanceof HTMLElement && tp.ContainsElement(el, target);
+};
+
+/**
+Returns an element if the id of that element ends width a specified id, else null.
+@param {string} IdEnding - The ending of the Id 
+@param {Element} [ParentElement=null] - Optional. If null, document is used as parent.
+@returns {any} Returns the found html element or null.
+*/
+tp.FindElementWithIdEnding = function (IdEnding, ParentElement = null) {
+    ParentElement = ParentElement || document;
+
+    var NodeList, Result = [], i, len, rgx;
+
+    NodeList = ParentElement.getElementsByTagName('*');
+    len = NodeList.length;
+    rgx = new RegExp(IdEnding + '$');
+    var el;
+    for (i = 0; i < len; i++) {
+        if (NodeList[i] instanceof HTMLElement) {
+            el = NodeList[i];
+            if (rgx.test(el.id)) {
+                Result.push(el);
+            }
+        }
+    }
+
+    if (Result.length > 0) {
+        return Result[0];
+    }
+
+    return null;
+};
+
+
+//#endregion
+
+//#region Misc Functions
+
+/**
+Calls a function, if specified, using a context if not null, passing the specified arguments.
+Returns whatever the called function returns
+@param {Function} Func - A reference to a function, e.g. the function name 
+@param {any} [Context] - The context to be used when calling the function 
+@param {any} [Args] - The arguments to the function. 
+@returns {any} Returns whatever the called function returns 
+*/
+tp.Call = function (Func, Context, ...Args) {
+    if (typeof Func === 'function') {
+        if (Args.length > 0) {
+            return Func.apply(Context, Args);
+        } else {
+            return Func.call(Context);
+        }
+    }
+
+    return null;
+};
+
+/**
+Displays a message in an alert box.
+@param {string} MessageText - The message text
+*/
+tp.ShowMessage = function (MessageText) {
+   alert(MessageText);
+};
+
+//#endregion
+ 
+//#region tp Properties and Constants
+ 
+/** Line Break    
+ * WARNING: .Net line break = \r\n */
+tp.LB = '\n';
+tp.SPACE = ' ';
+
+/** The undefined constant as a tp constant.
+ @see {@link http://stackoverflow.com/questions/7452341/what-does-void-0-mean}
+ @type {undefined}
+ */
+tp.Undefined = void 0;
+Object.defineProperty(tp, 'Undefined', {
+    get() { return void 0; }
+});
+ 
+/** The document the script operates on */
+tp.Doc = window.frameElement ? window.top.document : window.document;
+ 
+/** The currently active element 
+ @type {Element}
+ */
+tp.ActiveElement = null;
+Object.defineProperty(tp, 'ActiveElement', {
+    get() { return tp.Doc.activeElement; }
+});
+
+//#endregion
+
+//#region Class construction and inheritance
+
+/**
+Sets BaseClass as the base class of Class.
+Actually is a shortcut just to avoid writing the same code lines everywhere.
+@param {function} Class The class to inherit from
+@param {function} BaseClass The base class
+@returns {function} Returns the base class prototype
+*/
+tp.SetBaseClass = function (Class, BaseClass) {
+    // see: http://stackoverflow.com/questions/9959727/proto-vs-prototype-in-javascript
+    Class.prototype = Object.create(BaseClass.prototype);  // the prototype to be used when creating new instances
+    Class.prototype.constructor = Class;                   // the function that used as the constructor
+    return BaseClass.prototype;                            // return the base prototype, it is stored in a private variable inside class closures
+};
+/**
+ * Defines a named or accessor property in a class prototype
+ * @param {string} Name The name of the property
+ * @param {object} Prototype The class prototype
+ * @param {function} GetFunc The getter function
+ * @param {function} [SetFunc] The setter function
+ */
+tp.Property = function (Name, Prototype, GetFunc, SetFunc = null) {
+ 
+    var o = {};
+    if (typeof GetFunc === 'function') {        // it is a named accessor property
+        o.get = GetFunc;
+        if (typeof SetFunc === 'function') {    // if not present, it effectively creates a read-only property
+            o.set = SetFunc;
+        }
+    } else {                            // it is a named property
+        o.value = GetFunc;
+        o.writable = true;
+    }
+    o.enumerable = true;
+    o.configurable = true;
+    Object.defineProperty(Prototype, Name, o);
+};
+/**
+ * Defines a constant in a class prototype
+ * @param {string} Name The name of the constant
+ * @param {object} Prototype The class prototype
+ * @param {any} Value The value of the constant
+ */
+tp.Constant = function (Name, Prototype, Value) {
+    var o = {
+        value: Value,
+        writable: false,
+        enumerable: false,
+        configurable: false
+    };
+
+    Object.defineProperty(Prototype, Name, o);
+};
+
+/**
+Invokes a constructor and returns the new instance
+@param {function} Ctor A constructor function
+@param {...args} args A rest parameter
+@returns {object} Returns the new instance of the specified constructor.
+*/
+tp.CreateInstance = function (Ctor, ...args) {
+    return new Ctor(args);
+};
+//#endregion
+
+//#region Classes
+
+//#region tp.Listener
+/** A listener class. A listener requires a callback function, at least, and perhaps a context (this) object for the call. */
+tp.Listener = class {
+
+    /**
+    Constructor
+    @param {function} [Func=null] - The callback function
+    @param {object} [Context=null] - The context (this) of the callback function
+    */
+    constructor(Func = null, Context = null) {
+        this.Func = Func;
+        this.Context = Context;
+    }
+
+    // NOTE: Firefox and Edge do not support fields yet. 
+};
+/** The callback function 
+ * @type {function}
+ */
+tp.Listener.prototype.Func = null;
+/** The context (this) of the callback function 
+ * @type {object}
+ */
+tp.Listener.prototype.Context = null;
+//#endregion
+
+//#endregion
+ 
+//#region Document Ready State
+
+/** Returns true if the document is loaded and ready (readyState === 'complete') */
+tp.Property('IsReady', tp, () => tp.Doc.readyState === "complete");
+/** For internal use. A list of {@link tp.Listener} objects to be called when the document is loaded and ready. 
+ * @type {tp.Listener[]}
+ */
+tp.ReadyListeners = [];
+/**
+Adds a listener to the document.onreadystatechange event.
+@param {function} Func - The callback function
+@param {object} Context - The context (this) of the callback function
+*/
+tp.AddReadyListener = function (Func, Context = null) {
+    var Listener = new tp.Listener(Func, Context);
+    tp.ReadyListeners.push(Listener);
+};
+/**
+Executes a specified callback function when the document is loaded and ready.
+@param {function} Func - The function to call when document is loaded and ready.
+*/
+tp.Ready = function (Func) {
+    tp.AddReadyListener(Func);
+};
+/** Just a placeholder. Client code may re-assign this property. 
+ * NOTE: It is executed before any ready listeners.
+ */
+tp.AppInitializeBefore = function () { };
+/** Just a placeholder. Client code may re-assign this property.
+ * NOTE: It is executed after any ready listeners.
+ * */
+tp.AppInitializeAfter = function () { };
+/** Just a placeholder. Client code may re-assign this property.
+ * NOTE: It is executed after the AppInitializeAfter()
+ * */
+tp.Main = function () { };
+
+/** Just a placeholder for a function that adds languages. */
+tp.AddLanguagesFunc = null;
+
+(function () {
+
+    let ReadyFunc = async () => {
+        let List;
+
+        if (tp.IsFunction(tp.AppInitializeBefore))
+            tp.Call(tp.AppInitializeBefore);
+
+        // call "ready listeners"
+        List = tp.ReadyListeners;
+        let listener;
+        for (var i = 0, ln = List.length; i < ln; i++) {
+            listener = List[i];
+            listener.Func.call(listener.Context);
+        }
+
+        if (typeof tp.AppInitializeAfter === 'function')
+            tp.Call(tp.AppInitializeAfter);
+
+        // call Main()
+        if (typeof tp.Main === 'function')
+            tp.Call(tp.Main);
+    };
+
+    if (tp.IsReady) {
+        ReadyFunc();
+    } else {
+        tp.Doc.addEventListener('readystatechange', async (e) => {
+            if (tp.IsReady) {
+                ReadyFunc();
+            }
+        }, false);
+    }
+
+})();
+
+
+
+
+
+
+//#endregion
 
 
 
@@ -1119,10 +1557,4 @@ tp.GetParams = function (Url = null) {
 
 
 
-
-
-
-
-function tp_ShowMessage() {
-    alert('Hi tp javascript');
-}
+ 
