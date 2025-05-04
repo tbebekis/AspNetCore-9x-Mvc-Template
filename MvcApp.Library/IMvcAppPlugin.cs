@@ -7,7 +7,8 @@
     {
 
         /// <summary>
-        /// Initializes the plugin
+        /// Initializes the plugin.
+        /// <para>Here plugin may call the <c>WLib.ObjectMapper.Add(Type Source, Type Dest, bool TwoWay)</c> in order to add mappings to the <see cref="WLib.ObjectMapper"/></para>
         /// </summary>
         public void Initialize(IWebContext AppContext);
 

@@ -1,4 +1,4 @@
-﻿namespace MvcApp
+﻿namespace MvcApp.Authentication
 {
     static public class UserRequestorExtensions
     {

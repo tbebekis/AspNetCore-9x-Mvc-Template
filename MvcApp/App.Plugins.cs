@@ -23,11 +23,12 @@
                 }
             }      
         }
+
         /// <summary>
-        /// Loads plugins
+        /// Loads plugin definitions into <see cref="PluginDefList"/> list.
         /// </summary>
-        static void LoadPlugins(ApplicationPartManager PartManager)
-        { 
+        static public void LoadPluginDefinitions()
+        {
             string RootPluginFolder = Path.Combine(App.BinPath, "Plugins");
             string[] PluginFolders = Directory.GetDirectories(RootPluginFolder);
 
@@ -60,16 +61,20 @@
 
             // sort definition list
             PluginDefList = PluginDefList.OrderBy(item => item.LoadOrder).ToList();
-
+        }
+        /// <summary>
+        /// Loads plugin assemblies and creates the <see cref="IMvcAppPlugin"/> instances and adds them to the <see cref="PluginList"/>.
+        /// <para>After this method the <see cref="MvcAppPluginDef.PluginAssembly"/> property is set with the loaded plubin <see cref="Assembly"/></para>
+        /// </summary>
+        static public void LoadPluginAssemblies()
+        {
             // create plugins
             List<Type> ImplementorClassTypes;
             foreach (MvcAppPluginDef Def in PluginDefList)
             {
                 // load the assembly and the application part for that assembly
                 Def.PluginAssembly = Assembly.LoadFrom(Def.PluginAssemblyFilePath);
-                ApplicationPart Part = new AssemblyPart(Def.PluginAssembly);
-                PartManager.ApplicationParts.Add(Part);
-
+ 
                 ImplementorClassTypes = TypeFinder.FindImplementorClasses(typeof(IMvcAppPlugin), Def.PluginAssembly);
                 if (ImplementorClassTypes.Count == 0)
                     Sys.Throw($"Plugin: {Def.Id} does not implement IAppPlugin");
@@ -82,6 +87,18 @@
                 PluginList.Add(Plugin);
             }
         }
+        /// <summary>
+        /// Adds plugin assemblies to the <see cref="ApplicationPartManager"/>
+        /// </summary>
+        static public void AddPluginsToApplicationPartManager(ApplicationPartManager PartManager)
+        {
+            foreach (var Def in PluginDefList)
+            {
+                ApplicationPart Part = new AssemblyPart(Def.PluginAssembly);
+                PartManager.ApplicationParts.Add(Part);
+            }
+        }
+
         /// <summary>
         /// After plugin objects are created, initialize them
         /// </summary>

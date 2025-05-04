@@ -18,5 +18,9 @@
         /// Application settings, coming from appsettings.json
         /// </summary>
         AppSettings AppSettings { get; }
+        /// <summary>
+        /// Represents an application memory cache.
+        /// </summary>
+        IWebAppCache Cache { get; }
     }
 }

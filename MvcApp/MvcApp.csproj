@@ -22,7 +22,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <!-- Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation is needed if we are to have Views not embedded into assembly -->
+        <!-- Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation is needed if we are to have Views not embedded into assembly -->        
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="9.0.4" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.4" />          
         <PackageReference Include="Microsoft.Extensions.FileProviders.Abstractions" Version="9.0.4" />
@@ -42,6 +42,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\MvcApp.Library\MvcApp.Library.csproj" />
+        <ProjectReference Include="..\tp.Logging\tp.Logging.csproj" />
         <ProjectReference Include="..\tp.Web\tp.Web.csproj" />
         <ProjectReference Include="..\tp\tp.csproj" />
     </ItemGroup>    

@@ -1,4 +1,4 @@
-﻿namespace MvcApp
+﻿namespace MvcApp.Authentication
 {
     /// <summary>
     /// Allows subscribing to events raised during cookie authentication.

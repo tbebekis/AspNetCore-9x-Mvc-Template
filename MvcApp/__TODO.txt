@@ -4,3 +4,8 @@ Cache
 Features
 Themes
 AjaxController
+ObjectMapper
+Model Binders
+Filters                     https://learn.microsoft.com/en-us/aspnet/core/mvc/controllers/filters
+Authorization               https://docs.microsoft.com/en-us/aspnet/core/security/authorization/limitingidentitybyscheme
+HSTS                        https://aka.ms/aspnetcore-hsts.

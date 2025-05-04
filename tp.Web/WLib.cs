@@ -5,6 +5,8 @@
     /// </summary>
     static public partial class WLib
     {
+        static ObjectMapper fObjectMapper;
+
         /// <summary>
         /// Initializes this class
         /// </summary>
@@ -183,6 +185,16 @@
             return Res.GetString(Key, Key, WebContext.Culture);
         }
         /// <summary>
+        /// Configures the <see cref="ObjectMapperInternal"/> by calling the <see cref="ObjectMapperInternal.Configure"/>() method.
+        /// <para>CAUTION: This method should be called after all interested parts of the application have called the <see cref="IObjectMapper.Add(Type, Type, bool)"/>
+        /// in order to add their object mappings to the mapper.</para>
+        /// <para>After this call, calling <see cref="IObjectMapper.Add(Type, Type, bool)"/> will throw an exception.</para>
+        /// </summary>
+        static public void ConfigureObjectMapper()
+        {
+            ObjectMapperInternal.Configure();
+        }
+        /// <summary>
         /// Returns true when the request is an Ajax request
         /// </summary>
         static public bool IsAjaxRequest(HttpRequest R = null)
@@ -191,10 +203,25 @@
             return string.Equals(R.Query[HeaderNames.XRequestedWith], "XMLHttpRequest", StringComparison.Ordinal) 
                 || string.Equals(R.Headers.XRequestedWith, "XMLHttpRequest", StringComparison.Ordinal);
         }
+        
         // ● properties
         /// <summary>
         /// Returns the <see cref="IWebContext"/>
         /// </summary>
         static public IWebContext WebContext { get; private set; }
+        /// <summary>
+        /// Returns the <see cref="IObjectMapper"/> object mapper.
+        /// </summary>
+        static public IObjectMapper ObjectMapper
+        {
+            get
+            {
+                if (fObjectMapper == null)
+                    fObjectMapper = new ObjectMapper();
+
+                return fObjectMapper;
+            }
+        }
+ 
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace MvcApp
+﻿namespace MvcApp.Authentication
 {
     /// <summary>
     /// Request context for browser clients (cookies)

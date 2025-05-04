@@ -31,6 +31,7 @@ global using Microsoft.AspNetCore.Mvc.ViewEngines;
 global using Microsoft.AspNetCore.Authentication.Cookies;
 global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.AspNetCore.Razor.TagHelpers;
+global using Microsoft.Extensions.Caching.Memory;
 
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.FileProviders;
@@ -40,5 +41,7 @@ global using Newtonsoft.Json;
 global using Newtonsoft.Json.Converters;
 global using Newtonsoft.Json.Linq;
 global using Newtonsoft.Json.Serialization;
+
+global using AutoMapper;
 
 global using tp;

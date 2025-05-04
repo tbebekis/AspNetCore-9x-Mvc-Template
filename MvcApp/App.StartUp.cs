@@ -46,9 +46,15 @@ namespace MvcApp
 
             // ● custom services 
             builder.Services.AddScoped<IUserRequestContext, UserRequestContext>();
- 
-            // ● HttpContext
-            builder.Services.AddHttpContextAccessor();      // singleton
+
+            // ● HttpContext - NOTE: is singleton
+            builder.Services.AddHttpContextAccessor();
+
+            // ● ActionContext - see: https://github.com/aspnet/mvc/issues/3936
+            builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();  // see: https://github.com/aspnet/mvc/issues/3936
+
+            // ● Memory Cache - NOTE: is singleton
+            builder.Services.AddDistributedMemoryCache(); // AddMemoryCache(); AddDistributedMemoryCache
 
             // ● Cookie Authentication  
             AuthenticationBuilder AuthBuilder = builder.Services.AddAuthentication(options => {
@@ -69,15 +75,9 @@ namespace MvcApp
                 //options.SlidingExpiration = true;
 
                 options.Cookie.Name = App.SAuthCookieName;       // cookie name
-
-
-                /*
-                options.Cookie.Name = $"{Assembly.GetEntryAssembly().GetName().Name}.UserCookie";       // cookie name
                 options.Cookie.IsEssential = App.AppSettings.UserCookie.IsEssential;
                 options.Cookie.HttpOnly = App.AppSettings.UserCookie.HttpOnly;
-                options.Cookie.SameSite = App.AppSettings.UserCookie.SameSite;
-                //options.Cookie.Expiration = Expiration;   // Exception: OptionsValidationException: Cookie.Expiration is ignored, use ExpireTimeSpan instead
-                */
+                options.Cookie.SameSite = App.AppSettings.UserCookie.SameSite;   
             });
 
             builder.Services.AddScoped<UserCookieAuthEvents>();
@@ -112,44 +112,35 @@ namespace MvcApp
 
             // ● Localization
             builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
-
-            /*
-            // ● Request Localization
-            // https://www.codemag.com/Article/2009081/A-Deep-Dive-into-ASP.NET-Core-Localization
-            builder.Services.Configure((RequestLocalizationOptions options) => {
-
-                var Provider = new CustomRequestCultureProvider(async (HttpContext) => {
-                    await Task.Yield();
-
-                    // retrieve the ClaimsPrincipal from the cookies
-                    // note: this is dependent on how your authentication is set up
-                    var authResult = await HttpContext.AuthenticateAsync(Lib.SCookieAuthScheme);
-                    if (!authResult.Succeeded)
-                        return null;
-
-                    IRequestContext RequestContext = GetService<IUserRequestContext>();
-                    return new ProviderCultureResult(RequestContext.CultureCode);
-                });
-
-                var Cultures = Lib.GetSupportedCultures();
-                options.DefaultRequestCulture = new RequestCulture(App.AppSettings.DefaultCultureCode);
-                options.SupportedCultures = Cultures;
-                options.SupportedUICultures = Cultures;
-                options.RequestCultureProviders.Insert(0, Provider);
-            });
-            */
-
-
-
+ 
             // ● IHttpClientFactory
             builder.Services.AddHttpClient();
 
-
+            // ● HSTS
+            if (!builder.Environment.IsDevelopment())
+            {
+                HSTSSettings HSTS = App.AppSettings.HSTS;
+                builder.Services.AddHsts(options =>
+                {
+                    options.Preload = HSTS.Preload;
+                    options.IncludeSubDomains = HSTS.IncludeSubDomains;
+                    options.MaxAge = TimeSpan.FromHours(HSTS.MaxAgeHours >= 1 ? HSTS.MaxAgeHours : 1);
+                    if (HSTS.ExcludedHosts != null && HSTS.ExcludedHosts.Count > 0)
+                    {
+                        foreach (string host in HSTS.ExcludedHosts)
+                            options.ExcludedHosts.Add(host);
+                    }
+                });
+            }
 
             // ● MVC
-            IMvcBuilder MvcBuilder = builder.Services.AddControllersWithViews();
+            IMvcBuilder MvcBuilder = builder.Services.AddControllersWithViews(options => {
+                options.ModelBinderProviders.Insert(0, new AppModelBinderProvider());
+                options.Filters.Add<ActionExceptionFilter>();
+            });
             builder.Services.Configure<RazorViewEngineOptions>(options => { options.ViewLocationExpanders.Add(new ViewLocationExpander()); });
             MvcBuilder.AddRazorRuntimeCompilation();
+            
 
             MvcBuilder.AddNewtonsoftJson(options =>
             {
@@ -160,8 +151,9 @@ namespace MvcApp
             });
 
             // ● Plugins
-            LoadPlugins(MvcBuilder.PartManager);
-
+            LoadPluginDefinitions();
+            LoadPluginAssemblies();
+            AddPluginsToApplicationPartManager(MvcBuilder.PartManager);
         }
         /// <summary>
         /// Add middlewares the the pipeline
@@ -177,20 +169,17 @@ namespace MvcApp
 
             //----------------------------------------------------------------------------------------
             // Middlewares
-            //----------------------------------------------------------------------------------------
-
-            
-
-
-            if (!app.Environment.IsDevelopment())
-            {
-                app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
-            else
+ 
+            if (app.Environment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+            }
+            else // Production
+            {
+                app.UseExceptionHandler("/Home/Error");
+                
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseHsts();
             }
   
 
@@ -211,7 +200,6 @@ namespace MvcApp
            // app.UseResponseCaching(); 
              */
 
-            app.UseHsts();
             app.UseHttpsRedirection();
 
             // ● static files - wwwroot
@@ -249,6 +237,9 @@ namespace MvcApp
                 options.SupportedUICultures = Cultures;
                 options.RequestCultureProviders.Insert(0, new CookieRequestCultureProvider());
             });
+
+            // ● Cors
+            //app.UseCors();
 
             // ● Session
             app.UseSession();

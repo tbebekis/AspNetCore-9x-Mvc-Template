@@ -6,6 +6,8 @@
     /// </summary>
     internal class AppContext : IMvcAppContext
     {
+        IWebAppCache fCache;
+
         // ● public
         /// <summary>
         /// Returns a service specified by a type argument. If the service is not registered an exception is thrown.
@@ -91,6 +93,23 @@
         /// Application settings, coming from appsettings.json
         /// </summary>
         public AppSettings AppSettings => App.AppSettings;
+
+        /// <summary>
+        /// Represents an application memory cache.
+        /// </summary>
+        public IWebAppCache Cache
+        {
+            get
+            {
+                if (fCache == null)
+                {
+                    WebAppMemoryCache Instance = new WebAppMemoryCache(GetService<IMemoryCache>());
+                    Instance.DefaultEvictionTimeoutMinutes = App.AppSettings.CacheTimeoutMinutes;
+                    fCache = Instance;
+                }
+                return fCache;
+            }
+        }
 
     }
 }

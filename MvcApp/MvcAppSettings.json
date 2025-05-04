@@ -3,6 +3,7 @@
     "DefaultCurrencyCode": "EUR",
     "DefaultCurrencySymbol": "€",
     "MoneyFormat": "€ 0.00",
+    "CacheTimeoutMinutes": 15,
     "SupportedCultures": [ "en-US", "el-GR" ],
 
     "UserCookie": {

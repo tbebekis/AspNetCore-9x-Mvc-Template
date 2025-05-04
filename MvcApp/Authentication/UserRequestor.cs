@@ -1,4 +1,4 @@
-﻿namespace MvcApp
+﻿namespace MvcApp.Authentication
 {
     /// <summary>
     /// Since this is an MVC application, the Requestor is a user or something like a <see cref="HttpClient"/> requesting an MVC resource, using user credentials.

@@ -67,6 +67,11 @@
             set => fMoneyFormat = value;
         }
         /// <summary>
+        /// The eviction timeout of an entry from the cache, in minutes. 
+        /// <para>Defaults to 0 which means "use the timeouts of the internal implementation".</para>
+        /// </summary>
+        public int CacheTimeoutMinutes { get; set; }
+        /// <summary>
         /// List of supported cultures
         /// </summary>
         public List<string> SupportedCultures { get; set; } = new List<string>() { "en-US", "el-GR" };
