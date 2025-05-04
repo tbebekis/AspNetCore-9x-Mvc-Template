@@ -14,7 +14,7 @@
         /// </summary>
         static public string GetContentRootUrl(this MvcAppPluginDef Def)
         {
-            string Result = Def.PluginFolderPath.Replace(Lib.BinPath, string.Empty)
+            string Result = Def.PluginFolderPath.Replace(WLib.BinPath, string.Empty)
                                       .TrimStart('\\')
                                       .TrimEnd('\\')
                                       .TrimStart('/')

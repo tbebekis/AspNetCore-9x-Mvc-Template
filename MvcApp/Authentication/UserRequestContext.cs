@@ -106,7 +106,6 @@
             }
 
         }
- 
         /// <summary>
         /// True when the current user/requestor is authenticated with the cookie authentication scheme.
         /// </summary>

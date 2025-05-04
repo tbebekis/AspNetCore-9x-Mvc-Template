@@ -155,5 +155,9 @@ namespace tp
             byte[] Data = Convert.FromBase64String(Value);
             return Enc.GetString(Data);
         }
+
+        // ● properties
+        static public bool IsWindows => Environment.OSVersion.Platform == PlatformID.Win32NT || Environment.OSVersion.Platform == PlatformID.Win32Windows || Environment.OSVersion.Platform == PlatformID.WinCE;
+        static public bool IsLinux => Environment.OSVersion.Platform == PlatformID.Unix;
     }
 }

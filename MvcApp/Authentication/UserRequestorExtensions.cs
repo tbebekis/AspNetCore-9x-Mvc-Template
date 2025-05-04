@@ -3,10 +3,10 @@
     static public class UserRequestorExtensions
     {
         /// <summary>
-        /// Creates and returns a claim list regarding this instance.
+        /// Generates and returns a claim list regarding a <see cref="IRequestor"/>.
         /// <para>Claims are stored in the user cookie.</para>
         /// </summary>
-        static public List<Claim> GetUserClaimList(this IRequestor Requestor, string AuthenticationScheme, bool IsImpersonation = false)
+        static public List<Claim> GenerateUserClaimList(this IRequestor Requestor, string AuthenticationScheme, bool IsImpersonation = false)
         {
             if (string.IsNullOrWhiteSpace(Requestor.Id))
                 throw new ApplicationException("Cannot produce claims. No Id");
@@ -28,12 +28,12 @@
             return ClaimList;
         }
         /// <summary>
-        /// Creates and returns a <see cref="ClaimsPrincipal"/> along with a claim list
+        /// Creates and returns a <see cref="ClaimsPrincipal"/> along with a claim list for a specified <see cref="IRequestor"/>.
         /// </summary>
         static public ClaimsPrincipal CreateUserPrincipal(this IRequestor Requestor, string AuthenticationScheme, bool IsImpersonation = false)
         {
             // create claim list
-            List<Claim> ClaimList = GetUserClaimList(Requestor, AuthenticationScheme, IsImpersonation);
+            List<Claim> ClaimList = GenerateUserClaimList(Requestor, AuthenticationScheme, IsImpersonation);
 
             // identity and principal
             // NOTE: setting the second parameter actually authenticates the identity (IsAuthenticated returns true)

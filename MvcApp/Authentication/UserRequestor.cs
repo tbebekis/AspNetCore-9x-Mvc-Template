@@ -26,19 +26,30 @@
         public const string SIsImpersonationClaimType = "IsImpersonation";
  
         // ● get values from user claims
- 
+        /// <summary>
+        /// Returns the id of the requestor
+        /// </summary>
         static public string GetRequestorId(IEnumerable<Claim> Claims)
         {
             return WLib.GetClaimValue<string>(Claims, ClaimTypes.NameIdentifier);
         }
+        /// <summary>
+        /// Returns the <see cref="UserLevel"/> of the requestor
+        /// </summary>
         static public UserLevel GetRequestorLevel(IEnumerable<Claim> Claims)
         {
             return WLib.GetClaimValue<UserLevel>(Claims, SUserLevelClaimType);
         }
+        /// <summary>
+        /// Returns true if the requestor is impersonating another user
+        /// </summary>
         static public bool GetRequestorIsImpersonation(IEnumerable<Claim> Claims)
         {
             return WLib.GetClaimValue<bool>(Claims, SIsImpersonationClaimType);
         }
+        /// <summary>
+        /// Returns the authentication scheme of the requestor
+        /// </summary>
         static public string GetRequestorAuthenticationScheme(IEnumerable<Claim> Claims)
         {
             return WLib.GetClaimValue<string>(Claims, SAuthenticationSchemeClaimType);

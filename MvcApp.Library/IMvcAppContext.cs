@@ -14,5 +14,9 @@
         /// True when the current user/requestor is authenticated
         /// </summary>
         bool IsAuthenticated { get; }
+        /// <summary>
+        /// Application settings, coming from appsettings.json
+        /// </summary>
+        AppSettings AppSettings { get; }
     }
 }

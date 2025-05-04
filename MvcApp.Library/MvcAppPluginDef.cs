@@ -24,7 +24,7 @@
         /// </summary>
         public void AddPluginViewLocations()
         {
-            string PluginFolder = this.PluginFolderPath.Replace(Lib.BinPath, string.Empty)
+            string PluginFolder = this.PluginFolderPath.Replace(WLib.BinPath, string.Empty)
                 .TrimStart('\\')
                 .TrimEnd('\\')
                 .TrimStart('/')

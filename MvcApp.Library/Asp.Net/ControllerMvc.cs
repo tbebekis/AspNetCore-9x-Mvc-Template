@@ -13,7 +13,7 @@
         /// <summary>
         /// The context regarding the current HTTP request (current visitor, selected warehouse, etc.)
         /// </summary>
-        protected IUserRequestContext UserContext => fUserContext ?? (fUserContext = Lib.GetService<IUserRequestContext>());
+        protected IUserRequestContext UserContext => fUserContext ?? (fUserContext = WLib.GetService<IUserRequestContext>());
         /// <summary>
         /// Returns a localized string based on a specified resource key, e.g. Customer, and the current (Session's) culture code, e.g. el-GR
         /// </summary>

@@ -45,7 +45,7 @@
             {
                 string S = VirtualPath.Replace("~/", "wwwroot/").TrimStart('/');
 
-                if (Lib.IsWindows())
+                if (Sys.IsWindows)
                 {
                     S = S.Replace('/', '\\');
                 }

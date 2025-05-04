@@ -25,7 +25,7 @@ namespace MvcApp
             {
                 App.AppContext = new AppContext();
                 WLib.Initialize(App.AppContext);
-                Lib.Initialize(App.AppContext, App.AppSettings);                
+                Lib.Initialize(App.AppContext);                
                 App.InitializePlugins();
             }
         }
@@ -176,7 +176,8 @@ namespace MvcApp
             // Middlewares
             //----------------------------------------------------------------------------------------
 
- 
+           
+
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");

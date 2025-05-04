@@ -15,6 +15,7 @@ global using System.Web;
 
 global using Microsoft.AspNetCore.Html;
 global using Microsoft.AspNetCore.Http;
+global using Microsoft.AspNetCore.Http.Features;
 global using Microsoft.AspNetCore.Http.Extensions;
 global using Microsoft.AspNetCore.Hosting;
 global using Microsoft.AspNetCore.Builder;
@@ -28,6 +29,7 @@ global using Microsoft.AspNetCore.Mvc.ViewEngines;
 global using Microsoft.AspNetCore.Authentication.Cookies;
 global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.AspNetCore.Razor.TagHelpers;
+
 
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.FileProviders;

@@ -25,8 +25,7 @@
         /// Returns the current <see cref="HttpContext"/>
         /// </summary>
         public HttpContext GetHttpContext() => App.GetHttpContext();
-
-
+ 
         // ● properties
         /// <summary>
         /// The <see cref="IWebHostEnvironment"/>
@@ -58,7 +57,6 @@
         /// The default requestor
         /// </summary>
         public IRequestor DefaultRequestor => UserRequestor.Default;
-
         /// <summary>
         /// True when the current user/requestor is authenticated with the cookie authentication scheme.
         /// </summary>
@@ -89,7 +87,10 @@
 
             }
         }
-    
-    
+        /// <summary>
+        /// Application settings, coming from appsettings.json
+        /// </summary>
+        public AppSettings AppSettings => App.AppSettings;
+
     }
 }

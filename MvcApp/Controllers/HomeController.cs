@@ -1,11 +1,19 @@
-namespace MvcApp.Controllers
+﻿namespace MvcApp.Controllers
 {
+    /// <summary>
+    /// Home Controller
+    /// </summary>
     public class HomeController : ControllerMvc
     {
+        // ● construction
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public HomeController()
         {
         }
- 
+
+        // ● Actions
         [HttpGet("/", Name = "Home"), AllowAnonymous]
         public IActionResult Index()
         {
@@ -19,6 +27,8 @@ namespace MvcApp.Controllers
                 return RedirectToRoute("Home");
 
             CredentialsModel M = new CredentialsModel();
+
+            Sys.Throw("Test");
 
             return View("Login", M);
         }

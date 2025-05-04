@@ -1,3 +1,6 @@
 ﻿Session
 Session Cookie
 Cache
+Features
+Themes
+AjaxController

@@ -1,9 +1,15 @@
-﻿using Microsoft.AspNetCore.Http.Features;
+﻿using Microsoft.Net.Http.Headers;
 
 namespace tp.Web
 {
+    /// <summary>
+    /// Represents this library
+    /// </summary>
     static public partial class WLib
     {
+        /// <summary>
+        /// Initializes this class
+        /// </summary>
         static public void Initialize(IWebContext WebContext)
         {
             if (WLib.WebContext == null)
@@ -12,6 +18,7 @@ namespace tp.Web
             }
         }
 
+        // ● IWebContext related
         /// <summary>
         /// Returns a service specified by a type argument. If the service is not registered an exception is thrown.
         /// <para>WARNING: "Scoped" services can NOT be resolved from the "root" service provider. </para>
@@ -35,6 +42,32 @@ namespace tp.Web
         /// Returns the current <see cref="Microsoft.AspNetCore.Http.HttpContext.Request.Query"/>
         /// </summary>
         static public IQueryCollection GetQuery() => GetHttpRequest().Query;
+
+        /// <summary>
+        /// The <see cref="IWebHostEnvironment"/>
+        /// </summary>
+        static public IWebHostEnvironment WebHostEnvironment => WebContext.WebHostEnvironment;
+
+        /// <summary>
+        /// The physical "root path", i.e. the root folder of the application
+        /// <para> e.g. C:\MyApp</para>
+        /// </summary>
+        static public string ContentRootPath => WebContext.ContentRootPath;
+        /// <summary>
+        /// The physical "web root" path, i.e. the path to the "wwwroot" folder
+        /// <para>e.g. C:\MyApp\wwwwroot</para>
+        /// </summary>
+        static public string WebRootPath => WebContext.WebRootPath;
+        /// <summary>
+        /// The physical path of the output folder
+        /// <para>e.g. C:\MyApp\bin\Debug\net9.0\  </para>
+        /// </summary>
+        static public string BinPath => WebContext.BinPath;
+
+        /// <summary>
+        /// True when the application is running in development mode
+        /// </summary>
+        static public bool InDevMode => WebContext.InDevMode;
 
         // ● Url
         /// <summary>
@@ -142,9 +175,8 @@ namespace tp.Web
         {
              return Claim != null? (T)Convert.ChangeType(Claim.Value, typeof(T)) : DefaultValue;
         }
- 
 
-
+        // ● Miscs
         /// <summary>
         /// Returns a localized string based on a specified resource key, e.g. Customer, and the culture code of the current request, e.g. el-GR
         /// </summary>
@@ -152,6 +184,16 @@ namespace tp.Web
         {
             return Res.GetString(Key, Key, WebContext.Culture);
         }
+        /// <summary>
+        /// Returns true when the request is an Ajax request
+        /// </summary>
+        static public bool IsAjaxRequest(HttpRequest R = null)
+        {
+            R = R ?? GetHttpRequest();
+            return string.Equals(R.Query[HeaderNames.XRequestedWith], "XMLHttpRequest", StringComparison.Ordinal) 
+                || string.Equals(R.Headers.XRequestedWith, "XMLHttpRequest", StringComparison.Ordinal);
+        }
+        // ● properties
         /// <summary>
         /// Returns the <see cref="IWebContext"/>
         /// </summary>
