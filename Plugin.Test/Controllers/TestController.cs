@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿
 
 namespace Plugin.Test.Controllers
 {
-    public class TestController: ControllerMvc
+    public class TestController: ControllerMvcBase
     {
         [HttpGet("/plugin-test-no-layout", Name = "Plugin.Test.NoLayout"), AllowAnonymous]
         public IActionResult Index()

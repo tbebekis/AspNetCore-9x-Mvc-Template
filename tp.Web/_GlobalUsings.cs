@@ -45,3 +45,6 @@ global using Newtonsoft.Json.Serialization;
 global using AutoMapper;
 
 global using tp;
+global using tp.Web.Ajax;
+global using tp.Web.Controllers;
+

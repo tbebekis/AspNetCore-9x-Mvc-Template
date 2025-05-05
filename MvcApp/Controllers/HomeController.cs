@@ -3,7 +3,7 @@
     /// <summary>
     /// Home Controller
     /// </summary>
-    public class HomeController : ControllerMvc
+    public class HomeController : AppControllerMvcBase
     {
         // ● construction
         /// <summary>

@@ -38,6 +38,8 @@ global using Microsoft.Extensions.Caching.Memory;
 global using tp;
 global using tp.Logging;
 global using tp.Web;
+global using tp.Web.Controllers;
+global using tp.Web.Ajax;
 
 global using MvcApp.ModelBinders;
 global using MvcApp.Filters;
