@@ -213,101 +213,6 @@ tp.AjaxArgs.prototype.Tag = null;
 
 //#endregion
  
-//#region tp.AjaxArgs Helpers
-
-/**
-Creates and returns a tp.AjaxArgs instance for a POST communication
-@param {string} Url - The url to call
-@param {object} [Data=null] - Optional. The data to sent. Could be null
-@param {function} [OnSuccess=null] - Optional. A callback function(Args: tp.AjaxArgs): void to call on success.
-@param {function} [OnFailure=null] - Optional. A callback function(Args: tp.AjaxArgs): void to call on failure.
-@param {object} [Context=null] - Optional. The context (this) to use when calling the callback functions.
-@returns {tp.AjaxArgs} Returns a tp.AjaxArgs object.
-*/
-tp.Ajax.PostArgs = function (Url, Data = null, OnSuccess = null, OnFailure = null, Context = null) {
-    let Args = new tp.AjaxArgs();
-    Args.Url = Url;
-    Args.Method = 'POST';
-    Args.ContentType = tp.AjaxContentType.FormUrlEncoded;   //  'application/x-www-form-urlencoded; charset=UTF-8'
-    Args.Data = Data;
-
-    Args.Context = Context;
-    Args.OnSuccess = OnSuccess;
-    Args.OnFailure = OnFailure;
-
-    return Args;
-};
-/**
-Creates and returns a tp.AjaxArgs instance for a GET communication
-@param {string} Url - The url to call
-@param {object} [Data=null] - Optional. The data to sent. Could be null
-@param {function} [OnSuccess=null] - Optional. A callback function(Args: tp.AjaxArgs): void to call on success.
-@param {function} [OnFailure=null] - Optional. A callback function(Args: tp.AjaxArgs): void to call on failure.
-@param {object} [Context=null] - Optional. The context (this) to use when calling the callback functions.
-@returns {tp.AjaxArgs} Returns a tp.AjaxArgs object.
-*/
-tp.Ajax.GetArgs = function (Url, Data = null, OnSuccess = null, OnFailure = null, Context = null) {
-    let Args = new tp.AjaxArgs();
-    Args.Url = Url;
-    Args.Method = 'GET';
-    Args.Data = Data;
-
-    Args.Context = Context;
-    Args.OnSuccess = OnSuccess;
-    Args.OnFailure = OnFailure;
-
-    return Args;
-};
-/**
-Creates and returns a tp.AjaxArgs instance for a POST-ing a model. The function serializes the model by calling JSON.stringify(). 
-It also adjusts the Content-Type header as application/json; charset=utf-8
-@param {string} Url - The url to call
-@param {object} Model - The model, a plain object, to sent. The function serializes the model by calling JSON.stringify().
-@param {function} [OnSuccess=null] - Optional. A callback function(Args: tp.AjaxArgs): void to call on success.
-@param {function} [OnFailure=null] - Optional. A callback function(Args: tp.AjaxArgs): void to call on failure.
-@param {object} [Context=null] - Optional. The context (this) to use when calling the callback functions.
-@returns {tp.AjaxArgs} Returns a tp.AjaxArgs object.
-*/
-tp.Ajax.ModelArgs = function (Url, Model, OnSuccess = null, OnFailure = null, Context = null) {
-    let Args = new tp.AjaxArgs();
-    Args.Url = Url;
-    Args.Method = 'POST';
-    Args.ContentType = tp.AjaxContentType.Json;     // 'application/json; charset=utf-8';
-
-    if (!tp.IsEmpty(Model)) {
-        if ('__RequestVerificationToken' in Model) {
-            Args.AntiForgeryToken = Model['__RequestVerificationToken'];
-            delete Model['__RequestVerificationToken'];
-        }
-        Args.Data = tp.IsString(Model) ? Model : JSON.stringify(Model);
-    }
-
-    Args.Context = Context;
-    Args.OnSuccess = OnSuccess;
-    Args.OnFailure = OnFailure;
-
-    return Args;
-};
-/**
-Merges a specified object with the Data part (tp.AjaxArgs.Data) of the ajax arguments. 
-@param {tp.AjaxArgs} Args The tp.AjaxArgs object to use.
-@param {Object} ExtraData - The object to merge with tp.AjaxArgs.Data
-@returns {tp.AjaxArgs} Returns a tp.AjaxArgs object.
-*/
-tp.Ajax.AddExtraData = function (Args, ExtraData) {
-    Args.Data = Args.Data || {};
-
-    if (!tp.IsEmpty(ExtraData)) {
-        for (var Prop in ExtraData) {
-            Args.Data[Prop] = ExtraData[Prop];
-        }
-    }
-
-    return Args;
-};
-
-//#endregion
-
 //#region tp.Ajax Default handlers
 
 /**
@@ -514,6 +419,101 @@ tp.Ajax.Async = async function (Args) {
     // ------------------------------------------
     let Result = new Promise(ExecutorFunc);
     return Result;
+};
+
+//#endregion
+
+//#region tp.AjaxArgs Helpers
+
+/**
+Creates and returns a tp.AjaxArgs instance for a POST communication
+@param {string} Url - The url to call
+@param {object} [Data=null] - Optional. The data to sent. Could be null
+@param {function} [OnSuccess=null] - Optional. A callback function(Args: tp.AjaxArgs): void to call on success.
+@param {function} [OnFailure=null] - Optional. A callback function(Args: tp.AjaxArgs): void to call on failure.
+@param {object} [Context=null] - Optional. The context (this) to use when calling the callback functions.
+@returns {tp.AjaxArgs} Returns a tp.AjaxArgs object.
+*/
+tp.Ajax.PostArgs = function (Url, Data = null, OnSuccess = null, OnFailure = null, Context = null) {
+    let Args = new tp.AjaxArgs();
+    Args.Url = Url;
+    Args.Method = 'POST';
+    Args.ContentType = tp.AjaxContentType.FormUrlEncoded;   //  'application/x-www-form-urlencoded; charset=UTF-8'
+    Args.Data = Data;
+
+    Args.Context = Context;
+    Args.OnSuccess = OnSuccess;
+    Args.OnFailure = OnFailure;
+
+    return Args;
+};
+/**
+Creates and returns a tp.AjaxArgs instance for a GET communication
+@param {string} Url - The url to call
+@param {object} [Data=null] - Optional. The data to sent. Could be null
+@param {function} [OnSuccess=null] - Optional. A callback function(Args: tp.AjaxArgs): void to call on success.
+@param {function} [OnFailure=null] - Optional. A callback function(Args: tp.AjaxArgs): void to call on failure.
+@param {object} [Context=null] - Optional. The context (this) to use when calling the callback functions.
+@returns {tp.AjaxArgs} Returns a tp.AjaxArgs object.
+*/
+tp.Ajax.GetArgs = function (Url, Data = null, OnSuccess = null, OnFailure = null, Context = null) {
+    let Args = new tp.AjaxArgs();
+    Args.Url = Url;
+    Args.Method = 'GET';
+    Args.Data = Data;
+
+    Args.Context = Context;
+    Args.OnSuccess = OnSuccess;
+    Args.OnFailure = OnFailure;
+
+    return Args;
+};
+/**
+Creates and returns a tp.AjaxArgs instance for a POST-ing a model. The function serializes the model by calling JSON.stringify(). 
+It also adjusts the Content-Type header as application/json; charset=utf-8
+@param {string} Url - The url to call
+@param {object} Model - The model, a plain object, to sent. The function serializes the model by calling JSON.stringify().
+@param {function} [OnSuccess=null] - Optional. A callback function(Args: tp.AjaxArgs): void to call on success.
+@param {function} [OnFailure=null] - Optional. A callback function(Args: tp.AjaxArgs): void to call on failure.
+@param {object} [Context=null] - Optional. The context (this) to use when calling the callback functions.
+@returns {tp.AjaxArgs} Returns a tp.AjaxArgs object.
+*/
+tp.Ajax.ModelArgs = function (Url, Model, OnSuccess = null, OnFailure = null, Context = null) {
+    let Args = new tp.AjaxArgs();
+    Args.Url = Url;
+    Args.Method = 'POST';
+    Args.ContentType = tp.AjaxContentType.Json;     // 'application/json; charset=utf-8';
+
+    if (!tp.IsEmpty(Model)) {
+        if ('__RequestVerificationToken' in Model) {
+            Args.AntiForgeryToken = Model['__RequestVerificationToken'];
+            delete Model['__RequestVerificationToken'];
+        }
+        Args.Data = tp.IsString(Model) ? Model : JSON.stringify(Model);
+    }
+
+    Args.Context = Context;
+    Args.OnSuccess = OnSuccess;
+    Args.OnFailure = OnFailure;
+
+    return Args;
+};
+/**
+Merges a specified object with the Data part (tp.AjaxArgs.Data) of the ajax arguments. 
+@param {tp.AjaxArgs} Args The tp.AjaxArgs object to use.
+@param {Object} ExtraData - The object to merge with tp.AjaxArgs.Data
+@returns {tp.AjaxArgs} Returns a tp.AjaxArgs object.
+*/
+tp.Ajax.AddExtraData = function (Args, ExtraData) {
+    Args.Data = Args.Data || {};
+
+    if (!tp.IsEmpty(ExtraData)) {
+        for (var Prop in ExtraData) {
+            Args.Data[Prop] = ExtraData[Prop];
+        }
+    }
+
+    return Args;
 };
 
 //#endregion
@@ -744,7 +744,7 @@ tp.AjaxRequest.Counter = 0;
  * Executes an ajax request to the server and returns the Packet as it comes from server.
  * @param {tp.AjaxRequest|object|string} RequestOrOperationName Required. A {@link tp.AjaxRequest} object, or a plain object with an OperationName property, or a string denoting the operation name to execute.
  * @param {object} Params Optional. Used only when the first parameter is a string in order to create a {@link tp.AjaxRequest} object.
- * @returns {object} Returns the Packet from the server.
+ * @returns {tp.AjaxArgs} Returns a {@link tp.AjaxArgs} {@link Promise}. The Packet is a property of the returned object.
  */
 tp.AjaxRequest.Execute = async function (RequestOrOperationName, Params = null) {
     let Result = null;
@@ -764,7 +764,7 @@ tp.AjaxRequest.Execute = async function (RequestOrOperationName, Params = null) 
     }
 
     let Args = await tp.Ajax.PostModelAsync(Url, Request);
-    Result = Args.Packet;
+    Result = Args;
 
     return Result;
 };

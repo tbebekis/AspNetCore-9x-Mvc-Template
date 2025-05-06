@@ -105,5 +105,11 @@
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        [HttpGet("/ajax-demos", Name = "AjaxDemos"), AllowAnonymous]
+        public IActionResult AjaxDemos()
+        {
+            return View();
+        }
     }
 }

@@ -2928,7 +2928,7 @@ tp.DropDownHandler = function (Button, List, CssClass = 'tp-Visible') {
  * @param {boolean} [Formatted=true] Optional. When true the json text is formatted.
  */
 tp.ToJson = function (o, Formatted = true) {
-    return Formatted === true ? JSON.stringify(o, null, " ") : JSON.stringify(o);
+    return Formatted === true ? JSON.stringify(o, null, 4) : JSON.stringify(o);
 }
 /**
 Displays a message in an alert box.

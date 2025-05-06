@@ -1,6 +1,4 @@
-﻿ 
-
-namespace MvcApp
+﻿namespace MvcApp
 {
     /*
     Service Lifetime:           
@@ -33,6 +31,8 @@ namespace MvcApp
                 WLib.Initialize(App.AppContext);
                 Lib.Initialize(App.AppContext);                
                 App.InitializePlugins();
+
+                AjaxRequestHandlers.Initialize();
             }
         }
  

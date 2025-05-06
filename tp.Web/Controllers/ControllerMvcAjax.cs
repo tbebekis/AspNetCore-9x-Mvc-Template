@@ -34,7 +34,7 @@
 
         /// <summary>
         /// Processes the request.
-        /// <para>Sets itself as the <see cref="AjaxRequest.ViewToStringConverter"/> which is used when processing a Ui request by converting a razor view to HTML.</para>
+        /// <para>Sets itself, i.e. this Controller, as the <see cref="AjaxRequest.ViewToStringConverter"/> which is used when processing a Ui request by converting a razor view to HTML.</para>
         /// <para>Calls the static method <see cref="AjaxRequest.Process(AjaxRequest)"/> 
         /// which processes the request by calling all registered <see cref="IAjaxRequestHandler"/> handlers.</para>
         /// <para>And finally assigns the result to the <see cref="HttpPacketResult"/>.</para>
@@ -59,6 +59,18 @@
             return Result;
         }
 
+        /// <summary>
+        /// This is the default execution method.
+        /// <para>It just calls <see cref="ProcessRequest(AjaxRequest)"/> 
+        /// which in turn uses the static <see cref="AjaxRequest.Process(AjaxRequest)"/> method
+        /// delegating the execution of the request to a registered <see cref="IAjaxRequestHandler"/> handler.</para>
+        /// </summary>
+        protected virtual async Task<JsonResult> DefaultExecute(AjaxRequest R)
+        {
+            await Task.CompletedTask;
+            HttpPacketResult Result = ProcessRequest(R); 
+            return Json(Result);
+        }
     }
 
 }

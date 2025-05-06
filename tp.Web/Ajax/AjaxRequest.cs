@@ -6,6 +6,12 @@
     /// <para>A Ui request may set the an <see cref="IsSingleInstance"/> flag indicating that the Ui may exist only once. </para>
     /// <para>A Proc request may or may not return a packet. </para>
     /// <para>A requester may optionally set the <see cref="CommandId"/> and/or <see cref="CommandName"/> properties. </para>
+    /// <para></para>
+    /// <para>This class serves a registry for <see cref="IAjaxRequestHandler"/> objects.</para>
+    /// <para>A developer may choose instead of using <see cref="AjaxRequest"/> handler methods in the <see cref="ControllerMvcAjax"/> ajax controller, 
+    /// to implement his own <see cref="IAjaxRequestHandler"/> objects as request handlers
+    /// and have the </para>
+    /// <para></para>
     /// </summary>
     public class AjaxRequest
     {
