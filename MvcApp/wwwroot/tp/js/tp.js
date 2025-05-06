@@ -29,6 +29,90 @@ tp.Throw = function (Message) {
     throw Ex;
 };
  
+/**
+Returns a text of an error for display purposes
+@param {any} e - An Error, or ErrorEvent, or a string value or any other object with error information
+@returns {string} Returns the error text
+*/
+tp.ExceptionText = function (e) {
+    let SB = new tp.StringBuilder();
+    let S, o;
+
+    //---------------------------
+    function HandleEvent(e) {
+        o = { Message: 'Unknown error.' };
+        try {
+            o = {};
+
+            o.Name = e.error && e.error.name ? e.error.name : '';
+            o.Message = e.message;
+
+            if (tp.SysConfig.DebugMode === true) {
+                o.Type = e.type ? e.type : '';
+                o.Number = e.error && e.error.number ? e.error.number : null;
+                o.File = e.filename;
+                o.Line = e.lineno;
+                o.Col = e.colno;
+                o.Stack = e.error && e.error.stack ? e.error.stack : '';
+            }
+
+            if (e instanceof PromiseRejectionEvent) {
+                if (!tp.IsEmpty(e.reason)) {
+                    if (e.reason instanceof Error) {
+                        if (tp.SysConfig.DebugMode === true)
+                            o.Stack = e.reason.stack;
+                    } else {
+                        o.Reason = e.reason.toString();
+                    }
+                }
+            }
+
+        } catch (e) {
+            //
+        }
+
+        for (let Prop in o) {
+            let v = o[Prop];
+            if (v && tp.IsSimple(v)) {
+                v = v.toString();
+                if (!tp.IsBlank(v)) {
+                    S = tp.Format('{0}: {1}', Prop, v);
+                    SB.AppendLine(S);
+                }
+            }
+        }
+    }
+    //---------------------------
+
+
+    if (tp.IsString(e) && !tp.IsBlank(e)) {
+        SB.AppendLine(e);
+    } else if (e instanceof Error) {
+        SB.AppendLine(e.name + ': ' + e.message);
+        SB.AppendLine(e.stack || 'Stack not available.');
+    } else if (e instanceof PromiseRejectionEvent) {
+        HandleEvent(e);
+    } else if (e instanceof ErrorEvent) {
+        HandleEvent(e);
+    } else if ('ErrorText' in e && !tp.IsBlank(e.ErrorText)) {
+        SB.AppendLine(e.ErrorText);
+    } else if (e instanceof tp.AjaxArgs) {
+        if (!tp.IsBlank(e.ErrorText))
+            SB.AppendLine(e.ErrorText);
+        else if (!tp.IsBlank(e.ResponseData.ErrorText))
+            SB.AppendLine(e.ResponseData.ErrorText);
+        else
+            SB.AppendLine('Unknown ajax error.');
+    } else {
+        try {
+            S = e.toString();
+            SB.AppendLine(S);
+        } catch (e) {
+            SB.AppendLine('Unknown error.');
+        }
+    }
+    return SB.ToString();
+};
 
 //#endregion
  
@@ -314,6 +398,353 @@ Invokes a constructor and returns the new instance
 tp.CreateInstance = function (Ctor, ...args) {
     return new Ctor(args);
 };
+//#endregion
+
+//#region Reflection
+
+/** Contains information about a property or function 
+ @class
+ */
+tp.PropertyInfo = function () {
+    this.Name = '';
+    this.Signature = '';
+    this.Type = '';
+    this.Args = 0;
+    this.HasGetter = false;
+    this.HasSetter = false;
+    this.IsConstructor = false;
+    this.IsFunction = false;
+    this.IsProperty = false;
+    this.IsConfigurable = false;
+    this.IsEnumerable = false;
+    this.IsWritable = false;
+    this.Pointer = null;
+};
+
+
+/**
+ * Returns the property descriptor of a specified property, if any, else null.  
+ Can be used also for calling inherited property getters/setters. 
+ @example
+// Here is how to call a base property
+// NOTE: In both of the following examples, base is the base prototype
+ 
+return tp.GetPropertyDescriptor(base, 'Name').get.call(this);      // getter call
+tp.GetPropertyDescriptor(base, 'Name').set.call(this, v);          // setter call
+ 
+ @param {object} o An object (maybe a prototype object)
+ @param {string} PropName The name of the property.
+ @returns {PropertyDescriptor} Returns the property descriptor or null.
+ */
+tp.GetPropertyDescriptor = function (o, PropName) {
+    if (o !== null) {
+        return o.hasOwnProperty(PropName) ?
+            Object.getOwnPropertyDescriptor(o, PropName) :
+            tp.GetPropertyDescriptor(Object.getPrototypeOf(o), PropName);
+    }
+
+    return null;
+};
+/** Returns information about a property or function
+@param {object} o - The container object
+@param {string} Key - The name of the member
+@returns {tp.PropertyInfo} Returns an information object.
+*/
+tp.GetPropertyInfo = function (o, Key) {
+    var PD = tp.GetPropertyDescriptor(o, Key);
+
+    var Result = new tp.PropertyInfo();
+    Result.Name = Key;
+    Result.Signature = Key;
+
+
+    if (PD) {
+        var Pointer = o[Key];
+        var ParamList;
+
+        Result.Name = Key;
+        if (tp.IsFunction(Pointer)) {
+            Result.Type = 'f';
+            Result.IsFunction = true;
+            Result.Args = Pointer.length || 0;
+            ParamList = Result.Args > 0 ? tp.GetFunctionParams(Pointer) : [];
+            Result.Signature = 'function ' + Key + '(' + ParamList.join(',') + ')';
+
+        } else if (tp.IsArray(Pointer)) {
+            Result.Type = 'a';
+        } else {
+            Result.Type = 'o';
+        }
+
+        Result.HasGetter = Boolean(PD.get);
+        Result.HasSetter = Boolean(PD.set);
+        Result.IsConstructor = tp.IsSameText('constructor', Key);
+        Result.IsProperty = !Result.IsFunction && !Result.IsConstructor;
+        Result.IsConfigurable = PD.configurable;
+        Result.IsEnumerable = PD.enumerable;
+        Result.IsWritable = PD.writable === true || Result.HasSetter === true;
+        Result.Pointer = Pointer;
+    }
+
+    return Result;
+};
+/** Returns true if a specified property is writable (provides a setter and is not read-only)
+@param {object} o - The container object
+@param {string} Key - The name of the member
+@returns {tp.PropertyInfo} Returns true if a specified property is writable (provides a setter and is not read-only)
+*/
+tp.IsWritableProperty = function (o, Key) {
+    let PI = tp.GetPropertyInfo(o, Key);
+    return PI.HasSetter || PI.IsWritable;
+};
+/** Returns information about the properties and functions of a object
+@param {object} o - The container object
+@returns {tp.PropertyInfo[]} Returns a list of information objects.
+*/
+tp.GetPropertyInfoList = function (o) {
+    var A = [];
+
+    if (o) {
+        var P;
+        for (var Prop in o) {
+            P = tp.GetPropertyInfo(o, Prop);
+            if (P)
+                A.push(P);
+        }
+    }
+
+    return A;
+};
+/** Returns a descriptive text of an object
+@param {object} o - The container object
+@returns {string} Returns a descriptive text of an object
+*/
+tp.GetReflectionText = function (o) {
+
+    var A = tp.GetPropertyInfoList(o);
+
+    var S;
+    var f = '{0} {1} {2} {3} {4} {5} {6} {7} {8}';
+    var SB = new tp.StringBuilder();
+
+    A.forEach(function (P) {
+        S = tp.Format(f,
+            P.Type,
+            P.Args,
+            P.IsConstructor ? 'c' : '_',
+            P.HasGetter ? 'g' : '_',
+            P.HasSetter ? 's' : '_',
+
+            P.IsConfigurable ? 'c' : '_',
+            P.IsEnumerable ? 'e' : '_',
+            P.IsWritable ? 'w' : '_',
+            P.Signature
+        );
+
+        SB.AppendLine(S);
+    });
+
+    S = SB.ToString();
+
+    return S;
+};
+/** Returns the definition text of an object, that is the signatures of properties and functions. 
+@param {object} o - The container object
+@returns {string} Returns the definition text of an object, that is the signatures of properties and functions.
+*/
+tp.GetObjectDefText = function (o) {
+    var A = tp.GetPropertyInfoList(o);
+
+    var Constr = '';
+    var Props = [];
+    var Funcs = [];
+
+    var i, ln;
+    for (i = 0, ln = A.length; i < ln; i++) {
+        if (A[i].IsFunction) {
+            Funcs.push(A[i].Signature);
+        } else if (A[i].IsConstructor) {
+            Constr = A[i].Signature;
+        } else {
+            Props.push(A[i].Signature);
+        }
+    }
+
+    Props.sort();
+    Funcs.sort();
+
+    var SB = new tp.StringBuilder();
+
+    if (Constr !== '') {
+        SB.AppendLine('constructor ' + Constr);
+    }
+
+    if (Props.length > 0) {
+        SB.AppendLine();
+        SB.AppendLine('// properties');
+        for (i = 0, ln = Props.length; i < ln; i++) {
+            SB.AppendLine(Props[i]);
+        }
+    }
+
+    if (Funcs.length > 0) {
+        SB.AppendLine();
+        SB.AppendLine('// methods');
+        for (i = 0, ln = Funcs.length; i < ln; i++) {
+            SB.AppendLine(Funcs[i]);
+        }
+    }
+
+    return SB.ToString();
+
+};
+/** Returns an array of the parameter names of any function passed in. 
+@param {function} func The function to operate on
+@returns {string[]} Returns an array of the parameter names of any function passed in.
+*/
+tp.GetFunctionParams = function (func) {
+    // http://stackoverflow.com/questions/1007981/how-to-get-function-parameter-names-values-dynamically-from-javascript
+    return (func + '').replace(/\s+/g, '')
+        .replace('/[/][*][^/*]*[*][/]/g', '')           // strip simple comments  
+        .split('){', 1)[0].replace(/^[^(]*[(]/, '')   // extract the parameters  
+        .replace('/=[^,]+/g', '')                       // strip any ES6 defaults  
+        .split(',').filter(Boolean);                  // split & filter [""]  
+};
+/**
+ * Returns true if a specified object has a specified property (not function).
+@param {object} o - The container object
+@param {string} Key - The name of the member
+@returns {boolean} Returns true if a specified object has a specified property (not function).
+ */
+tp.HasProperty = function (o, Key) {
+    let PI = tp.GetPropertyInfo(o, Key);
+    return PI.IsProperty == true && PI.HasSetter === true;
+};
+/**
+ * Returns true if a specified object has a specified writable property (not function).
+@param {object} o - The container object
+@param {string} Key - The name of the member
+@returns {boolean} Returns true if a specified object has a specified writable property (not function).
+ */
+tp.HasWritableProperty = function (o, Key) {
+    let PI = tp.GetPropertyInfo(o, Key);
+    return PI.IsProperty == true && (PI.IsWritable === true || PI.HasSetter === true);
+};
+
+/** Returns an array with all property names of an object, walking down to its hierarchy.
+ * An optional call-back may exclude any of the passed property, by name.
+ * NOTE: Functions are excluded. Properties starting with __ are also excluded.
+ * @param {object} o The object to operate on
+ * @param {function} [CanGetPropFunc=null] Optional. A <code>function CanGetPropFunc(PropName): boolean </code>. Returning false excludes the property.
+ * @returns {string[]} Returns an array with all property names of an object, walking down to its hierarchy.
+ */
+tp.GetPropertyNames = function (o, CanGetPropFunc = null) {
+    let Result = [];
+    CanGetPropFunc = CanGetPropFunc || function (Prop) { return true; };
+    let List;
+
+    do {
+        List = Object.getOwnPropertyNames(o);
+
+        List.forEach((prop) => {
+            if (typeof o[prop] !== 'function' && !prop.startsWith('__') && Result.indexOf(prop) === -1 && CanGetPropFunc(prop)) {
+                Result.push(prop);
+            }
+        });
+
+    }
+    while (o = Object.getPrototypeOf(o));
+
+    return Result;
+};
+//#endregion
+
+//#region Merging objects
+
+
+/**
+Merges properties ONLY of objects in the Sources array to the Dest object. 
+CAUTION: No overload. All argument must have values. 
+@param {object} Dest - The destination object. It is returned as the Result of the function.
+@param {object|any[]} Sources - The source object or an array of source objects (or arrays)
+@param {boolean} [DeepMerge=true] - When DeepMerge is true, then source properties that are objects and arrays, are deeply copied to Dest. If false then only their referencies are copied to Dest.
+@returns {object|any[]} - Returns the Dest object.
+*/
+tp.MergeProps = function (Dest, Sources, DeepMerge = true) {
+
+    if (tp.IsEmpty(Dest))
+        return null;
+
+    if (tp.IsValid(Sources)) {
+
+        if (!tp.IsArray(Sources)) {
+            let x = Sources;
+            Sources = [];
+            Sources.push(x);
+        }
+
+        Sources.forEach((Source) => {
+            if (tp.IsValid(Source)) {
+
+                let PropNameList = tp.GetPropertyNames(Source);
+
+                PropNameList.forEach((PropName) => {
+                    let v = Source[PropName];
+
+                    if (v !== Dest) {
+                        if (tp.IsSimple(v)) {
+                            Dest[PropName] = v;
+                        }
+                        else {
+                            if (!DeepMerge) {
+                                Dest[PropName] = v;
+                            }
+                            else {
+                                let DestValue = Dest[PropName];
+                                if (tp.IsArray(v)) {
+                                    DestValue = DestValue && tp.IsArray(DestValue) ? DestValue : [];
+                                    Dest[PropName] = tp.MergeProps(DestValue, [v], DeepMerge);
+                                }
+                                else if (tp.IsObject(v)) {
+                                    DestValue = DestValue && tp.IsPlainObject(DestValue) ? DestValue : {};
+                                    Dest[PropName] = tp.MergeProps(DestValue, [v], DeepMerge);
+                                }
+                                else if (PropName !== 'constructor') {
+                                    Dest[PropName] = v;
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+        });
+    }
+
+
+
+    return Dest;
+};
+/**
+Merges properties ONLY of objects in the Sources array to the Dest object. Returns the Dest.
+It does a deep merge, that is source properties that are objects and arrays, are deeply copied to Dest.
+@param {object} Dest - The destination object. It is returned as the Result of the function.
+@param {object|any[]} Sources - The source object or an array of source objects (or arrays)
+@returns {object|any[]} - Returns the Dest object.
+*/
+tp.MergePropsDeep = function (Dest, Sources) {
+    return tp.MergeProps(Dest, Sources, true);
+};
+/**
+Merges properties ONLY of the Source object to the Dest object. Returns the Dest.
+@param {object} Dest - The destination object. It is returned as the Result of the function.
+@param {object|any[]} Sources - The source object or an array of source objects (or arrays)
+@returns {object} - Returns the Dest object.
+*/
+tp.MergePropsShallow = function (Dest, Sources) {
+    return tp.MergeProps(Dest, Sources, false);
+};
+
 //#endregion
 
 //#region Format, FormatNumber, FormatDateTime
@@ -4232,7 +4663,590 @@ tp.TextSizeInfo = {
 
 //#endregion
 
+
 //---------------------------------------------------------------------------------------
+
+//#region Encoding
+
+/**
+Encodes an argument (a Key/Value pair) for use with GET/POST ajax operations and returns the encoded string. 
+@param {string} Key The key of the argument
+@param {any} Value The value of the argument
+@returns {string} Returns the encoded string.
+*/
+tp.EncodeArg = function (Key, Value) {
+    Value = tp.IsEmpty(Value) ? "" : Value;
+    var Result = encodeURIComponent(Key) + "=" + encodeURIComponent(Value);
+    Result = Result.replace(/%20/g, '+');
+    return Result;
+};
+/**
+Encodes arguments for use with GET/POST ajax operations and returns the encoded string. 
+@param  {object|object[]|HTMLElement[]} v - The value to operate on. Could be 
+1. a plain object, 
+2. array of values, 
+3. array of DOM elements
+@returns {string} Returns the encoded string.
+ */
+tp.EncodeArgs = function (v) {
+
+    var i, ln, Name, Value, Data = [];
+
+    if (v instanceof Array && v.length > 0) {
+        if (tp.IsHTMLElement(v[0])) {                       // is an array of HTMLElement
+            for (i = 0, ln = v.length; i < ln; i++) {
+                if ('name' in v[i] && 'value' in v[i]) {
+                    Name = v[i]['name'];
+                    Value = v[i]['value'];
+                    Data[Data.length] = tp.EncodeArg(Name, Value);
+                }
+            }
+        } else {                                            // is an array of values
+            for (i = 0, ln = v.length; i < ln; i++) {
+                Data[Data.length] = tp.EncodeArg("v" + i.toString(), v);
+            }
+        }
+    } else if (tp.IsPlainObject(v)) {                       // is a plain object
+        for (var Prop in v) {
+            Data[Data.length] = tp.EncodeArg(Prop, v[Prop]);
+        }
+    }
+
+    var S = Data.join('&');
+    S = S.replace(/%20/g, '+');
+
+    return S;
+};
+ 
+//#endregion
+
+//#region Serialization
+
+/**
+Reads the value of an element (input, select, textarea, button) and adds a property to a specified plain javascript object. 
+The new property is named after element's name or element's id (in this order).
+
+That is for an element such as 
+    &lt;input type='text' id='UserName' value='John' /&gt;
+a property/value is added as 
+    { UserName: 'John' }
+
+WARNING: input elements of type file or image, are IGNORED.
+NOTE: A select element of type select-multiple generates an array property.
+@param {HTMLElement} el - The element to get the value from. Must have a name attribute defined (or at least an id defined).
+@param {object} Model - A plain object where the new property/value is added. Caller code is responsible to provide this object.
+*/
+tp.ElementToProperty = function (el, Model) {
+    if (el.name || el.id) {
+        var A, j, jln, Name = el.name || el.id;
+
+        if (!tp.IsBlank(Name)) {
+            var NodeName = el.nodeName.toLowerCase();
+            var Type = el.type ? el.type.toLowerCase() : '';
+
+            switch (NodeName) {
+                case 'input':
+                    switch (Type) {
+                        case 'hidden':
+                        case 'text':
+                        case 'password':
+                        case 'color':
+                        case 'date':
+                        case 'datetime-local':
+                        case 'email':
+                        case 'month':
+                        case 'number':
+                        case 'range':
+                        case 'search':
+                        case 'tel':
+                        case 'time':
+                        case 'url':
+                        case 'week':
+                            Model[Name] = el.value;
+                            break;
+                        case 'checkbox':
+                            Model[Name] = el.checked ? true : false;
+                            break;
+                        case 'radio':
+                            if (el.checked) {
+                                Model[Name] = el.value;
+                            }
+                            break;
+                        case 'button':
+                        case 'submit':
+                        case 'reset':
+                            Model[Name] = el.value;
+                            break;
+                        case 'file':
+                            break;
+                        case 'image':
+                            break;
+                    }
+                    break;
+                case 'button':
+                    switch (Type) {
+                        case 'button':
+                        case 'submit':
+                        case 'reset':
+                            Model[Name] = el.value;
+                            break;
+                    }
+                    break;
+                case 'select':
+                    switch (Type) {
+                        case 'select-one':
+                            Model[Name] = el.value;
+                            break;
+                        case 'select-multiple':
+                            A = [];
+                            for (j = 0, jln = el.options.length; j < jln; j++) {
+                                if (el.options[j].selected) {
+                                    A.push(el.options[j].value);
+                                }
+                            }
+                            Model[Name] = A;
+                            break;
+                    }
+                    break;
+                case 'textarea':
+                    Model[Name] = el.value;
+                    break;
+            }
+        }
+
+    }
+
+};
+/**
+Serializes a form, or any other container, into a javascript object, by adding a property for each input, select, textarea or button child element, to that object.  
+The new property is named after child element's name or id (in this order). 
+
+That is for an element such as
+    &lt;input type='text' id='UserName' value='John' /&gt;
+a property/value is added as
+    { UserName: 'John' }
+
+WARNING: input elements of type file or image, are IGNORED.
+NOTE: A select element of type select-multiple generates an array property.
+@param {Element|string} ElementOrSelector - A selector or n html form or any other container element, that contains input, select, textarea and button elements.  
+@param {object} [Model=null] - Optional. A plain object where the new properties/values are added.
+@returns {object} Returns the model where the new properties/values are added.
+*/
+tp.ContainerToModel = function (ElementOrSelector, Model = null) {
+    if (!Model) {
+        Model = {};
+    }
+
+    var parent = tp.Select(ElementOrSelector);
+
+    if (parent instanceof HTMLElement) {
+        var i, ln, el, elements = parent.nodeName.toLowerCase() === 'form' ? parent.elements : tp.SelectAll(parent, 'input, select, textarea, button');
+        for (i = 0, ln = elements.length; i < ln; i++) {
+            el = elements[i];
+            if (!tp.IsBlank(el.name || el.id))
+                tp.ElementToProperty(el, Model);
+        }
+    }
+
+    return Model;
+};
+/**
+Serializes a form, or any other container, into a javascript object, by adding a property for each input, select, textarea or button child element, to that object.  
+The new property is named after child element's name or id (in this order).
+
+That is for an element such as
+    &lt;input type='text' id='UserName' value='John' /&gt;
+a property/value is added as
+    { UserName: 'John' }
+
+WARNING: input elements of type file or image, are INCLUDED.
+NOTE: A select element of type select-multiple generates an array property.
+@param {boolean} ShowSpinner - True to show the global spinner while processing files.
+@param {Element|String} ElementOrSelector - A selector or n html form or any other container element, that contains input, select, textarea and button elements.
+@returns {Promise} Returns a promise
+*/
+tp.ContainerToModelAsync = async function (ShowSpinner, ElementOrSelector) {
+
+    let Model = {};
+    let Result = Promise.resolve(Model);
+    let parent = tp.Select(ElementOrSelector);
+
+    if (parent instanceof HTMLElement) {
+
+        // collect the elements in two lists, one for the input[type='file'] and one for the rest of the elements
+        let i, ln, el, elements = parent.nodeName.toLowerCase() === 'form' ? parent.elements : tp.SelectAll(parent, 'input, select, textarea, button');
+        let IsInputFileElement;
+        let FileElementList = [];
+        let ElementList = [];
+        let PromiseList = [];
+
+        for (i = 0, ln = elements.length; i < ln; i++) {
+            el = elements[i];
+            if (!tp.IsBlank(el.name || el.id)) {
+                IsInputFileElement = el instanceof HTMLInputElement && tp.IsSameText(el.type, 'file');
+
+                if (IsInputFileElement) {
+                    FileElementList.push(el);
+                } else {
+                    ElementList.push(el);
+                }
+            }
+        }
+
+
+        // input[type='file'] elements first    
+        FileElementList.forEach(function (el) {
+
+            let P = new Promise((resolve, reject) => {
+                tp.ReadFiles(true, el.files)
+                    .then(function (FileList) {
+                        Model[el.name || el.id] = FileList; // HttpFile[]
+                        resolve();
+                    });
+            });
+
+            PromiseList.push(P);
+        });
+
+        // the rest elements
+        let P2 = new Promise((resolve, reject) => {
+            for (i = 0, ln = ElementList.length; i < ln; i++) {
+                el = ElementList[i];
+                tp.ElementToProperty(el, Model);
+            }
+            resolve();
+        });
+        PromiseList.push(P2);
+
+
+        // nested function
+        let Spinner = function (Flag) {
+            if (ShowSpinner) {
+                tp.ShowSpinner(Flag);
+            }
+        };
+
+        Spinner(true);
+
+        // create the result promise
+        Result = Promise.all(PromiseList)
+            .then(function () {
+                Spinner(false);
+                return Model;
+            }).catch(function (e) {
+                tp.ForceHideSpinner();
+                tp.Throw(e ? e.toString() : 'Unknown error');
+            });
+
+    }
+
+    return Result;
+};
+
+/**
+Converts a specified ArrayBuffer to a Hex string
+@param {ArrayBuffer} Buffer The ArrayBuffer to convert to Hex string
+@returns {string} Returns the Hex string
+*/
+tp.ArrayBufferToHex = function (Buffer) {
+
+    var UA = new Uint8Array(Buffer);
+    var A = new Array(UA.length);
+    var i = UA.length;
+    while (i--) {
+        A[i] = (UA[i] < 16 ? '0' : '') + UA[i].toString(16);  // map to hex
+    }
+
+    UA = null; // free memory
+    return A.join('');
+};
+
+
+/**
+ * A file sent by a POST action to the server, perhaps by an ajax call.
+ * @class
+ * */
+tp.HttpFile = function () {
+    this.FileName = '';
+    this.Size = 0;
+    this.MimeType = '';
+    this.Data = '';
+};
+/** The file name  */
+tp.HttpFile.prototype.FileName = '';
+/** The size of the file */
+tp.HttpFile.prototype.Size = 0;
+/** The mime type of the file content */
+tp.HttpFile.prototype.MimeType = '';
+/** The file content as a base64 string */
+tp.HttpFile.prototype.Data = '';
+
+/**
+Loads file data from disk using a system dialog. It is passed a list of File objects to load. 
+
+Returns a Promise with a resolve(ResultFileList) where each entry in the ResultFileList is an object of 
+    { FileName:, Size:, MimeType:, Data:,}
+where Data is a base64 string.  
+
+IMPORTANT: For increasing the allowed maximub POST size, see: {@link http://stackoverflow.com/questions/3853767/maximum-request-length-exceeded|stackoverflow}
+@example
+var el = tp.Select('#FileData');
+
+tp.ReadFiles(true, el.files)
+.then(function (FileList) {
+    // handle file list here
+}).catch(function (Error) {
+    throw Error;
+})
+
+@param {boolean} ShowSpinner - True to show the global spinner while processing files.
+@param {string|any[]|FileList} FileListOrSelector - Either an input[type="file"] element, or a selector to such an element, or a list of File objects 
+(see File API FileList and File classes at {@link https://developer.mozilla.org/en-US/docs/Web/API/FileList|FileList} )
+@param {function} [OnDone=null] - Optional. A function(List: HttpFile[]) to call when done and all files are loaded.
+It is passed a list of { FileName:, Size:, MimeType:, Data:,} where Data is a base64 string.
+@param {function} [OnError=null] - Optional. A function(e: Error, File: File) to call on error.
+It is passed the error event and the File that caused the error.
+@param {object} [Context=null] - Optional. Defaults to null. The context (this) to use when calling the provided call-back functions.
+@param {boolean} [AsHex=false] - Optional. Defaults to false. If true then the Data of the file is converted to a Hex string. Else to a base64 string.
+@returns {Promise} Returns a promise
+*/
+tp.ReadFiles = function (ShowSpinner, FileListOrSelector, OnDone = null, OnError = null, Context = null, AsHex = false) {
+
+    let ReadAsBase64 = function (ResultList, File, ReadNext, Resolve, Reject) {
+        let Reader = new FileReader();
+
+        Reader.onload = function () {
+
+            let Data = Reader.result;
+            let Parts = Data.split('base64,');
+            if (Parts.length === 2) {
+                Data = Parts[1];
+            }
+
+            // { FileName:,Size:, MimeType:, Data:,}
+            let o = new tp.HttpFile();
+            o.FileName = File.name;
+            o.Size = File.size;
+            o.MimeType = File.type;
+            o.Data = Data;
+
+            ResultList.push(o);
+            ReadNext();
+        };
+        Reader.onerror = function (e) {
+            Reject(e);
+            if (OnError)
+                tp.Call(OnError, Context, e);
+        };
+        Reader.onabort = Reader.onerror;
+
+        Reader.readAsDataURL(File);
+    };
+    let ReadAsHex = function (ResultList, File, ReadNext, Resolve, Reject) {
+        let Reader = new FileReader();
+
+        Reader.onload = function () {
+
+            let Data = Reader.result;
+
+            // { FileName:,Size:, MimeType:, Data:,}
+            let o = new tp.HttpFile();
+            o.FileName = File.name;
+            o.Size = File.size;
+            o.MimeType = File.type;
+            o.Data = tp.ArrayBufferToHex(Data);
+
+            ResultList.push(o);
+            ReadNext();
+        };
+        Reader.onerror = function (e) {
+            Reject(e);
+            if (OnError)
+                tp.Call(OnError, Context, e);
+        };
+        Reader.onabort = Reader.onerror;
+
+        Reader.readAsArrayBuffer(File);
+    };
+
+
+    return new Promise(function (Resolve, Reject) {
+        let el;
+        let FileList = null;
+        try {
+            if (tp.IsArrayLike(FileListOrSelector)) {
+                FileList = FileListOrSelector;
+            } else {
+                el = tp.Select(FileListOrSelector);
+                if (el instanceof HTMLInputElement) {
+                    FileList = el.files;
+                }
+            }
+        } catch (e) {
+            Reject(e);
+
+            if (OnError)
+                tp.Call(OnError, Context, e);
+        }
+
+        if (ShowSpinner) {
+            tp.ShowSpinner(true);
+        }
+
+        var Index = 0;
+        var ResultList = [];
+
+        var ReadNext = function () {
+            if (Index < FileList.length) {
+                var File = FileList[Index++];
+
+                if (AsHex === true) {
+                    ReadAsHex(ResultList, File, ReadNext, Resolve, Reject);
+                } else {
+                    ReadAsBase64(ResultList, File, ReadNext, Resolve, Reject);
+                }
+
+            } else {
+                if (ShowSpinner) {
+                    tp.ShowSpinner(false);
+                }
+                Resolve(ResultList);
+                if (OnDone)
+                    tp.Call(OnDone, Context, ResultList);
+            }
+        };
+
+        ReadNext();
+
+
+    });
+};
+ 
+//#endregion
+
+//#region  tp.PostModelAsForm()
+/**
+Creates an html form and submits that form to a url using POST method. 
+It accepts a model parameter (a plain object) whose properties become form's input elements. 
+Model properties that are arrays are posted as name[0]=value name[1]=value etc. 
+Model properties that are other than primitives and dates are stringified using JSON.
+@param {string} Url The url where the form is submitted.  
+@param {object} Model A plain object whose properties become input elements in the submitted form. 
+ */
+tp.PostModelAsForm = function (Url, Model) {
+    var form, el, i, ln, PropName, v, Data = {};
+
+    for (PropName in Model) {
+        v = Model[PropName];
+        if (!tp.IsEmpty(v) && !tp.IsFunction(v)) {
+            if (v instanceof Date) {
+                v = v.toISOString();
+            }
+            Data[PropName] = v;
+        }
+    }
+
+    form = document.createElement("form");
+    form.action = Url;
+    form.method = 'post';
+
+    var NormalizeValue = function (Value) {
+        return tp.IsSimple(Value) ? Value : JSON.stringify(Value);
+    };
+
+    for (PropName in Data) {
+        v = Data[PropName];
+
+        if (tp.IsArray(v)) {
+            for (i = 0, ln = v.length; i < ln; i++) {
+                el = document.createElement("input");
+                el.setAttribute("type", "hidden");
+                el.setAttribute("name", PropName + '[' + i + ']');
+                el.setAttribute("value", NormalizeValue(v[i]));
+                form.appendChild(el);
+            }
+        } else {
+            el = document.createElement("input");
+            el.setAttribute("type", "hidden");
+            el.setAttribute("name", PropName);
+            el.setAttribute("value", NormalizeValue(v));
+            form.appendChild(el);
+        }
+    }
+
+    document.body.appendChild(form);
+    form.submit();
+
+    setTimeout(() => { tp.Remove(form); }, 1000 * 3);
+};
+//#endregion
+
+//---------------------------------------------------------------------------------------
+
+//#region tp.Names
+/** A static class for constructing element names
+ @class
+ @static
+ */
+tp.Names = (function () {
+    let items = {};
+    let counter = 2000; // do not collide with Asp.Net Core auto Ids
+
+    return {
+        /**
+         * Constructs and returns a string based on Prefix and an auto-inc counter associated to Prefix.
+         * It stores passed prefixes in order to auto-increment the associated counter.
+         * It Prefix is null or empty, it just returns an auto-inc number as string.
+         * WARNING: NOT case-sensitive.
+         * @param {string} [Prefix=''] The prefix to prepend in the returned name.
+         * @returns {string} Returns the new name.
+         * @memberof tp.Names
+         * @static
+        */
+        Next: function (Prefix = '') {
+
+            if (!tp.IsNullOrWhiteSpace(Prefix)) {
+                var ucPrefix = Prefix.toUpperCase();
+                if (!(ucPrefix in items)) {
+                    items[ucPrefix] = 2000; // do not collide with Asp.Net Core auto Ids
+                }
+                var V = items[ucPrefix]++;
+                return Prefix + V.toString();
+            }
+
+            counter++;
+            return counter.toString();
+        }
+    };
+})();
+
+/**
+Constructs and returns a string based on a specified prefix and an internal auto-inc counter associated to thant prefix. 
+It stores passed prefixes in order to auto-increment the associated counter. 
+It the prefix is null or empty, it just returns an auto-inc number as string. 
+WARNING: NOT case-sensitive.
+@param {string} [Prefix=''] The prefix to prepend in the returned name.
+@returns {string} Returns the new name.
+*/
+tp.NextName = function (Prefix = '') {
+    return tp.Names.Next(Prefix);
+};
+/**
+ Constructs and returns an Id, based on a specified prefix. If prefix is null or empty, tp.Prefix is used.  
+ WARNING: NOT case-sensitive.
+@param {string} [Prefix=tp.Prefix] The prefix to prepend in the returned Id.
+@returns {string} Returns the new Id.
+ */
+tp.SafeId = function (Prefix = tp.Prefix) {
+    if (tp.IsBlank(Prefix))
+        Prefix = tp.Prefix;
+
+    var S = tp.NextName(Prefix);
+    S = tp.ReplaceAll(S, '.', '-');
+
+    return S;
+};
+//#endregion
 
 //#region  tp.Point
 /**
@@ -4687,7 +5701,7 @@ tp.Size = class {
 };
 //#endregion
 
-//#region Screen
+//#region Screen - tp.Viewport
 
 /*=======================================================================================
                                12-column grid system
@@ -4880,6 +5894,264 @@ tp.Viewport = {
 
 //#endregion
 
+//#region Overlay - tp.ScreenOverlay
+
+/** A global (screen) ovelay DIV. Occupies the whole viewport and becomes the top-most element. */
+tp.ScreenOverlay = class {
+
+    /** Constructor 
+     * This class creates a DIV that occupies the whole viewport and  becomes the top-most element.
+     * @param {HTMLElement} [Parent=null] Optional. The parent of the DIV overlay.
+     */
+    constructor(Parent = null) {
+
+        Parent = tp.IsHTMLElement(Parent) ? Parent : tp.Doc.body;
+        this.Handle = tp.Div(Parent); // Parent.ownerDocument.createElement('div');
+
+        this.Handle.id = tp.SafeId('tp-ScreenOverlay');
+
+        let OverlayStyle = `display: flex;    
+position: absolute;
+top: 2px;
+left: 2px;
+right: 2px;
+bottom: 2px;
+justify-content: center;
+align-items: center;
+background: rgba(0, 0, 0, 0.07);
+`;
+
+        tp.StyleText(this.Handle, OverlayStyle);
+
+        Parent.appendChild(this.Handle);
+        tp.BringToFront(this.Handle);
+    }
+
+    /**
+    Returns the z-index of the overlay
+    */
+    get ZIndex() {
+        return Number(this.Handle.style.zIndex);
+    }
+    /**
+    Gets or sets a boolean value indicating whether the overlay is visible
+    */
+    get Visible() {
+        return this.Handle.style.display !== 'none';
+    }
+    set Visible(v) {
+        v === true;
+
+        if (this.Visible !== v) {
+            if (v) {
+                this.Handle.style.display = 'flex';
+                tp.BringToFront(this.Handle);
+            } else {
+                this.Handle.style.display = 'none';
+            }
+        }
+    }
+
+
+    /** Creates, shows and returns the DIV. 
+     @returns {HTMLDivElement} Returns the DIV.
+     */
+    Show() {
+        this.Visible = true;
+        return this.Handle;
+    }
+    Hide() {
+        this.Visible = false;
+        return this.Handle;
+    }
+    /**
+     * Hides and destroys the DIV.
+     * @returns {any} It always returns null.
+     * */
+    Dispose() {
+        if (this.Handle && this.Handle.parentNode) {
+            this.Handle.parentNode.removeChild(this.Handle);
+        }
+        this.Handle = null;
+        return null;
+    }
+};
+tp.ScreenOverlay.prototype.Handle = null;
+
+//#endregion
+
+//#region Spinner
+
+/**
+Static class for displaying a global spinner to the user while waiting for a lengthy operation to be completed.
+The global spinner creates a DIV that occupies the whole viewport and  becomes the top-most element.
+Above that DIV displays a snake-like spinner.
+@class
+*/
+tp.Spinner = (function () {
+
+    let SpinnerContainerStyle = `
+    position: relative;
+    width: auto;
+    height: auto;
+    background-color: transparent;
+`;
+
+    let SpinnerStyle = `
+    height: 60px;
+    width: 60px;
+    border: 16px solid #034F84;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: tripous-global-spinner 1.5s infinite linear;
+`;
+
+    let KeyFrames = `
+@keyframes tripous-global-spinner {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(360deg); }
+}
+`;
+
+
+    let DefaultSpinner = {
+        Initialized: false,
+        Overlay: null,
+        divContainer: null,
+        divSpinner: null,
+
+        Initialize: function () {
+            if (!this.Initialized) {
+                this.Initialized = true;
+                var style = document.createElement('style');
+                style.type = 'text/css';
+                style.innerHTML = KeyFrames;
+                document.getElementsByTagName('head')[0].appendChild(style);
+            }
+        },
+
+        Show: function () {
+            this.Initialize();
+
+            if (!this.Overlay) {
+                this.Overlay = new tp.ScreenOverlay();
+            }
+
+            this.Overlay.Show();
+
+            this.divContainer = tp.Div(this.Overlay.Handle);
+            tp.StyleText(this.divContainer, SpinnerContainerStyle);
+
+            this.divSpinner = tp.Div(this.divContainer);
+            tp.StyleText(this.divSpinner, SpinnerStyle);
+        },
+        Hide: function () {
+            this.Overlay.Dispose();
+            this.Overlay = null;
+            this.divSpinner = null;
+            this.divContainer = null;
+            this.divOverlay = null;
+        }
+    };
+
+
+
+    let fCounter = 0;
+    let fInstance = null;
+
+    let DoShow = function () {
+        if (fCounter >= 0) {
+            fCounter++;
+
+            if (fCounter === 1) {
+                if (!tp.ImplementsInterface(fInstance, ['Show', 'Hide'])) {
+                    fInstance = DefaultSpinner;
+                }
+                fInstance.Show();
+            }
+        }
+    };
+    let DoHide = function () {
+        if (fCounter > 0) {
+            fCounter--;
+        }
+
+        if (fCounter === 0) {
+            if (tp.ImplementsInterface(fInstance, ['Show', 'Hide'])) {
+                fInstance.Hide();
+            }
+            fInstance = null;
+        }
+    };
+
+
+    return {
+        /**
+        Shows or hides the spinner, according to a specified flag. 
+        Calling this method with the flag set to true, it shows the spinner in the first call, and the it just increases a counter.
+        Calling with the flag set to false, hides the spinner.
+        @param {boolean} Flag  True to show, false to hide.
+        @memberof tp.Spinner
+        @static
+        */
+        Show: function (Flag) {
+            if (Flag === true)
+                DoShow();
+            else
+                DoHide();
+        },
+        /**
+        Forces the spinner to hide
+        @memberof tp.Spinner
+        @static
+        */
+        ForceHide: function () {
+            fCounter = 0;
+            DoHide();
+        },
+        /**
+         * Sets the object that functions as a spinner.
+         * @param {object} Implementation An instance that provides a Show, Hide, and Dispose methods.
+         * @memberof tp.Spinner
+         * @static
+         */
+        SetSpinnerImplementation: function (Implementation) {
+            if (tp.ImplementsInterface(Implementation, ['Show', 'Hide', 'Dispose'])) {
+                fInstance = Implementation;
+            }
+        },
+        /**
+        Returns true while the spinner is visible
+        @memberof tp.Spinner
+        @static
+        */
+        get IsShowing() { return !tp.IsEmpty(fInstance); },
+        /**
+        Returns a number indicating how many times the Show() method is called with its Flag set to true, before a call with the Flag set to fasle.
+        @memberof tp.Spinner
+        @static
+        */
+        get ShowingCounter() { return fCounter; }
+    };
+
+})();
+/**
+Shows or hides the global spinner, according to a specified flag.  
+The global spinner creates a DIV that occupies the whole viewport and  becomes the top-most element.
+Above that DIV displays a snake-like spinner.
+Calling this method with the flag set to true, it shows the global spinner in the first call, and the it just increases a counter.
+Calling with the flag set to false, hides the global spinner.
+@param {boolean} Flag True to show, false to hide.
+*/
+tp.ShowSpinner = function (Flag) {
+    tp.Spinner.Show(Flag);
+};
+/**
+Forces the global spinner to hide
+*/
+tp.ForceHideSpinner = function () { tp.Spinner.ForceHide(); };
+//#endregion
+
 //---------------------------------------------------------------------------------------
 
 //#region tp.Async (Promise)
@@ -5032,6 +6304,87 @@ tp.Async.All = async function (ShowSpinner, List, Func, Context = null) {
 //---------------------------------------------------------------------------------------
 
 //#region Classes
+
+//#region tp.StringBuilder
+
+/** A class for constructing strings. The default line break is set to '\n' */
+tp.StringBuilder = class StringBuilder {
+    /**
+     * A class for constructing strings. The default line break is set to '\n'
+     * @param {string} LineBreak - Optional.  The line break to use. Defaults to \n .
+     */
+    constructor(LineBreak = '\n') {
+        this.fData = '';
+        this.fLB = LineBreak || '\n';
+    }
+
+    /* properties */
+    /** Returns the length of the internal string 
+     */
+    get Length() { return this.fData.length; }
+    /** True if the internal string is empty 
+    */
+    get IsEmpty() { return this.fData.length === 0; }
+    /**
+    Gets or sets the line break. Defaults to '\n'
+    */
+    get LineBreak() { return this.fLB; }
+    set LineBreak(v) { this.fLB = v; }
+
+    /* public */
+    /**  
+    Sets the internal string to an empty string.
+    */
+    Clear() {
+        this.fData = '';
+    }
+    /**
+    Appends a value
+    @param {any} v - The value to append. 
+    */
+    Append(v) {
+        if (tp.IsString(v))
+            this.fData += v.toString();
+    }
+    /**
+    Appends a value and a line break
+    @param {any} v - Optional. The value to append. If not specified a line break is added.
+    */
+    AppendLine(v) {
+        if (tp.IsString(v)) {
+            this.fData += v.toString();
+        }
+
+        this.fData += this.LineBreak;
+    }
+    /**
+    Inserts a value at a specified index in the internal string
+    @param {number} Index - The index in the internal string.
+    @param {any} v - The value to append. 
+    */
+    Insert(Index, v) {
+        if (tp.IsValid(v)) {
+            this.fData = tp.InsertText(v.toString(), this.fData, Index);
+        }
+    }
+    /**
+    Replaces a value with another value in the internal string
+    @param {string} OldValue - The string to be replace.
+    @param {string} NewValue - The replacer string.
+    @param {boolean} CI - CI (Case-Insensitive) can be true (the default) or false
+    */
+    Replace(OldValue, NewValue, CI = true) {
+        this.fData = tp.ReplaceAll(this.fData, OldValue, NewValue, CI);
+    }
+    /** 
+    Returns the internal string 
+    @returns {string} - Returns the internal string.
+    */
+    ToString() {
+        return this.fData;
+    }
+};
+//#endregion
 
 //#region tp.Listener
 /** A listener class. A listener requires a callback function, at least, and perhaps a context (this) object for the call. */
@@ -5209,6 +6562,23 @@ tp.Doc = window.frameElement ? window.top.document : window.document;
 tp.ActiveElement = null;
 Object.defineProperty(tp, 'ActiveElement', {
     get() { return tp.Doc.activeElement; }
+});
+
+
+/** A global object for keeping the urls used by a javascript application in ajax and other calls. */
+tp.Urls = {};
+tp.Urls.AjaxExecute = '/Ajax/Execute';
+
+/**
+The system configuration global object
+@class
+*/
+tp.SysConfig = {};
+tp.SysConfig.DebugMode = false;
+tp.SysConfig.GlobalErrorHandling = false;
+
+Object.defineProperty(tp, 'DebugMode', {
+    get() { return tp.SysConfig.DebugMode === true; }
 });
 
 //#endregion
