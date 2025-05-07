@@ -81,6 +81,16 @@
             return ParamsContainsKey(Key) ? Params[Key] : null;
         }
 
+        /// <summary>
+        /// Converts the <see cref="Params"/> dictionary to a packet object, i.e. an incoming Model.
+        /// </summary>
+        public T ParamsToPacket<T>()
+        {
+            string JsonText = Json.Serialize(this.Params);
+            T Result = Json.Deserialize<T>(JsonText);
+            return Result;
+        }
+
         /* properties */
         /// <summary>
         /// Optional. The id of the request.

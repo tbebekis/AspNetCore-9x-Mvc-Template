@@ -39,8 +39,10 @@
         /// which processes the request by calling all registered <see cref="IAjaxRequestHandler"/> handlers.</para>
         /// <para>And finally assigns the result to the <see cref="HttpPacketResult"/>.</para>
         /// </summary>
-        protected virtual HttpPacketResult ProcessRequest(AjaxRequest R)
+        protected virtual async Task<JsonResult> ProcessRequestAsync(AjaxRequest R)
         {
+            await Task.CompletedTask;
+
             R.ViewToStringConverter = this;
 
             HttpPacketResult Result = new HttpPacketResult();
@@ -56,21 +58,10 @@
                 Result.ErrorText = GetExceptionText(e);
             }
 
-            return Result;
-        }
-
-        /// <summary>
-        /// This is the default execution method.
-        /// <para>It just calls <see cref="ProcessRequest(AjaxRequest)"/> 
-        /// which in turn uses the static <see cref="AjaxRequest.Process(AjaxRequest)"/> method
-        /// delegating the execution of the request to a registered <see cref="IAjaxRequestHandler"/> handler.</para>
-        /// </summary>
-        protected virtual async Task<JsonResult> DefaultExecute(AjaxRequest R)
-        {
-            await Task.CompletedTask;
-            HttpPacketResult Result = ProcessRequest(R); 
             return Json(Result);
         }
+
+
     }
 
 }

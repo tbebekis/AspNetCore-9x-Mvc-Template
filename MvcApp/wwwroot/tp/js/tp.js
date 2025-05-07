@@ -6568,6 +6568,7 @@ Object.defineProperty(tp, 'ActiveElement', {
 /** A global object for keeping the urls used by a javascript application in ajax and other calls. */
 tp.Urls = {};
 tp.Urls.AjaxExecute = '/Ajax/Execute';
+tp.Urls.AjaxRequest = '/Ajax/Request';
 
 /**
 The system configuration global object

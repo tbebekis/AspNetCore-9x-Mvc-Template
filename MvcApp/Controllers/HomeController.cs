@@ -28,7 +28,7 @@
 
             CredentialsModel M = new CredentialsModel();
 
-            Sys.Throw("Test");
+            //Sys.Throw("Test"); // for testing error page
 
             return View("Login", M);
         }

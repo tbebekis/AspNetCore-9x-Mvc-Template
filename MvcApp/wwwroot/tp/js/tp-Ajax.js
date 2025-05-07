@@ -234,7 +234,7 @@ tp.AjaxResponseDefaultHandler = function (Args) {
     let o = JSON.parse(Args.ResponseText);
     Args.ResponseData = o;
 
-    if (!tp.IsEmpty(o) && o.IsSuccess !== true)
+    if (!tp.IsEmpty(o) && "IsSuccess" in o && o.IsSuccess !== true && "ErrorText" in o &&!tp.IsBlank(o.ErrorText))
         throw `Ajax operation error: ${ErrorText(o.ErrorText)}`;
 
     if (tp.IsValid(Args.ResponseData)) {
@@ -250,6 +250,10 @@ tp.AjaxResponseDefaultHandler = function (Args) {
         // packet is already an object
         else if (tp.IsValid(Args.ResponseData.Packet)) {
             Args.Packet = Args.ResponseData.Packet;
+        }
+        // packet is the ResponseData
+        else if (tp.IsPlainObject(Args.ResponseData)) {
+            Args.Packet = Args.ResponseData;
         }
     }
 
@@ -713,9 +717,9 @@ tp.AjaxRequest = class {
      */
     Params = {};
 
-    /** The request type. Ui or Proc.
+    /** The request type. Proc or Ui.
+     * A Proc request, the default, may or may not return a packet.
      * A Ui request returns HTML.
-     * A Proc request may or may not return a packet.
      * @type {string}
      */
     Type = tp.AjaxRequestType.Proc;
@@ -751,7 +755,7 @@ tp.AjaxRequest.Execute = async function (RequestOrOperationName, Params = null) 
 
     /** @type {tp.AjaxRequest} */
     let Request = null;
-    let Url = tp.Urls.AjaxExecute;
+    let Url = tp.Urls.AjaxRequest;
 
     if (tp.IsString(RequestOrOperationName)) {
         Request = new tp.AjaxRequest(RequestOrOperationName, Params);

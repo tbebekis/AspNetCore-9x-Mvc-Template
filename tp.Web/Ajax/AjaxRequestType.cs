@@ -8,12 +8,12 @@
     public enum AjaxRequestType
     {
         /// <summary>
-        /// Requests a Ui. 
-        /// </summary>
-        Ui = 0,
-        /// <summary>
         /// Request the execution of a procedure. 
         /// </summary>
         Proc = 1,
+        /// <summary>
+        /// Requests a Ui. 
+        /// </summary>
+        Ui = 0,              
     }
 }

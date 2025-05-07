@@ -10,19 +10,25 @@
         padding-bottom: 2px;
     }
     ul li button {
-        min-width: 200px;
+        width: 280px;
+        min-width: 280px;
     }
 
     .demos {
         position: relative;
         display: flex;
         flex-direction: column;
+        width: 100%;
     }
 
     .results {
         position: relative;
         display: flex;
         height: 100%;
+    }
+
+    .results > * {
+        width: 100%;
     }
 </style>
 
@@ -31,8 +37,11 @@
 <div class="demos">
     <h2>Ajax Demos</h2>
     <ul>
-        <li><button onclick="AjaxRequestWithOperationName()">Test 1 </button></li>
-        <li><button>Test 2</button></li>
+        <li><button onclick="PlainAjaxCall()">Plain Ajax Call with a Model</button></li>
+        <li><button onclick="Ajax_PostModelAsync()">tp.Ajax.PostModelAsync()</button></li>
+        <li><button onclick="AjaxRequest_OperationName()">tp.AjaxRequest.Execute() with just OperationName</button></li>
+        <li><button onclick="AjaxRequest_Model()">tp.AjaxRequest.Execute() with a Model</button></li>
+        <li><button onclick="AjaxRequest_View()">tp.AjaxRequest.Execute() requesting a View</button></li>
     </ul>
 
     <div id="ajax-results" class="results">

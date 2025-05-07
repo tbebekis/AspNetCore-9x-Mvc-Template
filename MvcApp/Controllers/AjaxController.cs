@@ -3,14 +3,35 @@
     public class AjaxController: ControllerMvcAjax
     {
 
-        [HttpPost("/Ajax/Execute")]
-        public async Task<JsonResult> AjaxExecute([FromBody] AjaxRequest R)
+
+        [HttpPost("/Ajax/PlainAjaxCall")]
+        public async Task<JsonResult> PlainAjaxCall([FromBody] AjaxModel M)
         {
-            //await Task.CompletedTask;
-            //HttpPacketResult Result = ProcessRequest(R);
-            //return Json(Result);
-            return await DefaultExecute(R);
+            await Task.CompletedTask;
+
+            M.Message = "The App just received this message: " + M.Message;
+            M.Value = M.Value * 2;
+
+            return Json(M);
         }
+
+        [HttpPost("/Ajax/Ajax_PostModelAsync")]
+        public async Task<JsonResult> PostModelAsync([FromBody] AjaxModel M)
+        {
+            await Task.CompletedTask;
+
+            M.Message = "The App just received this message: " + M.Message;
+            M.Value = M.Value * 2;
+
+            return Json(M);
+        }
+
+        [HttpPost("/Ajax/Request")]
+        public async Task<JsonResult> AjaxRequest([FromBody] AjaxRequest R)
+        {
+            return await ProcessRequestAsync(R);
+        }
+
 
 
         /// <summary>
