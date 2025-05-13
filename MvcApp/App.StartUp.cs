@@ -40,7 +40,6 @@
                 AjaxRequestHandlers.Initialize();
             }
         }
- 
 
         /// <summary>
         /// Add services to the container.
@@ -62,33 +61,42 @@
             builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();  // see: https://github.com/aspnet/mvc/issues/3936
 
             // ● Memory Cache - NOTE: is singleton
-            builder.Services.AddDistributedMemoryCache(); // AddMemoryCache(); AddDistributedMemoryCache
+            builder.Services.AddMemoryCache(); // AddMemoryCache(); AddDistributedMemoryCache
 
             // ● Cookie Authentication  
-            AuthenticationBuilder AuthBuilder = builder.Services.AddAuthentication(options => {
-                options.DefaultScheme = Lib.SCookieAuthScheme;
-                options.DefaultAuthenticateScheme = options.DefaultScheme;
-                options.DefaultChallengeScheme = options.DefaultScheme;
-            });
+            if (App.AppSettings.UseAuthentication)
+            {
+                AuthenticationBuilder AuthBuilder = builder.Services.AddAuthentication(options => {
+                    options.DefaultScheme = Lib.SCookieAuthScheme;
+                    options.DefaultAuthenticateScheme = options.DefaultScheme;
+                    options.DefaultChallengeScheme = options.DefaultScheme;
+                });
 
-            AuthBuilder.AddCookie(Lib.SCookieAuthScheme, options => {
- 
-                TimeSpan Expiration = App.AppSettings.UserCookie.ExpirationHours <= 0 ? TimeSpan.FromDays(365) : TimeSpan.FromHours(App.AppSettings.UserCookie.ExpirationHours);
+                AuthBuilder.AddCookie(Lib.SCookieAuthScheme, options => {
 
-                options.LoginPath = "/login";
-                options.LogoutPath = "/logout";
-                options.ReturnUrlParameter = "ReturnUrl";
-                options.EventsType = typeof(UserCookieAuthEvents);
-                options.ExpireTimeSpan = Expiration;
-                //options.SlidingExpiration = true;
+                    TimeSpan Expiration = App.AppSettings.UserCookie.ExpirationHours <= 0 ? TimeSpan.FromDays(365) : TimeSpan.FromHours(App.AppSettings.UserCookie.ExpirationHours);
 
-                options.Cookie.Name = App.SAuthCookieName;       // cookie name
-                options.Cookie.IsEssential = App.AppSettings.UserCookie.IsEssential;
-                options.Cookie.HttpOnly = App.AppSettings.UserCookie.HttpOnly;
-                options.Cookie.SameSite = App.AppSettings.UserCookie.SameSite;   
-            });
+                    options.LoginPath = "/login";
+                    options.LogoutPath = "/logout";
+                    options.ReturnUrlParameter = "ReturnUrl";
+                    options.EventsType = typeof(UserCookieAuthEvents);
+                    options.ExpireTimeSpan = Expiration;
+                    //options.SlidingExpiration = true;
 
-            builder.Services.AddScoped<UserCookieAuthEvents>();
+                    options.Cookie.Name = App.SAuthCookieName;       // cookie name
+                    options.Cookie.IsEssential = App.AppSettings.UserCookie.IsEssential;
+                    options.Cookie.HttpOnly = App.AppSettings.UserCookie.HttpOnly;
+                    options.Cookie.SameSite = App.AppSettings.UserCookie.SameSite;
+                });
+
+                builder.Services.AddScoped<UserCookieAuthEvents>();
+
+                //● authorization
+                builder.Services.AddAuthorization(options =>
+                {
+                    options.AddPolicy(App.PolicyAuthenticated, policy => { policy.RequireAuthenticatedUser(); });
+                });
+            }
 
             // ● Session
             builder.Services.AddSession(options => {
@@ -96,27 +104,7 @@
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;  // Make the session cookie essential
                 //options.IdleTimeout = TimeSpan.FromSeconds(10);
-            });
-
-            // ● Cookie Policy
-            builder.Services.Configure<CookiePolicyOptions>(o =>
-            {
-                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-                // If CheckConsentNeeded is set to true, then the IsEssential should be also set to true, for any Cookie's CookieOptions setting.
-                // SEE: https://stackoverflow.com/questions/52456388/net-core-cookie-will-not-be-set
-                o.CheckConsentNeeded = context => true;
-
-                // Set the secure flag, which Chrome's changes will require for SameSite none.
-                // Note this will also require you to be running on HTTPS.
-                o.MinimumSameSitePolicy = Microsoft.AspNetCore.Http.SameSiteMode.None;
-
-                // Set the cookie to HTTP only which is good practice unless you really do need
-                // to access it client side in scripts.
-                o.HttpOnly = HttpOnlyPolicy.Always;
-
-                // Add the SameSite attribute, this will emit the attribute with a value of none.
-                o.Secure = CookieSecurePolicy.Always;
-            });
+            });   
 
             // ● Localization
             builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
@@ -141,15 +129,20 @@
                 });
             }
 
+            // ● Themes support
+            if (ViewLocationExpander.UseThemes)
+            {
+                builder.Services.Configure<RazorViewEngineOptions>(options => { options.ViewLocationExpanders.Add(new ViewLocationExpander()); });
+            }
+
             // ● MVC
             IMvcBuilder MvcBuilder = builder.Services.AddControllersWithViews(options => {
                 options.ModelBinderProviders.Insert(0, new AppModelBinderProvider());
                 options.Filters.Add<ActionExceptionFilter>();
             });
-            builder.Services.Configure<RazorViewEngineOptions>(options => { options.ViewLocationExpanders.Add(new ViewLocationExpander()); });
-            MvcBuilder.AddRazorRuntimeCompilation();
             
-
+            MvcBuilder.AddRazorRuntimeCompilation();
+ 
             MvcBuilder.AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.ContractResolver = new DefaultContractResolver() { NamingStrategy = new DefaultNamingStrategy() };   // no camelCase
@@ -163,9 +156,6 @@
             LoadPluginAssemblies();
             AddPluginsToApplicationPartManager(MvcBuilder.PartManager);
         }
-
-
-
         /// <summary>
         /// Add middlewares the the pipeline
         /// </summary>
@@ -238,15 +228,34 @@
                 });
             }
 
-
             // ● Cookie Policy
-            app.UseCookiePolicy();
+            app.UseCookiePolicy(new CookiePolicyOptions {
+                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+                // If CheckConsentNeeded is set to true, then the IsEssential should be also set to true, for any Cookie's CookieOptions setting.
+                // SEE: https://stackoverflow.com/questions/52456388/net-core-cookie-will-not-be-set
+                CheckConsentNeeded = context => true,
+
+                // Set the secure flag, which Chrome's changes will require for SameSite none.
+                // Note this will also require you to be running on HTTPS.
+                MinimumSameSitePolicy = Microsoft.AspNetCore.Http.SameSiteMode.None,
+
+                // Set the cookie to HTTP only which is good practice unless you really do need
+                // to access it client side in scripts.
+                HttpOnly = HttpOnlyPolicy.Always,
+
+                // Add the SameSite attribute, this will emit the attribute with a value of none.
+                Secure = CookieSecurePolicy.Always
+            });
 
             // ● endpoint resolution middlware
             app.UseRouting();
- 
-            app.UseAuthentication();
-            app.UseAuthorization();
+
+            if (App.AppSettings.UseAuthentication)
+            {
+                app.UseAuthentication();
+                app.UseAuthorization();
+            }
+
  
             // ● Request Localization 
             // UseRequestLocalization initializes a RequestLocalizationOptions object. 

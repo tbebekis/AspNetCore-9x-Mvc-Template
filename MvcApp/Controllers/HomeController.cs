@@ -14,13 +14,13 @@
         }
 
         // ● Actions
-        [HttpGet("/", Name = "Home"), AllowAnonymous]
+        [HttpGet("/", Name = "Home")]
         public IActionResult Index()
         {
             return View();
         }
 
-        [HttpGet("/login", Name = "Login"), AllowAnonymous]
+        [HttpGet("/login", Name = "Login")]
         public IActionResult Login()
         {
             if (UserContext.IsAuthenticated)
@@ -32,7 +32,7 @@
 
             return View("Login", M);
         }
-        [HttpPost("/login", Name = "Login"), AllowAnonymous]
+        [HttpPost("/login", Name = "Login")]
         public async Task<IActionResult> Login(CredentialsModel M, string ReturnUrl = "")
         {
  
@@ -68,7 +68,7 @@
 
             return View("Login", M); // something went wrong 
         }
-        [Route("/logout", Name = "Logout"), AllowAnonymous]
+        [Route("/logout", Name = "Logout")]
         public async Task<IActionResult> Logout()
         {
             if (UserContext.IsAuthenticated)
@@ -77,7 +77,7 @@
             return RedirectToRoute("Home");
         }
 
-        [Route("/set-language", Name = "SetLanguage"), AllowAnonymous]
+        [Route("/set-language", Name = "SetLanguage")]
         public IActionResult SetLanguage(string CultureCode, string ReturnUrl = "")
         {
  
@@ -111,13 +111,13 @@
             return NotYetInternal("");
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true), AllowAnonymous]
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        [HttpGet("/ajax-demos", Name = "AjaxDemos"), AllowAnonymous]
+        [HttpGet("/ajax-demos", Name = "AjaxDemos")]
         public IActionResult AjaxDemos()
         {
             return View();

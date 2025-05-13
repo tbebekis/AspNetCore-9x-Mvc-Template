@@ -35,6 +35,10 @@
 
         // ● properties
         /// <summary>
+        /// Whether or not to use Cookie authentication
+        /// </summary>
+        public bool UseAuthentication { get; set; } = true;
+        /// <summary>
         /// The theme currently in use. Defaults to null or empty string, meaning no themes at all.
         /// </summary>
         public string Theme { get; set; }

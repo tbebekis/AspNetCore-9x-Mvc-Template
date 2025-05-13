@@ -2,21 +2,24 @@
     <div class="header-zone"></div>
     <div class="header-zone header-zone-border">      
         <div>
-           <a class="" href="/ajax-demos">Ajax Demos</a>
+            <a class="" href="/ajax-demos">Ajax Demos</a>
         </div>
         <div class="tp-FlexFill"></div> @* fill *@
 
-        @if (!Lib.AppContext.IsAuthenticated)
+        @if (App.AppSettings.UseAuthentication)
         {
-            <a class="login" href="/login">
-                <span class="tp-Hide-sm tp-Hide-xs">@L("Login")</span>
-            </a>
-        }
-        else
-        {
-            <a class="logout" href="/logout">
-                <span class="tp-Hide-sm tp-Hide-xs">@L("Logout")</span>
-            </a>
+            if (!Lib.AppContext.IsAuthenticated)
+            {
+                <a class="login" href="/login">
+                    <span class="tp-Hide-sm tp-Hide-xs">@L("Login")</span>
+                </a>
+            }
+            else
+            {
+                <a class="logout" href="/logout">
+                    <span class="tp-Hide-sm tp-Hide-xs">@L("Logout")</span>
+                </a>
+            }
         }
 
         @await Component.InvokeAsync("LanguageSelector")

@@ -1,4 +1,5 @@
 {
+    "UseAuthentication": true,
     "Theme": "Default",
     "SupportedCultures": [ "en-US", "el-GR" ],
 

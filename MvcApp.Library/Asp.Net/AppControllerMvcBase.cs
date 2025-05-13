@@ -3,9 +3,10 @@
 
 
     /// <summary>
-    /// Base MVC controller of this application
+    /// Base MVC controller of this application.
+    /// <para>NOTE: Does NOT require authentication</para>
     /// </summary>
-    [Authorize(AuthenticationSchemes = Lib.SCookieAuthScheme)]
+    [AllowAnonymous]
     public class AppControllerMvcBase : ControllerMvc
     {
         // ● construction
