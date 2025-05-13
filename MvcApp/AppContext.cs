@@ -103,7 +103,7 @@
                 if (fCache == null)
                 {
                     WebAppMemoryCache Instance = new WebAppMemoryCache(GetService<IMemoryCache>());
-                    Instance.DefaultEvictionTimeoutMinutes = App.AppSettings.CacheTimeoutMinutes;
+                    Instance.DefaultEvictionTimeoutMinutes = App.AppSettings.Defaults.CacheTimeoutMinutes;
                     fCache = Instance;
                 }
                 return fCache;

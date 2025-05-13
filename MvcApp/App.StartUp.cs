@@ -10,7 +10,12 @@
 
     static internal partial class App
     {
- 
+
+        static void AppSettings_Loaded(object sender, EventArgs e)
+        {
+            ViewLocationExpander.Theme = App.AppSettings.Theme;
+            PageBuilderService.Seo = App.AppSettings.Seo;
+        }
         /// <summary>
         /// Static file response callback.
         /// </summary>
@@ -43,9 +48,12 @@
         static public void AddServices(WebApplicationBuilder builder)
         {
             App.AppSettings = new AppSettings();
+            App.AppSettings.Loaded += AppSettings_Loaded;
+            AppSettings_Loaded(null, null);
 
             // ● custom services 
             builder.Services.AddScoped<IUserRequestContext, UserRequestContext>();
+            builder.Services.AddScoped<PageBuilderService>();
 
             // ● HttpContext - NOTE: is singleton
             builder.Services.AddHttpContextAccessor();
@@ -119,7 +127,7 @@
             // ● HSTS
             if (!builder.Environment.IsDevelopment())
             {
-                HSTSSettings HSTS = App.AppSettings.HSTS;
+                HSTSSettingsBase HSTS = App.AppSettings.HSTS;
                 builder.Services.AddHsts(options =>
                 {
                     options.Preload = HSTS.Preload;
@@ -155,6 +163,9 @@
             LoadPluginAssemblies();
             AddPluginsToApplicationPartManager(MvcBuilder.PartManager);
         }
+
+
+
         /// <summary>
         /// Add middlewares the the pipeline
         /// </summary>
@@ -169,7 +180,8 @@
 
             //----------------------------------------------------------------------------------------
             // Middlewares
- 
+            //----------------------------------------------------------------------------------------
+
             if (app.Environment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -214,6 +226,18 @@
                 RequestPath = new PathString("/Plugins"),
                 OnPrepareResponse = StaticFileResponseProc
             });
+            // ● static files - Themes folder
+            if (!string.IsNullOrWhiteSpace(App.AppSettings.Theme))
+            {
+                string ThemesFolderPhysicalPath = Path.Combine(App.ContentRootPath, ViewLocationExpander.ThemesFolder);
+                app.UseStaticFiles(new StaticFileOptions
+                {
+                    FileProvider = new PhysicalFileProvider(ThemesFolderPhysicalPath),
+                    RequestPath = new PathString("/" + ViewLocationExpander.ThemesFolder),
+                    OnPrepareResponse = StaticFileResponseProc
+                });
+            }
+
 
             // ● Cookie Policy
             app.UseCookiePolicy();
@@ -232,7 +256,7 @@
             app.UseRequestLocalization((RequestLocalizationOptions options) =>
             {
                 var Cultures = Lib.GetSupportedCultures();
-                options.DefaultRequestCulture = new RequestCulture(App.AppSettings.DefaultCultureCode);
+                options.DefaultRequestCulture = new RequestCulture(App.AppSettings.Defaults.CultureCode);
                 options.SupportedCultures = Cultures;
                 options.SupportedUICultures = Cultures;
                 options.RequestCultureProviders.Insert(0, new CookieRequestCultureProvider());

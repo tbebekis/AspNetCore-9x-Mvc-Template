@@ -100,6 +100,17 @@
             return RedirectToRoute("Home");
         }
 
+        [Route("/notfound", Name = "NotFound")]
+        public IActionResult NotFoundPage()
+        {
+            return NotFoundInternal("");
+        }
+        [Route("/notyet", Name = "NotYet")]
+        public IActionResult NotYetPage()
+        {
+            return NotYetInternal("");
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true), AllowAnonymous]
         public IActionResult Error()
         {

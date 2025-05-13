@@ -1,9 +1,9 @@
-﻿namespace MvcApp.Library
+﻿namespace tp.Web
 {
     /// <summary>
     /// Http related settings
     /// </summary>
-    public class HttpSettings
+    public class HttpSettingsBase
     {
         string fStaticFilesCacheControl;
 
@@ -11,7 +11,7 @@
         /// <summary>
         /// Constructor
         /// </summary>
-        public HttpSettings()
+        public HttpSettingsBase()
         {
         }
 

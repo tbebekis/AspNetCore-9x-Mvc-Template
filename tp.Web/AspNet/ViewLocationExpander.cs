@@ -8,6 +8,10 @@
     /// </summary>
     public class ViewLocationExpander : IViewLocationExpander
     {
+        const string SThemeKey = "__Theme__";
+        static string fThemesFolder;
+
+        static List<string> NonThemeableAreaList = new List<string>();
         static List<string> LocationList = new List<string>();
 
         // ● public 
@@ -22,19 +26,38 @@
             if (LocationList.Count > 0)
                 viewLocations = LocationList.Union(viewLocations);
 
+            // 0 = view file name
+            // 1 = controller name
+            if (UseThemes && context.Values.TryGetValue(SThemeKey, out string Theme))
+            {
+                var Locations = new[] {
+                        $"/{ThemesFolder}/{Theme}/Views/{{1}}/{{0}}.cshtml",
+                        $"/{ThemesFolder}/{Theme}/Views/Shared/{{0}}.cshtml",
+                    };
+
+                viewLocations = Locations.Union(viewLocations);
+            }
+
             return viewLocations;
-        }
+        }                 
         /// <summary>
         /// Invoked by a <see cref="RazorViewEngine"/> to determine the values that would be consumed by this instance
         /// of <see cref="IViewLocationExpander"/>. The calculated values are used to determine if the view location
         /// has changed since the last time it was located.
+        /// <para>SEE: Remarks section at https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.razor.iviewlocationexpander </para>
         /// </summary>
         /// <param name="context">The <see cref="ViewLocationExpanderContext"/> for the current view location
         /// expansion operation.</param>
         public void PopulateValues(ViewLocationExpanderContext context)
         {
+            
+            if (!IsNonThemeableArea(context.AreaName)) // maybe there are some non-themeable areas
+            {
+                context.Values[SThemeKey] = Theme;
+            }
         }
 
+        // ● static  
         /// <summary>
         /// Adds a location to the internal list.
         /// <para>Example for normal views:
@@ -62,6 +85,49 @@
             string S = LocationList.FirstOrDefault(s => string.Compare(s, Location, true) == 0);
             if (string.IsNullOrWhiteSpace(S))
                 LocationList.Add(Location);
+        }
+        /// <summary>
+        /// Adds the name of a non-themeable area to the internal list
+        /// </summary>
+        static public void AddNonThemeableArea(string AreaName)
+        {
+            if (!string.IsNullOrWhiteSpace(AreaName))
+            {
+                AreaName = AreaName.ToLowerInvariant();
+                if (!NonThemeableAreaList.Contains(AreaName))
+                    NonThemeableAreaList.Add(AreaName);
+            }
+        }
+        /// <summary>
+        /// Returns true if a specified area name refers to a non-themeable area
+        /// </summary>
+        static public bool IsNonThemeableArea(string AreaName)
+        {
+            if (!string.IsNullOrWhiteSpace(AreaName))
+            {
+                AreaName = AreaName.ToLowerInvariant();
+                return NonThemeableAreaList.Contains(AreaName);
+            }
+
+            return false;
+        }
+
+        // ● properties  
+        /// <summary>
+        /// When true then themes are used
+        /// </summary>
+        static public bool UseThemes => !string.IsNullOrWhiteSpace(Theme);
+        /// <summary>
+        /// The theme currently in use. Defaults to null or empty string, meaning no themes at all.
+        /// </summary>
+        static public string Theme { get; set; }  
+        /// <summary>
+        /// The name of the Themes folder. Defaults to "Themes"
+        /// </summary>
+        static public string ThemesFolder
+        {
+            get { return !string.IsNullOrWhiteSpace(fThemesFolder) ? fThemesFolder : "Themes"; }
+            set { fThemesFolder = value; }
         }
     }
 }

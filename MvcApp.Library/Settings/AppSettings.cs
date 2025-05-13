@@ -10,18 +10,20 @@
     public class AppSettings : AppSettingsBase
     {
         const string SFileName = "MvcAppSettings.json";
-
-        string fDefaultCultureCode;
-        string fDefaultCurrencyCode;
-        string fDefaultCurrencySymbol;
-        string fMoneyFormat;
+ 
 
         protected override void BeforeLoad()
         {
             base.BeforeLoad();
             SupportedCultures.Clear();
         }
- 
+        protected override void AfterLoad()
+        {
+            base.AfterLoad();
+            if (Loaded != null)
+                Loaded(this, EventArgs.Empty);
+        }
+
         // ● construction
         /// <summary>
         /// Constructor
@@ -33,62 +35,40 @@
 
         // ● properties
         /// <summary>
-        /// The default culture, i.e. el-GR
-        /// <para>NOTE: This setting is assigned initially by default to any new visitor.</para>
+        /// The theme currently in use. Defaults to null or empty string, meaning no themes at all.
         /// </summary>
-        public string DefaultCultureCode
-        {
-            get => !string.IsNullOrWhiteSpace(fDefaultCultureCode) ? fDefaultCultureCode : Lib.SDefaultCultureCode;           // en-US
-            set => fDefaultCultureCode = value;
-        }
-        /// <summary>
-        /// Default currency code, e.g. EUR, USD, etc.
-        /// <para>NOTE: This setting is assigned initially by default to any new visitor.</para>
-        /// </summary>
-        public string DefaultCurrencyCode
-        {
-            get => !string.IsNullOrWhiteSpace(fDefaultCurrencyCode) ? fDefaultCurrencyCode : Lib.SDefaultCurrencyCode;       // "EUR";
-            set => fDefaultCurrencyCode = value;
-        }
-        /// <summary>
-        /// Returns the currency symbol. Used in formatting prices
-        /// </summary>
-        public string DefaultCurrencySymbol
-        {
-            get => !string.IsNullOrWhiteSpace(fDefaultCurrencySymbol) ? fDefaultCurrencySymbol : Lib.SDefaultCurrencySymbol;  // "€";
-            set => fDefaultCurrencySymbol = value;
-        }
-        /// <summary>
-        /// Format string for formatting money values
-        /// </summary>
-        public string MoneyFormat
-        {
-            get => !string.IsNullOrWhiteSpace(fMoneyFormat) ? fMoneyFormat : $"{DefaultCurrencySymbol} 0.00";
-            set => fMoneyFormat = value;
-        }
-        /// <summary>
-        /// The eviction timeout of an entry from the cache, in minutes. 
-        /// <para>Defaults to 0 which means "use the timeouts of the internal implementation".</para>
-        /// </summary>
-        public int CacheTimeoutMinutes { get; set; }
+        public string Theme { get; set; }
         /// <summary>
         /// List of supported cultures
         /// </summary>
         public List<string> SupportedCultures { get; set; } = new List<string>() { "en-US", "el-GR" };
  
         /// <summary>
+        /// Default settings
+        /// </summary>
+        public DefaultSettingsBase Defaults { get; set; } = new DefaultSettingsBase();
+        /// <summary>
         /// User cookie settings
         /// </summary>
-        public UserCookieSettings UserCookie { get; set; } = new UserCookieSettings();
-
+        public UserCookieSettingsBase UserCookie { get; set; } = new UserCookieSettingsBase();
         /// <summary>
         /// Http related settings
         /// </summary>
-        public HttpSettings Http { get; set; } = new HttpSettings();
+        public HttpSettingsBase Http { get; set; } = new HttpSettingsBase();
         /// <summary>
         /// HSTS settings
         /// <para>SEE: https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security </para>
         /// </summary>
-        public HSTSSettings HSTS { get; set; } = new HSTSSettings();
+        public HSTSSettingsBase HSTS { get; set; } = new HSTSSettingsBase();
+        /// <summary>
+        /// SEO related settings
+        /// </summary>
+        public SeoSettingsBase Seo { get; set; } = new SeoSettingsBase();
+
+        // ● events
+        /// <summary>
+        /// Called when the settings are loaded
+        /// </summary>
+        public event EventHandler Loaded;
     }
 }

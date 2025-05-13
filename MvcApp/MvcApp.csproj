@@ -38,6 +38,11 @@
              -->
         <None Include="Plugins\**" CopyToOutputDirectory="PreserveNewest" />
         <None Include="Plugins\**" CopyToPublishDirectory="PreserveNewest" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Remove="Themes\Default\Views\Shared\_Layout.Common.cshtml" />
+      <Content Remove="Views\Shared\_Layout.Common.cshtml" />
     </ItemGroup>   
 
     <ItemGroup>
@@ -49,6 +54,11 @@
 
     <ItemGroup>
       <Folder Include="Plugins\" />
+    </ItemGroup>    
+
+    <ItemGroup>
+      <None Include="Themes\Default\Views\Shared\_Layout.Common.cshtml" />
+      <None Include="Views\Shared\_Layout.Common.cshtml" />
     </ItemGroup>    
 
     <ItemGroup>

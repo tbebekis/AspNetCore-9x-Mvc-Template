@@ -1,9 +1,9 @@
-﻿namespace MvcApp.Library
+﻿namespace tp.Web
 {
     /// <summary>
     /// User cookie settings
     /// </summary>
-    public class UserCookieSettings
+    public class UserCookieSettingsBase
     {
  
         /// <summary>

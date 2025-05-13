@@ -29,7 +29,7 @@
             if (AppSettings.SupportedCultures != null && AppSettings.SupportedCultures.Count > 0)
                 Result.AddRange(AppSettings.SupportedCultures);
             else
-                Result.Add(AppSettings.DefaultCultureCode);
+                Result.Add(AppSettings.Defaults.CultureCode);
 
             return Result;
         }

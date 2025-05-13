@@ -46,6 +46,8 @@
         /// </summary>
         protected virtual IActionResult NotFoundInternal(string Text = "No Message")
         {
+            // can be used by overrides as
+            // return NotFoundInternal(SOME MESSAGE HERE); 
             return View("_NotFound", Text);
         }
         /// <summary>
@@ -53,6 +55,8 @@
         /// </summary>
         protected virtual IActionResult NotYetInternal(string Text = "No Message")
         {
+            // can be used by overrides as
+            // return NotYetInternal(SOME MESSAGE HERE); 
             return View("_NotYet", Text);
         }
 

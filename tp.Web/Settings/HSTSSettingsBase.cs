@@ -1,4 +1,4 @@
-﻿namespace MvcApp.Library
+﻿namespace tp.Web
 {
     /// <summary>
     /// HSTS settings.
@@ -19,7 +19,7 @@
     /// <para>SEE: https://aka.ms/aspnetcore-hsts </para>
     /// <para>SEE: https://hstspreload.org/ </para>
     /// </summary>
-    public class HSTSSettings
+    public class HSTSSettingsBase
     {
         /// <summary>
         /// How many ours to apply the policy

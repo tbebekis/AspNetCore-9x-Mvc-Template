@@ -1,10 +1,14 @@
 {
-    "DefaultCultureCode": "en-US",
-    "DefaultCurrencyCode": "EUR",
-    "DefaultCurrencySymbol": "€",
-    "MoneyFormat": "€ 0.00",
-    "CacheTimeoutMinutes": 15,
+    "Theme": "Default",
     "SupportedCultures": [ "en-US", "el-GR" ],
+
+    "Defaults": {
+        "CultureCode": "en-US",
+        "CurrencyCode": "EUR",
+        "CurrencySymbol": "€",
+        "MoneyFormat": "€ 0.00",
+        "CacheTimeoutMinutes": 15
+    },
 
     "UserCookie": {
         "IsEssential": true,
@@ -26,5 +30,12 @@
             "example.com",
             "www.example.com"
         ]
+    },
+    "Seo": {
+        "DefaultMetaTitle": "MvcApp",
+        "DefaultMetaDescription": "",
+        "DefaultMetaKeywords": "",
+        "TitleSeparator": " | ",
+        "AppendDefaultMetaTitle": true
     }
 }
