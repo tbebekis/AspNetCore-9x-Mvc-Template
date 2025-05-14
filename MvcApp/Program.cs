@@ -7,12 +7,8 @@ namespace MvcApp
             var builder = WebApplication.CreateBuilder(args);
             builder.Host.UseDefaultServiceProvider(options => options.ValidateScopes = false);
             App.AddServices(builder);
-
-            //IServiceProvider
-
             var app = builder.Build();
             App.AddMiddlewares(app);
-
             app.Run();
         }
 

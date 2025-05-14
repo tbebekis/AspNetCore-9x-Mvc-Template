@@ -41,6 +41,10 @@
     </ItemGroup>
 
     <ItemGroup>
+        <None Include="Themes\**" CopyToPublishDirectory="PreserveNewest" />
+    </ItemGroup>
+
+    <ItemGroup>
       <Content Remove="Themes\Default\Views\Shared\_Layout.Common.cshtml" />
       <Content Remove="Views\Shared\_Layout.Common.cshtml" />
     </ItemGroup>   

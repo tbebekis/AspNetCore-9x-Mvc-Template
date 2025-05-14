@@ -11,6 +11,7 @@ global using System.ComponentModel.DataAnnotations;
 global using System.Data;
 global using System.Linq;
 global using System.Security.Claims;
+global using System.Net;
 global using System.Web;
 
 global using Microsoft.Net.Http.Headers;
