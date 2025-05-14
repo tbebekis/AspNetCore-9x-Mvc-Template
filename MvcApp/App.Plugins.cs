@@ -1,6 +1,6 @@
 ﻿namespace MvcApp
 {
-    static internal partial class App
+    static public partial class App
     {
         // ● private
         /// <summary>
@@ -27,7 +27,7 @@
         /// <summary>
         /// Loads plugin definitions into <see cref="PluginDefList"/> list.
         /// </summary>
-        static public void LoadPluginDefinitions()
+        static void LoadPluginDefinitions()
         {
             string RootPluginFolder = Path.Combine(App.BinPath, "Plugins");
             string[] PluginFolders = Directory.GetDirectories(RootPluginFolder);
@@ -66,7 +66,7 @@
         /// Loads plugin assemblies and creates the <see cref="IMvcAppPlugin"/> instances and adds them to the <see cref="PluginList"/>.
         /// <para>After this method the <see cref="MvcAppPluginDef.PluginAssembly"/> property is set with the loaded plubin <see cref="Assembly"/></para>
         /// </summary>
-        static public void LoadPluginAssemblies()
+        static void LoadPluginAssemblies()
         {
             // create plugins
             List<Type> ImplementorClassTypes;
@@ -90,7 +90,7 @@
         /// <summary>
         /// Adds plugin assemblies to the <see cref="ApplicationPartManager"/>
         /// </summary>
-        static public void AddPluginsToApplicationPartManager(ApplicationPartManager PartManager)
+        static void AddPluginsToApplicationPartManager(ApplicationPartManager PartManager)
         {
             foreach (var Def in PluginDefList)
             {
@@ -115,10 +115,10 @@
         /// <summary>
         /// List of plugin definitions
         /// </summary>
-        static public List<MvcAppPluginDef> PluginDefList { get; private set; } = new List<MvcAppPluginDef>();
+        static List<MvcAppPluginDef> PluginDefList { get; set; } = new List<MvcAppPluginDef>();
         /// <summary>
         /// List of plugins
         /// </summary>
-        static public List<IMvcAppPlugin> PluginList { get; } = new List<IMvcAppPlugin>();  
+        static List<IMvcAppPlugin> PluginList { get; } = new List<IMvcAppPlugin>();  
     }
 }

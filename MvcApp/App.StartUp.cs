@@ -8,7 +8,7 @@
      */
 
 
-    static internal partial class App
+    static public partial class App
     {
 
         static void AppSettings_Loaded(object sender, EventArgs e)
@@ -28,7 +28,7 @@
         /// <summary>
         /// Initializes other libraries and plugins
         /// </summary>
-        static public void Initialize()
+        static void Initialize()
         {
             if (App.AppContext == null)
             {

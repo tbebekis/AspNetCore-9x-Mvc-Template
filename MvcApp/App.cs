@@ -3,7 +3,7 @@
     /// <summary>
     /// Represetns this application
     /// </summary>
-    static internal partial class App
+    static public partial class App
     {
 
         /// <summary>
@@ -55,11 +55,11 @@
         /// This <see cref="IServiceProvider"/> is the root service provider and is assigned in <see cref="AppStartUp.AddMiddlewares(WebApplication)"/>
         /// <para><strong>WARNING</strong>: do <strong>NOT</strong> use this service provider to resolve "Scoped" services.</para>
         /// </summary>
-        static internal IServiceProvider RootServiceProvider { get; private set; }
+        static public IServiceProvider RootServiceProvider { get; private set; }
         /// <summary>
         /// <see cref="IHttpContextAccessor"/> is a singleton service and this property is assigned in <see cref="AppStartUp.AddMiddlewares(WebApplication)"/>
         /// </summary>
-        static internal IHttpContextAccessor HttpContextAccessor { get; private set; }
+        static public IHttpContextAccessor HttpContextAccessor { get; private set; }
         /// <summary>
         /// The <see cref="IWebHostEnvironment"/>
         /// </summary>
