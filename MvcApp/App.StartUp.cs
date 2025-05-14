@@ -87,6 +87,7 @@
                     options.Cookie.IsEssential = App.AppSettings.UserCookie.IsEssential;
                     options.Cookie.HttpOnly = App.AppSettings.UserCookie.HttpOnly;
                     options.Cookie.SameSite = App.AppSettings.UserCookie.SameSite;
+                    options.Cookie.SecurePolicy = builder.Environment.IsDevelopment()? CookieSecurePolicy.None : CookieSecurePolicy.Always;
                 });
 
                 builder.Services.AddScoped<UserCookieAuthEvents>();
@@ -244,7 +245,7 @@
                 HttpOnly = HttpOnlyPolicy.Always,
 
                 // Add the SameSite attribute, this will emit the attribute with a value of none.
-                Secure = CookieSecurePolicy.Always
+                Secure = app.Environment.IsDevelopment() ? CookieSecurePolicy.None : CookieSecurePolicy.Always
             });
 
             // ● endpoint resolution middlware
