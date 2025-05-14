@@ -1,5 +1,7 @@
 # Dependency Injection
 
+> This text is part of a group of texts describing an [Asp.Net Core MVC template project](ReadMe.md).
+
 [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_injection) is a subtle matter.
 
 A dependency is an object that a client object depends on, in order to operate. A code mechanism **injects** the dependency object to the client object.
@@ -28,6 +30,9 @@ public class DataService: IDataService
 
 Services should be registered with the Asp.Net's `Dependency Container`, which is an [IServiceProvider](https://learn.microsoft.com/en-us/dotnet/api/system.iserviceprovider) interface.
 
+> Asp.Net comes with its own Dependency Container. To configure some aspects of that default provider the developer has to call `builder.Host.UseDefaultServiceProvider()`.
+> Another option that can be used as Dependency Container is the excellent [AutoFac](https://autofac.org/) library.
+
 That registration happens in the early stages of application initialization.
 
 The `builder.Services` in the following example is an `IServiceProvider` instance.
@@ -43,10 +48,12 @@ public class Program
         builder.Services.AddControllersWithViews();
 
         // NOTE: add your own services here
-
         ...
 
         var app = builder.Build();
+
+        // add middlewares here
+        ...
 
         app.Run();
     }
@@ -64,14 +71,14 @@ A service is created when some client code asks for it. If no client code asks f
 
 Here are the available lifetimes
 
-- Singleton. The service's lifetime is of that of the application.
-- Scoped. The service's lifetime is of that of the current HTTP Request.
-- Transient. The service instance is created each time the service is requested.
+- **Singleton**. The service's lifetime is of that of the application.
+- **Scoped**. The service's lifetime is of that of the current HTTP Request.
+- **Transient**. The service instance is created each time the service is requested.
 
 Again. According to its lifetime a service is created
-- Singleton: once per application.
-- Scoped: once per HTTP Request.
-- Transient : each time is requested.
+- **Singleton**: once per application.
+- **Scoped**: once per HTTP Request.
+- **Transient** : each time is requested.
 
 There are service registration methods according to available lifetimes.
 
@@ -79,7 +86,7 @@ There are service registration methods according to available lifetimes.
 - `AddScoped()`
 - `AddTransient()`
 
-These methods are provided by the [ServiceCollectionServiceExtensions](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.dependencyinjection.servicecollectionserviceextensions) class. **Not** the `IServiceProvider`.
+These methods are provided by the [ServiceCollectionServiceExtensions](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.dependencyinjection.servicecollectionserviceextensions) class. **Not** by the `IServiceProvider`.
 
 ## Service registration
 
@@ -260,9 +267,9 @@ An `IServiceProvider` is created when the application starts executing and it is
 
 Scoped services are **not** created by the `Root Service Provider`.
 
-Scoped services are created by the `HttpContext.RequestServices` Service Provider which it is considered a scoped Service Provider.
+Scoped services are created by the `HttpContext.RequestServices` Service Provider which is considered a scoped Service Provider.
 
-If a scoped service is created by the `Root Service Provider` and not by the `HttpContext.RequestServices` Service Provider, then **the scoped service becomes a singleton one**.
+If a scoped service is created by the `Root Service Provider` and not by the `HttpContext.RequestServices` scoped Service Provider, then **the scoped service becomes a singleton one**.
 
 This is because a scoped service gets the lifetime of the service provider which created the scoped service. The `Root Service Provider` lasts to the application shutdown.
 
@@ -317,7 +324,7 @@ Here is how it can be done.
 First a static class, like the following is needed.
 
 ```
-static internal partial class App
+static public partial class App
 {
     static public IServiceProvider GetServiceProvider(IServiceScope Scope = null)
     {
@@ -376,11 +383,11 @@ After that any service can be resolved as
 var dataservice = App.GetService<IDataService>();
 ```
 
-## Some Guidlines
+## Some Guidelines
 
 - not every class deserves to be a service registered with the Service Provider. Static classes are easier to use in Controllers, Razor Views and View Components.
 - more than three or four services in a Controller constructor is bad design. Use public property injection instead.
 - avoid writing extension methods for service registration. Asp.Net Core has already a huge number.
-- prefer clean an easily understandable design everywhere. Writing code is not a championship. It's art.
+- prefer clean an easily understandable design everywhere. Writing code is not a championship. It's an art.
  
  

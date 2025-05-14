@@ -8,14 +8,15 @@ Authorization               https://docs.microsoft.com/en-us/aspnet/core/securit
 HSTS                        https://aka.ms/aspnetcore-hsts.
 ----------------------------------------------------------------------
 Application Start up        https://learn.microsoft.com/en-us/aspnet/core/fundamentals/startup
-                            https://learn.microsoft.com/en-us/aspnet/core/migration/50-to-60?view=aspnetcore-9.0&tabs=visual-studio#smhm
+                            https://learn.microsoft.com/en-us/aspnet/core/migration/50-to-60#smhm
 Dependency injection        https://learn.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection
                             https://learn.microsoft.com/en-us/aspnet/core/mvc/controllers/dependency-injection
                             https://learn.microsoft.com/en-us/aspnet/core/mvc/views/dependency-injection
 Middlewares                 https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware
+                            https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/#middleware-order
                             https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/write
 Request and response Ops    https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/request-response
-Host                        https://learn.microsoft.com/en-us/aspnet/core/fundamentals/?view=aspnetcore-9.0&tabs=windows#host
+Host                        https://learn.microsoft.com/en-us/aspnet/core/fundamentals/#host
 Configuration - Options     https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration
                             https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/options
 Environments                https://learn.microsoft.com/en-us/aspnet/core/fundamentals/environments
@@ -42,6 +43,8 @@ Areas                       https://learn.microsoft.com/en-us/aspnet/core/mvc/co
 Filters                     https://learn.microsoft.com/en-us/aspnet/core/mvc/controllers/filters
 Model Binding               https://learn.microsoft.com/en-us/aspnet/core/mvc/models/model-binding
 Model validation            https://learn.microsoft.com/en-us/aspnet/core/mvc/models/validation
+Authentication              https://learn.microsoft.com/en-us/aspnet/core/security
+Localization                https://learn.microsoft.com/en-us/aspnet/core/fundamentals/localization
 Features                    https://learn.microsoft.com/en-us/aspnet/core/fundamentals/request-features
 IChangeToken                https://learn.microsoft.com/en-us/aspnet/core/fundamentals/change-tokens
 Upload files                https://learn.microsoft.com/en-us/aspnet/core/mvc/models/file-uploads
