@@ -8,7 +8,7 @@ This project is ready to copy it to some folder, change some project names and s
 
 The project can also serve as a playground for experimentation.
 
-This text describes the project and some aspects of Asp.Net Core MVC.
+This text describes the project, its feauters, and some aspects of Asp.Net Core MVC.
 
 Following is a list of topics covered by this text.
 
