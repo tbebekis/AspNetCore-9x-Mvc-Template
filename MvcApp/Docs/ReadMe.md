@@ -15,5 +15,6 @@ Following is a list of topics covered by this text.
 - [Application Startup](ApplicationStartup.md)
 - [Dependency Injection](DependencyInjection.md)
 - [Middlewares](Middlewares.md)
+- [Session](Session.md)
 - [Plugins with Views, Javascript and CSS](Plugins.md)
 - [Localization](Localization.md)
