@@ -43,6 +43,10 @@
         /// </summary>
         public string Theme { get; set; }
         /// <summary>
+        /// The session timeout in minutes
+        /// </summary>
+        public int SessionTimeoutMinutes { get; set; } = 30;
+        /// <summary>
         /// List of supported cultures
         /// </summary>
         public List<string> SupportedCultures { get; set; } = new List<string>() { "en-US", "el-GR" };

@@ -8,23 +8,34 @@ In Asp.Net Core these components are called `Middlewares` or `Request Delegates`
 
 A `Middleware`, in Asp.Net Core, is a term referring to a software component that examines and handles a request.
 
-`Pipeline` is a term referring to the sequence of middlewares. 
+`Request Delegate` is another term for a middleware.
 
-A middleware may, or may not, pass the request down to the next middleware in the pipeline. It may also do some work with the request before passing it or after passing it to the next middleware.
+[`Pipeline`](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/?view=aspnetcore-9.0#create-a-middleware-pipeline-with-webapplication) is a term referring to the sequence of middlewares. 
 
-A middleware may opt to not pass the request to the next middleware in the pipeline, thus terminating the handling or the request and sending a response to the client. That middleware is called `terminal middleware`.
+In Asp.Net Core the pipeline is a sequence of middlewares which are called one after the other, giving them a chance to handle the request.
+
+A middleware may do some work with the request before passing it to the next middleware and/or after passing it to the next middleware.
+
+A middleware may opt to not pass the request to the next middleware in the pipeline, thus terminating the handling or the request and sending a response to the client. Such a  middleware is called `terminal middleware`.
 
 The order a middleware is added to the pipeline is **very important**.
 
 ## Request Delegates
 
-Request Delegate is another term for a middleware.
+Request delegate is another term for a middleware.
 
-A request delegate can be either an anonymous method or a specialized middleware class. The pipeline is actually a sequence of request delegates.
+Request delegate is actually a [delegate type](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.http.requestdelegate).
 
-Request delegates, be it an anonymous method or a middleware class, are added to the pipeline using the `Use`, `Map` and `Run` extension methods. 
+```
+public delegate System.Threading.Tasks.Task RequestDelegate(HttpContext context);
+```
+Request delegates are *inline middlewares*.
 
-## The `Run` request delegate
+A request delegate is an anonymous method that is chained into the pipeline.
+
+A request delegate is added to the pipeline using the `Use`, `Map` and `Run` extension methods. 
+
+## The `Run` extension method
 
 A `Run` request delegate is a `terminal middleware` and it terminates the pipeline returning a response.
 
@@ -45,7 +56,7 @@ app.Run(async context =>
 app.Run();
 ```
  
-## The `Use` request delegate
+## The `Use` extension method
 
 The `Use` request delegate is used in chaining multiple request delegates, i.e. middlewares.
 
@@ -53,6 +64,7 @@ The `Use` request delegate is used in chaining multiple request delegates, i.e. 
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
+// first middleware
 app.Use(async (context, next) =>
 {
     // do some work before calling the next middleware
@@ -65,10 +77,9 @@ app.Use(async (context, next) =>
     // ...
 });
 
+// second middleware
 app.Use(async (context, next) =>
 {
-    // this is the next middleware in the pipeline
-
     // call next middleware  
     await next.Invoke();
 });
@@ -76,6 +87,7 @@ app.Use(async (context, next) =>
 // other middlewares here
 // ...
 
+// terminal middleware
 app.Run(async context =>
 {
     await context.Response.WriteAsync("This is the response.");
@@ -88,9 +100,9 @@ The next parameter represents the next request delegate, i.e. middleware, in the
 
 The `Run` extension method does not receive a `next` parameter as it is always a `terminal middleware`.
 
-## The `Map` request delegate
+## The `Map` extension method
 
-The `app` variable is of type [WebApplication](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.builder.webapplication).
+In Asp.Net Core Web application `Startup` code the `app` variable is of type [WebApplication](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.builder.webapplication).
 
 The `WebApplication` implements, among others, the following two interfaces.
 - [IApplicationBuilder](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.builder.iapplicationbuilder)
@@ -101,7 +113,7 @@ There is number of `Map` extension methods on these two interfaces. Here are the
 - [MapExtensions](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.builder.mapextensions)
 - [EndpointRouteBuilderExtensions](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.builder.endpointroutebuilderextensions)
 
-The `Map` request delegate is used in branching the pipeline based on the request path. If the request path starts with the path of the `Map` delegate, then that branch is executed.
+The `Map` request delegate is used in branching the pipeline based on a specified request path. If the incoming request path starts with the path of the `Map` delegate, then that branch is executed.
 
 ```
 var builder = WebApplication.CreateBuilder(args);
@@ -130,5 +142,205 @@ app.Run();
 
 There are `MapGet()`, `MapPost()`, etc. variations of the `Map` method.
 
-## The `UseWhen` and `MapWhen` request delegates
+`Map` request delegates are mostly `terminal middlewares`.
+
+## The `UseWhen` and `MapWhen` extension methods
+
+Here are the links for these extensions
+
+- [UseWhen](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.builder.usewhenextensions)
+- [MapWhen](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.builder.mapwhenextensions)
  
+The `UseWhen` and `MapWhen` extension methods are branching the pipeline based on the outcome of a condition, which is actually a predicate.
+
+The `UseWhen` branches are usually rejoined back to the pipeline, provided that they do not contain a `terminal middleware`.
+
+The `MapWhen` branches are mostly `terminal`.
+
+Both  `UseWhen` and `MapWhen` extension methods accept two parameters:
+
+- the predicate, with the signature `Func<HttpContext, bool>`
+- a function to be called when the predicate returns `true`, with the signature `Action<IApplicationBuilder>`
+ 
+```
+var builder = WebApplication.CreateBuilder(args);
+var app = builder.Build();
+
+app.UseWhen(context => {
+        return context.Request.Query.ContainsKey("SOME_KEY");
+    },
+    appBuilder => {
+
+        app.Use(async (context, next) =>
+        {
+            // ...
+
+            // call next middleware  
+            await next.Invoke();
+
+            // ...
+        });
+
+    });
+
+app.MapWhen(context => {
+        return context.Request.Query.ContainsKey("SOME_OTHER_KEY");
+    },
+    appBuilder => {
+
+        app.Run(async context =>
+        {
+            await context.Response.WriteAsync("This is the response.");
+        });
+        
+    });    
+
+
+// other middlewares here
+// ...    
+
+app.Run(async context =>
+{
+    await context.Response.WriteAsync("This is the response.");
+});
+
+app.Run();
+
+```
+
+## Custom Middleware class
+
+The developer may opt to write a custom middleare class. There are two options:
+
+- implement the [IMiddleware](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.http.imiddleware) interface
+- write a public class following some conventions.
+
+Here is an example of the first case, implementing `IMiddleware`.
+
+```
+public class MyMiddleware: IMiddleware
+{
+    private readonly ISomeService someService;
+
+    public MyMiddleware(ISomeService someService)
+    {
+        this.someService = someService;
+    }
+
+    public async Task InvokeAsync(HttpContext context, RequestDelegate next)
+    {
+        // do some work before calling the next middleware
+        // ...
+
+        // call next middleware  
+        await next(context);
+
+        // do some work after calling the next middleware
+        // ...
+    }
+}
+```
+
+Here is an example with a public classfollowing some conventions.
+
+```
+public class MyMiddleware
+{
+    private readonly RequestDelegate next;
+
+    public MyMiddleware(RequestDelegate next)
+    {
+        this.next = next;
+    }
+
+    public async Task InvokeAsync(HttpContext context)
+    {
+        // do some work before calling the next middleware
+        // ...
+
+        // call next middleware  
+        await next(context);
+
+        // do some work after calling the next middleware
+        // ...
+    }
+}
+```
+
+The conventions are the following. The middleware class must have
+
+- a public constructor with a parameter of type [RequestDelegate](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.http.requestdelegate).
+- a public method named InvokeAsync as `public async Task InvokeAsync(HttpContext context)`.
+- **or** a public method named Invoke as `public Task Invoke(HttpContext context)`
+
+There can be additional parameters for both the constructor and the `InvokeAsync` or `Invoke` methods that are populated by the Dependency Injection system.
+
+## Registering a Custom Middleware class
+
+Middlewares implementing the `IMiddleware` interface [should be added](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/extensibility) to the Dependency Injection container.
+
+```
+services.AddTransient<MyMiddleware>();
+```
+
+A middleware class, custom or not, is exposed with one or more extension methods.
+
+```
+static public class MyMiddlewareExtensions
+{
+    public static IApplicationBuilder UseMyMiddleware(this IApplicationBuilder builder)
+    {
+        return builder.UseMiddleware<MyMiddleware>();
+    }
+}
+```
+
+These extension methods help in chaining a middleware into the pipeline.
+
+```
+var builder = WebApplication.CreateBuilder(args);
+var app = builder.Build();
+
+// other middlewares here
+// ...    
+
+app.UseMyMiddleware();
+
+// other middlewares here
+// ...    
+
+app.Run(async (context) =>
+{
+    await context.Response.WriteAsync("This is the response.");
+});
+
+app.Run();
+```
+
+There are situations where a custom middleware needs to read from the request body or write to the response body. For situations like these please consider the relevant [link](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/request-response) in docs.
+
+
+## Asp.Net Core built-in Middlewares
+
+Asp.Net Core comes with a number of [built-in](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/#built-in-middleware) Middlewares.
+
+A wide range of needs is covered by these ready-made Middlewares including Authentication, Logging, Session, Static files and MVC.
+
+## The importance of Middleware order
+
+The [order of a middleware in the pipeline](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/#middleware-order) is **very important**.
+
+Custom middlewares go to a certain order in the pipeline.
+
+Here is the order the documentation dictates.
+
+- Exception Handling
+- HSTS
+- HTTPS Redirection
+- Static Files
+- Routing
+- CORS
+- Authentication
+- Authorization
+- Custom middlewares
+- EndPoint (such as MVC)

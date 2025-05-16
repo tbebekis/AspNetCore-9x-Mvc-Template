@@ -61,7 +61,9 @@
             builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();  // see: https://github.com/aspnet/mvc/issues/3936
 
             // ● Memory Cache - NOTE: is singleton
-            builder.Services.AddMemoryCache(); // AddMemoryCache(); AddDistributedMemoryCache
+            // NOTE: Distributed Cache is required for Session to function properly
+            // SEE: https://learn.microsoft.com/en-us/aspnet/core/fundamentals/app-state#configure-session-state
+            builder.Services.AddDistributedMemoryCache(); // AddMemoryCache(); 
 
             // ● Cookie Authentication  
             if (App.AppSettings.UseAuthentication)
@@ -101,10 +103,10 @@
 
             // ● Session
             builder.Services.AddSession(options => {
-                options.Cookie.Name = App.SSessionCookieName;    // cookie name
+                options.Cookie.Name = App.SSessionCookieName;       // cookie name
                 options.Cookie.HttpOnly = true;
-                options.Cookie.IsEssential = true;  // Make the session cookie essential
-                //options.IdleTimeout = TimeSpan.FromSeconds(10);
+                options.Cookie.IsEssential = true;                  // Make the session cookie essential
+                options.IdleTimeout = TimeSpan.FromMinutes(App.AppSettings.SessionTimeoutMinutes);
             });   
 
             // ● Localization

@@ -1,6 +1,7 @@
 {
     "UseAuthentication": true,
     "Theme": "Default",
+    "SessionTimeoutMinutes": 30,
     "SupportedCultures": [ "en-US", "el-GR" ],
 
     "Defaults": {
