@@ -92,6 +92,7 @@
                     options.Cookie.SecurePolicy = builder.Environment.IsDevelopment()? CookieSecurePolicy.None : CookieSecurePolicy.Always;
                 });
 
+                // TODO: check if this is needed
                 builder.Services.AddScoped<UserCookieAuthEvents>();
 
                 //● authorization

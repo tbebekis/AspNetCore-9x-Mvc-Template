@@ -14,7 +14,7 @@ Asp.Net Core provides a number of ways to deal with [Authentication](https://lea
 
 This text describes a solution using [Cookie Authentication](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/cookie)
 
-## Configuring Gookie Authentication
+## Configuring Cookie Authentication
 
 ```
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -82,7 +82,9 @@ An `Authentication Scheme` consists of the following:
 - an authentication handler, which should inherit from [AuthenticationHandler](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.authentication.authenticationhandler-1) class or implement the [IAuthenticationHandler](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.authentication.iauthenticationhandler) interface
 - an authentication options class, which should inherit from [AuthenticationSchemeOptions](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.authentication.authenticationschemeoptions) class.
 
-An Asp.Net Core application should have set the application's **default** authentication scheme. All the `AddAuthentication()` does is just this, it adds a scheme name as the application's **default** authentication scheme.
+> If `Cookie` or `JWT` authentication is all an application needs then there is no need to implement the three above elements. Asp.Net Core provides everything for authentication types like these.
+
+An Asp.Net Core application should have set the application's **default** authentication scheme. All the `AddAuthentication()` method does is just this, it adds a scheme name as the application's **default** authentication scheme.
 
 > **NOTE**: always set a default authentication scheme, especially if working with Asp.Net Core 6 and earlier.
 
@@ -138,12 +140,17 @@ public async Task<IActionResult> Login(CredentialsModel Model, string ReturnUrl 
 
     if (account != null)
     {
+        // claim list
         List<Claim> ClaimList = new List<Claim>();
-
         ClaimList.Add(new Claim(ClaimTypes.NameIdentifier, account.Id));
         ClaimList.Add(new Claim(ClaimTypes.Name, !string.IsNullOrWhiteSpace(account.Name) ? account.Name : "no name"));
         ClaimList.Add(new Claim(ClaimTypes.Email, !string.IsNullOrWhiteSpace(account.Email) ? account.Email : "no email"));
- 
+
+        // identity and principal
+        ClaimsIdentity Identity = new ClaimsIdentity(ClaimList, CookieAuthenticationDefaults.AuthenticationScheme);
+        ClaimsPrincipal Principal = new ClaimsPrincipal(Identity);
+
+        // authentication properties
         AuthenticationProperties AuthProperties = new AuthenticationProperties();
         AuthProperties.AllowRefresh = true;
         AuthProperties.IssuedUtc = DateTime.UtcNow;
@@ -163,9 +170,7 @@ public async Task<IActionResult> Login(CredentialsModel Model, string ReturnUrl 
 }
 ```
 
-The `RememberMe` boolean property of the `CredentialsModel` is used in making the cookie **persistent**, which means that the cookie [remains alive](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/cookie#persistent-cookies) across browser sessions. This persistency is not for the application to decide. User consent is required for that. The user has to check the corresponding check-box in the login screen.
-
-You may want the cookie to persist across browser sessions. This persistence should only be enabled with explicit user consent with a "Remember Me" checkbox on sign in or a similar mechanism.
+The `RememberMe` boolean property of the `CredentialsModel` is used in making the cookie **persistent**, which means that the cookie [remains alive](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/cookie#persistent-cookies) across browser sessions. This persistency is not for the application to decide. **User consent** is required for that. The user has to check the corresponding check-box in the login screen.
 
 Claims are stored in the authentication cookie and cookies have a strict size limit. Ideally only the `Account.Id` claim is needed. All other user information may come from the Identity store.
 
@@ -190,9 +195,9 @@ The user is considered valid as long as the authentication cookie is valid. And 
 
 But although a request comes with a valid cookie, there are situations where in the back-end system an administrator may have set the user account invalid or blocked. 
 
-To deal with [situations like the above](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/cookie?view=aspnetcore-9.0#react-to-back-end-changes) an application needs to check the validity of a cookie on every request. This is done by using a class inheriting from [CookieAuthenticationEvents](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.authentication.cookies.cookieauthenticationevents) in the `ValidatePrincipal()` method.
+To deal with [situations like the above](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/cookie?view=aspnetcore-9.0#react-to-back-end-changes) an application needs to check the validity of a cookie on every request. This is done by using a class inheriting from [CookieAuthenticationEvents](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.authentication.cookies.cookieauthenticationevents) in its `ValidatePrincipal()` method.
 
-That event class must be set in the cookie options as is done in a previous example.
+That `UserCookieAuthEvents` event class must be set in the cookie options as is done in a previous example.
 
 ```
 options.EventsType = typeof(UserCookieAuthEvents);
@@ -201,53 +206,53 @@ options.EventsType = typeof(UserCookieAuthEvents);
 Here is that custom `UserCookieAuthEvents` class.
 
 ```
-    internal class UserCookieAuthEvents : CookieAuthenticationEvents
+internal class UserCookieAuthEvents : CookieAuthenticationEvents
+{
+    public UserCookieAuthEvents()
+    {           
+    }
+
+    public override async Task ValidatePrincipal(CookieValidatePrincipalContext context)
     {
-        public UserCookieAuthEvents()
-        {           
-        }
-
-        public override async Task ValidatePrincipal(CookieValidatePrincipalContext context)
+        try
         {
-            try
+            if (context.Principal.Identity.IsAuthenticated)
             {
-                if (context.Principal.Identity.IsAuthenticated)
+                // we have Account.Id stored in ClaimTypes.NameIdentifier claim
+                Claim Claim = context.Principal.FindFirst(ClaimTypes.NameIdentifier); 
+
+                string AccountId = Convert.ChangeType(Claim.Value, typeof(string));
+
+                // the fictional DataStore.GetAccountById()
+                // returns an Account instance or null
+                Account account = DataStore.GetAccountById(AccountId); 
+
+                if (account != null)
                 {
-                    // we have Account.Id stored in ClaimTypes.NameIdentifier claim
-                    Claim Claim = context.Principal.FindFirst(ClaimTypes.NameIdentifier); 
-
-                    string AccountId = Convert.ChangeType(Claim.Value, typeof(string));
-
-                    // the fictional DataStore.GetAccountById()
-                    // returns an Account instance or null
-                    Account account = DataStore.GetAccountById(AccountId); 
-
-                    if (account != null)
+                    // Account is blocked  but we still have a logged-in user
+                    // so we must sign-out and return
+                    if (account.IsBlocked)
                     {
-                        // Account is blocked  but we still have a logged-in user
-                        // so we must sign-out and return
-                        if (account.IsBlocked)
-                        {
-                            context.RejectPrincipal();
-                            await context.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-                            return;
-                        }
-
+                        context.RejectPrincipal();
+                        await context.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                        return;
                     }
+
                 }
             }
-            catch
-            {
-                // do nothing
-            }
         }
-
+        catch
+        {
+            // do nothing
+        }
     }
+
+}
 ```
 
 ## Cookie Policy
 
-[Cookie Policy](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/cookie#cookie-policy-middleware) middleware is used in configuring global characteristics of cookies and even to define event handlers to take actions when cookies are appended or deleted. 
+[Cookie Policy](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/cookie#cookie-policy-middleware) middleware is used in configuring global characteristics of cookies and even in definining event handlers to take actions when cookies are appended or deleted. 
 
 This is how the template application uses the cookie policy middleware.
 
