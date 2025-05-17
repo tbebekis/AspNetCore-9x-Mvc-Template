@@ -183,6 +183,6 @@ static public class Session
 Some notes on the above class.
 
 - a static class is available to any code in an application without the need to use Dependency Injection.
-- the above class requires an [IHttpContextAccessor](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.http.ihttpcontextaccessor) to be passed in its `Initialize()` method.
-- the developer may store any object in the session, since the data is serialized to `json`. Avoid saving large data amounts to session, since the storage medium is a cookie with a limited size.
-- the `Request` property provides access to `HttpContext.Items` property. That property is a generic dictionary and it is used in storing data while processing a single request. The lifetime of that dictionary is the lifetime of the HTTP request. The dictionary's contents are discarded after the request is processed. 
+- the above static class requires an [IHttpContextAccessor](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.http.ihttpcontextaccessor) to be passed in its `Initialize()` method.
+- using this static `Session` class the developer may store any object in the session, since the data is serialized to `json`. Avoid saving large data amounts to session, since the storage medium is a cookie with a limited size.
+- the `Request` property of this static `Session` class provides access to `HttpContext.Items` property. That property is a generic dictionary and it is used in storing data while processing a single request. The lifetime of that dictionary is the lifetime of the HTTP request. The dictionary's contents are discarded after the request is processed. 

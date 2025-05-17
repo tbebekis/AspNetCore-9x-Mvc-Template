@@ -44,6 +44,7 @@ Filters                     https://learn.microsoft.com/en-us/aspnet/core/mvc/co
 Model Binding               https://learn.microsoft.com/en-us/aspnet/core/mvc/models/model-binding
 Model validation            https://learn.microsoft.com/en-us/aspnet/core/mvc/models/validation
 Authentication              https://learn.microsoft.com/en-us/aspnet/core/security
+                            https://learn.microsoft.com/en-us/aspnet/core/security/authentication/cookie
 Localization                https://learn.microsoft.com/en-us/aspnet/core/fundamentals/localization
 Features                    https://learn.microsoft.com/en-us/aspnet/core/fundamentals/request-features
 IChangeToken                https://learn.microsoft.com/en-us/aspnet/core/fundamentals/change-tokens

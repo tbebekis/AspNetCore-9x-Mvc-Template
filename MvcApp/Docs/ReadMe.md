@@ -16,5 +16,6 @@ Following is a list of topics covered by this text.
 - [Dependency Injection](DependencyInjection.md)
 - [Middlewares](Middlewares.md)
 - [Session](Session.md)
+- [Cookie Authentication](CookieAuthentication.md)
 - [Plugins with Views, Javascript and CSS](Plugins.md)
 - [Localization](Localization.md)
