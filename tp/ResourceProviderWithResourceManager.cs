@@ -30,7 +30,7 @@
         /// </summary>
         public override string GetString(string Key, CultureInfo Culture = null)
         {
-            return Culture == null ? Manager.GetString(Key) : Manager.GetString(Key, Culture);
+            return Manager.GetString(Key, Culture);
         }
         /// <summary>
         /// Returns a resource object for the Key, if any, else null.
@@ -39,7 +39,7 @@
         /// </summary>
         public override object GetObject(string Key, CultureInfo Culture = null)
         {
-            return Culture == null ? Manager.GetObject(Key) : Manager.GetObject(Key, Culture);
+            return Manager.GetObject(Key, Culture);
         }
         /// <summary>
         /// Returns a binary resource for the Key, if any, else null.

@@ -4,7 +4,7 @@
 
 A website may opt to provide its content in more than one languages. We live in a multilingual world and a multilingual website has the potential to attract much more visitors.
 
-[Localization](https://en.wikipedia.org/wiki/Internationalization_and_localization) in software is a process of making an application which displays content in the language of a user and it also uses number formatting, date formatting, etc. in the culture of the user.
+[Localization](https://en.wikipedia.org/wiki/Internationalization_and_localization) in software is a process of making an application to display its content in the language of a user and it also to use number formatting, date formatting, etc. in the culture of the user.
 
 [Culture](https://learn.microsoft.com/en-us/dotnet/api/system.globalization.cultureinfo) in .Net is a term and software entity which specifies a language and, optionally, a region. A culture which specifies both the language and the region, e.g. `en-US`, is called `Specific Culture`. A culture that specifies the language only,  e.g. `en`, is called `Neutral Culture`. A `Specific Culture`, e.g. `en-US`,  belongs to a `Parent Culture`, e.g. `en`, which is always a `Neutral Culture`.
 
@@ -54,7 +54,7 @@ The code uses the [CookieRequestCultureProvider](https://learn.microsoft.com/en-
 
 A `Request Culture Provider` is a class used in [determining the culture](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/localization/select-language-culture) to be used with a request.
 
-The [RequestLocalizationOptions](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.builder.requestlocalizationoptions) used with the `UseRequestLocalization()` method provides the `RequestCultureProviders` property which is a list of request culture providers.
+The [RequestLocalizationOptions](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.builder.requestlocalizationoptions) used with the `UseRequestLocalization()` method provides the `RequestCultureProviders` property which is a list of the registered request culture providers.
 
 An application may register more than one request culture providers. 
 
@@ -73,9 +73,9 @@ Asp.Net Core also provides the [CustomRequestCultureProvider](https://learn.micr
 
 ## Localization Resources
 
-Localization resources are files with `.resx` extension. The [file name](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/localization/provide-resources?#resource-file-naming) indicates
-- if present, then is the **full type name** of the class, controller, view or view component which consumes the resource
-- the culture it is for.
+Localization resources are files with `.resx` extension. The [file name](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/localization/provide-resources?#resource-file-naming) 
+- may indicate the **full type name** of the class, controller, view or view component which consumes the resource
+- always indicate the culture it is for.
 
 `MyApp.Controllers.HomeController.el-GR.resx` may be the file name of a resource file for the `HomeController` and Greek culture. 
 
@@ -111,7 +111,7 @@ public interface IResourceProvider
 }
 ```
 
-A IResourceProvider may use a `resx` file and another may use some other medium, such as a database or a `JSON` or `XML` file.
+One `IResourceProvider` may use a `resx` file while another may use some other medium, such as a database or a `JSON` or `XML` file.
 
 Here is the base implementation.
 
@@ -176,11 +176,11 @@ public class ResourceProviderWithResourceManager: ResourceProviderBase
     // ● public
     public override string GetString(string Key, CultureInfo Culture = null)
     {
-        return Culture == null ? Manager.GetString(Key) : Manager.GetString(Key, Culture);
+        return Manager.GetString(Key, Culture);
     }
     public override object GetObject(string Key, CultureInfo Culture = null)
     {
-        return Culture == null ? Manager.GetObject(Key) : Manager.GetObject(Key, Culture);
+        return Manager.GetObject(Key, Culture);
     }
     public override byte[] GetBinary(string Key, CultureInfo Culture = null)
     {
@@ -241,11 +241,11 @@ static public class Res
     {
         return GetString(Key, Key, Culture);
     }        
-    static public string GS(string Key, string Default, CultureInfo Culture = null)
+    static public string L(string Key, string Default, CultureInfo Culture = null)
     {
         return GetString(Key, Default, Culture);
     }
-    static public string GS(string Key, CultureInfo Culture = null)
+    static public string L(string Key, CultureInfo Culture = null)
     {
         return GetString(Key, Key, Culture);
     }
@@ -293,9 +293,11 @@ static public class Res
 
 Any client code in the application has access to this static `Res` class and may ask for a localized resource using a resource key, e.g. `Home.Wellcome`. 
 
-The `Res` class enumerates its registered resource providers and returns the first resource found under that key.
+The `Res` class enumerates its registered resource providers and returns the first resource found under the specified resource key.
 
-Any Assembly in the application may use the `Res.Add()` to register one or more `IResourceProvider` instances. Another approach in `IResourceProvider` registration would be to use an `Attribute` to mark all resource providers and have the central code to collect these classes.
+Any Assembly in the application may use the `Res.Add()` to register one or more `IResourceProvider` instances. 
+
+Another approach in `IResourceProvider` registration would be to use an `Attribute` to mark all resource providers and have the central code to collect these classes.
 
 ### View Localization
 
@@ -304,7 +306,6 @@ A View derived class is always useful to have. The base class is the [RazorBase]
 ```
 public abstract class ViewBase<TModel> : RazorPage<TModel>
 {
-
     public HtmlString L(string Key, params object[] Args)
     {
         string S = Res.GetString(Key);  
@@ -329,7 +330,7 @@ A custom View class should be declared in the `_ViewImports.cshtml` file.
 @inherits tp.Web.ViewBase<TModel>
 ```
 
-This view class provides the `L()` method which then is used in `*.cshtml` view files to ask localized strings.
+This view class provides the `L()` method, stands for `Localize()`, which then is used in `*.cshtml` view files to ask for localized strings.
 
 ```
 <span class="...">@L("Login")</span>

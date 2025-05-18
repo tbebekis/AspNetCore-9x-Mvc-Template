@@ -72,15 +72,17 @@
         
         /// <summary>
         /// Returns a resource string for the Key, if any, else Default.
+        /// <para>L stands for Localize.</para>
         /// </summary>
-        static public string GS(string Key, string Default, CultureInfo Culture = null)
+        static public string L(string Key, string Default, CultureInfo Culture = null)
         {
             return GetString(Key, Default, Culture);
         }
         /// <summary>
         /// Returns a resource string for the Key, if any, else returns the Key.
+        /// <para>L stands for Localize.</para>
         /// </summary>
-        static public string GS(string Key, CultureInfo Culture = null)
+        static public string L(string Key, CultureInfo Culture = null)
         {
             return GetString(Key, Key, Culture);
         }
