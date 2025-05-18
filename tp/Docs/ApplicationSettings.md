@@ -100,7 +100,7 @@ public class ApplicationSettings: ApplicationSettingsBase
 
 `AppSettingsBase` saves configuration to a `json` file. It watches that `json` file for changes that may happen during application execution, using the [FileSystemWatcher](https://learn.microsoft.com/en-us/dotnet/api/system.io.filesystemwatcher) class. If a change happens the `AppSettingsBase` reloads the file into its properties.
 
-If there are list properties in the `AppSettingsBase`, such is the `BlackList` in the above example, the developer has to override the `BeforeLoad()` method and clean those lists.
+> **NOTE**: If there are list properties in the `AppSettingsBase`, such is the `BlackList` in the above example, the developer has to override the `BeforeLoad()` method and clear those lists.
  
 ## How to use it
 

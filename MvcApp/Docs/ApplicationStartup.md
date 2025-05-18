@@ -61,7 +61,7 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         // add services to the Dependency Injection container
-        builder.Services.AddControllersWithViews();
+        // ...
 
         var app = builder.Build();
 
