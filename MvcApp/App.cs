@@ -42,6 +42,22 @@
         static public HttpContext GetHttpContext() => HttpContextAccessor.HttpContext;
 
 
+        /// <summary>
+        /// Initializes other libraries and plugins
+        /// </summary>
+        static void Initialize()
+        {
+            if (App.AppContext == null)
+            {
+                App.AppContext = new AppContext();
+                WLib.Initialize(App.AppContext);
+                Lib.Initialize(App.AppContext);
+                App.InitializePlugins();
+
+                AjaxRequestHandlers.Initialize();
+            }
+        }
+
         // ● properties
         /// <summary>
         /// Application settings, coming from appsettings.json

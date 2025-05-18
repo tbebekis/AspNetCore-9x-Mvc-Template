@@ -2,7 +2,7 @@
 {
 
     /// <summary>
-    /// Provides access to the resources of any ResourceManager registered by calling the Add method.
+    /// Provides access to the resources of any <see cref="IResourceProvider"/> registered by calling the Add method.
     /// </summary>
     static public class Res
     {

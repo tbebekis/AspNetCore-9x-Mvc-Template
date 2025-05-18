@@ -17,8 +17,6 @@ This text describes a solution using [Cookie Authentication](https://learn.micro
 ## Configuring Cookie Authentication
 
 ```
-using Microsoft.AspNetCore.Authentication.Cookies;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // some services here
