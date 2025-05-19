@@ -19,23 +19,6 @@ Key3 = Value
 
 Nowadays applications use `xml` and `json` formats with their configuration files.
 
-## .Net Configuration
-
-.Net and especially Asp.Net provide a whole universe of classes and interfaces that comprising its configuration system.
-
-- [ConfigurationBuilder](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.configuration.configurationbuilder)
-- [IConfiguration](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.configuration.iconfiguration)
-- [Configuration Providers](https://learn.microsoft.com/en-us/dotnet/core/extensions/configuration#configuration-providers)
-- [ConfigurationBinder](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.configuration.configurationbinder)
-- [IOptions<TOptions>](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.options.ioptions)
-- [IOptionsSnapshot<TOptions>](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.options.ioptionssnapshot-1)
-- [IOptionsMonitor<TOptions>](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.options.ioptionsmonitor-1)
-- and more...
-
-Documentation for the above system can be found at
-- [Configuration in .NET](https://learn.microsoft.com/en-us/dotnet/core/extensions/configuration)
-- [Configuration in ASP.NET Core](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration)
-
 ## The AppSettingsBase class
 
 This library provides the `AppSettingsBase` class for application configuration.

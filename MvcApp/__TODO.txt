@@ -52,3 +52,6 @@ Upload files                https://learn.microsoft.com/en-us/aspnet/core/mvc/mo
 Cache                       https://learn.microsoft.com/en-us/aspnet/core/performance/caching/overview?view=aspnetcore-9.0
                             https://learn.microsoft.com/en-us/aspnet/core/mvc/views/tag-helpers/built-in/cache-tag-helper
                             https://learn.microsoft.com/en-us/aspnet/core/mvc/views/tag-helpers/built-in/distributed-cache-tag-helper
+
+
+https://auth0.com/blog/using-csharp-extension-methods-for-auth0-authentication/                            
