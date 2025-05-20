@@ -193,7 +193,7 @@ public class HomeController : Controller
 }
 ```
 
-The [IOptionsSnapshot](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/options#use-ioptionssnapshot-to-read-updated-data) is used here in order to read changes in the `appsettings.json` file **after** the application is started. 
+The [IOptionsSnapshot](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/options#use-ioptionssnapshot-to-read-updated-data) is used here in order to read changes in the `appsettings.json` file **after** the application is started and maybe the file is already altered. 
 
 `IOptionsSnapshot` is a **scoped** service. It provides a snapshot of the configuration source, i.e. the options file, at the time its instance is constructed. 
 
@@ -356,5 +356,7 @@ public static void Main(string[] args)
 Adding a file as `builder.Configuration.AddJsonFile(...)` adds the file as one of the Asp.Net Core configuration sources, just like the default `appsettings.json` file. Asp.Net Core unifies the configuration sources into a single configuration system.
 
 Although configuration sources are unified, the application has to install a specific `IOptionsMonitor` for each configuration file if that file is going to be monitored for changes, and respond accordingly.
+
+> In the above code both the `OnChange()` methods will be called even if just one of the files changes. It looks like the consolidation of the configuration sources fails to distinguish the changed file and thus to call just its the corresponding `OnChange()`. Or I have done something wrong which is very possible too.
 
 Because `AppSettings` and `AppOptions` classes are registerd as Dependency Injection services too they can be injected wherever a Dependency Injection is allowed.

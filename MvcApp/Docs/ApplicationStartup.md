@@ -51,7 +51,7 @@ public class Startup
 }
 ```
 
-In recent Asp.Net Core versions the `Program.cs` file is something like the following
+In recent Asp.Net Core versions the application startup code in the `Program.cs` file is something like the following
 
 ```
 public class Program

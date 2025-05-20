@@ -18,5 +18,6 @@ Following is a list of topics covered by this text.
 - [Configuration](Configuration.md)
 - [Session](Session.md)
 - [Cookie Authentication](CookieAuthentication.md)
+- [Static Files and File Providers](StaticFilesAndFileProviders.md)
 - [Localization](Localization.md)
 - [Plugins with Views, Javascript and CSS](Plugins.md)
