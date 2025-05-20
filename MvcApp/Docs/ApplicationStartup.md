@@ -61,11 +61,13 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         // add services to the Dependency Injection container
+        // builder.Services.Add...
         // ...
 
         var app = builder.Build();
 
         // add middlewares into the app pipeline
+        // app.Use...
         // ...
 
         // start the application
@@ -76,15 +78,17 @@ public class Program
 
 If the developer leaves un-checked the *Do not use top-level statements*, when creating the project in Visual Studio, then the `Program` class and the `Main()` method is omitted and the content of the `Program.cs` file is just the content of the above `Main()` method.
 
-In any case here is what is going on
+I'm not perfectly sure what is going on here and I'll try my best to explain it.
 
-- there is a `host`, such as the `WebApplication` above
-- the `host` is used in creating a [`builder`](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.builder.webapplicationbuilder)
-- the `builder` provides the `Services` property which is used in adding services to [Dependency Injection](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection) container
-- the `builder` builds the `app` which is a `WebApplication` instance (lol)
-- the `app` is used in adding [Middlewares](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware) into the app pipeline to handle requests and responses.
+- the [WebApplication](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.builder.webapplication) creates a `builder` which is a[`WebApplicationBuilder`](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.builder.webapplicationbuilder)
+- the `builder` provides the `Services` property which is then used in adding services to [Dependency Injection](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection) container
+- the `builder` then builds the `app` which is a `WebApplication` instance (lol)
+- the `app` is then used in adding [Middlewares](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware) into the app pipeline to handle requests and responses.
+- [docs say](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/#host) *"On startup, an ASP.NET Core app builds a host"*. 
+- Well `WebApplication` implements the `IHost` interface which provides a `Services` property, but it is **not** used used in adding services to DI container. Instead the `WebApplication.Services` is used, which is the `builder`. 
+- I'm at a loss.
 
-> Nobody said being a developer is an easy or at least rational job and we all understand why.
+> Nobody says being a developer is an easy or at least reasonable job and we all understand why.
 
 ## The two phases of Application Startup
 
