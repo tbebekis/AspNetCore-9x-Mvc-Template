@@ -119,7 +119,6 @@ Here is the base implementation.
 
 public class ResourceProviderBase : IResourceProvider
 {
-
     // ● construction
     ResourceProviderBase() { }
     protected ResourceProviderBase(string Name = null)
@@ -301,7 +300,7 @@ Another approach in `IResourceProvider` registration would be to use an `Attribu
 
 ### View Localization
 
-A View derived class is always useful to have. The base class is the [RazorBase](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.razor.razorpage).
+A View derived class is always useful to have. The base class is the Asp.Net Core's [RazorPage](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.razor.razorpage).
 
 ```
 public abstract class ViewBase<TModel> : RazorPage<TModel>

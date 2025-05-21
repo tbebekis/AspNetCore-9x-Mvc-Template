@@ -2,7 +2,7 @@
 
 > This text is part of a group of texts describing an [Asp.Net Core MVC template project](ReadMe.md).
 
-`Configuration` in Asp.Net Core is a term referring to a sub-system which provides settings, in the form of `Key-Value` pairs, required for application configuration.
+`Configuration` in Asp.Net Core is a term referring to a sub-system which provides configuration options, i.e. settings, in the form of `Key-Value` pairs, required for application configuration.
 
 `Configuration` in Asp.Net Core is a complex issue.
  
@@ -17,7 +17,7 @@
 - [IOptions<TOptions>](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.options.ioptions)
 - [IOptionsSnapshot<TOptions>](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.options.ioptionssnapshot-1)
 - [IOptionsMonitor<TOptions>](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.options.ioptionsmonitor-1)
-- and more...
+- and much more...
 
 Documentation for the above configuration sub-system can be found at
 - [Configuration in .NET](https://learn.microsoft.com/en-us/dotnet/core/extensions/configuration)
@@ -25,11 +25,13 @@ Documentation for the above configuration sub-system can be found at
 
 ## Asp.Net Core Configuration providers
 
-In Asp.Net Core a `Configuration Provider` is a software entity which reads information, in the form of `Key-Value` pairs, stored in a wide number of sources, such as disk files, environment variables, database tables, etc.
+In Asp.Net Core a `Configuration Provider` is a software entity which reads information, in the form of `Key-Value` pairs, stored in a wide number of `Configuration Sources`, such as JSON or XML files, Environment Variables, Command Line parameters, Azure Key Vault, etc.
 
-In Asp.Net Core there is number of [configuration providers](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/#configuration-providers) available.
+In Asp.Net Core there is number of built-in [configuration providers](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/#configuration-providers) available representing these various configuration sources.
 
 The most commonly used configuration provider in Asp.Net Core applications is the [JSON configuration provider](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/#json-configuration-provider).
+
+Asp.Net Core merges the various configuration sources into a single configuration system. The configuration sources are consolidated into a hierarchical structure of `Key-Value` pairs, similar to a file system. That consolidated result has a tree structure where `Nodes` are the `Configuration Sections`.
 
 ## The internals of Asp.Net Core configuration
 
@@ -39,6 +41,8 @@ Consider the following code of an Asp.Net Core application startup.
 public static void Main(string[] args)
 {
     var builder = WebApplication.CreateBuilder(args);
+
+    var Configuration = builder.Configuration;
  
     // ...
 
@@ -53,6 +57,17 @@ The `builder` variable here is of type [WebApplicationBuilder](https://learn.mic
 `ConfigurationManager` implements an number of interfaces. One of them is the [IConfiguration](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.configuration.iconfiguration) interface.
 
 Also the `ConfigurationManager.GetSection(string Key)` method returns a [IConfigurationSection](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.configuration.iconfigurationsection) interface which is a `IConfiguration` interface too.
+
+The `key` here identifies a `Configuration Section`. In a `JSON` file such a section is the name of a `JSON` object.
+
+```
+{
+    "MySection": {
+        "Option1": true,
+        "Option2: "a string here"
+    }
+}
+```
 
 The `IConfiguration` has a number of extension methods such as `Bind()`, `Get()` and `GetValue()`.
 
@@ -161,7 +176,10 @@ public static void Main(string[] args)
 {
     var builder = WebApplication.CreateBuilder(args);
 
-    builder.Services.AddOptions();
+    // no more neede, 
+    // the builder.Services.Configure<IOptions>(IConfigurationSection)
+    // ends up calling AddOptions() too
+    // builder.Services.AddOptions();
 
     IConfigurationSection SettingsSection = builder.Configuration.GetSection(nameof(AppSettings));
     builder.Services.Configure<AppSettings>(SettingsSection); 
@@ -171,6 +189,8 @@ public static void Main(string[] args)
     app.Run();
 }
 ```
+
+> NOTE: The `AddOptions()` method installs monitors that get notifications when a  **file-based** configuration source, e.g. a JSON, XML or INI file, is altered. Only **file-based** configuration sources support dynamic changes. The `builder.Services.Configure<IOptions>(IConfigurationSection)` ends up calling `AddOptions()` too. If `AddOptions()` is called, directly or indirectly, a second time, then the application gets notified twice for a single change in a configuration file. There is a section below on how to monitor changes in JSON configuration files.
 
 After that the user defined Configuration class may injected wherever a Dependency Injection is allowed.
 
@@ -199,7 +219,7 @@ The [IOptionsSnapshot](https://learn.microsoft.com/en-us/aspnet/core/fundamental
 
 ## Monitoring Configuration changes
 
-Using the [IOptionsMonitor](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/options#ioptionsmonitor) an application may notified when the underlying configuration source, i.e. the `appsettings.json` file, changes.
+Using the [IOptionsMonitor](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/options#ioptionsmonitor) an application may notified every time the underlying configuration source, i.e. the `appsettings.json` file, changes.
 
 > **NOTE**: when debugging use the `appsettings.json` found in the root application folder. **Not** the one in the bin folder.
 
@@ -228,8 +248,6 @@ public static void Main(string[] args)
     var builder = WebApplication.CreateBuilder(args);
 
     // ...
-
-    builder.Services.AddOptions();
 
     // add AppSettings as a service
     IConfigurationSection AppSettingsSection = builder.Configuration.GetRequiredSection(nameof(AppSettings));
@@ -317,8 +335,6 @@ public static void Main(string[] args)
 
     // ...
 
-    builder.Services.AddOptions();
-
     // add AppSettings as a service
     IConfigurationSection AppSettingsSection = builder.Configuration.GetRequiredSection(nameof(AppSettings));
     builder.Services.Configure<AppSettings>(AppSettingsSection);
@@ -353,10 +369,23 @@ public static void Main(string[] args)
 }
 ```
 
-Adding a file as `builder.Configuration.AddJsonFile(...)` adds the file as one of the Asp.Net Core configuration sources, just like the default `appsettings.json` file. Asp.Net Core unifies the configuration sources into a single configuration system.
+Adding a file as `builder.Configuration.AddJsonFile(...)` adds the file as one of the Asp.Net Core configuration sources, just like the default `appsettings.json` file. 
 
-Although configuration sources are unified, the application has to install a specific `IOptionsMonitor` for each configuration file if that file is going to be monitored for changes, and respond accordingly.
+Although Asp.Net Core merges the configuration sources into a single configuration system, the application has to install a specific `IOptionsMonitor` for each configuration file if that file is going to be monitored for changes, and respond accordingly.
 
 > In the above code both the `OnChange()` methods will be called even if just one of the files changes. It looks like the consolidation of the configuration sources fails to distinguish the changed file and thus to call just its the corresponding `OnChange()`. Or I have done something wrong which is very possible too.
 
 Because `AppSettings` and `AppOptions` classes are registerd as Dependency Injection services too they can be injected wherever a Dependency Injection is allowed.
+
+## Other Configuration Sources
+
+The application may use the `builder.Configuration` in adding various configuration sources and even different configuration files depending on the [Environment](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/environments).
+
+```
+builder.Configuration
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: 
+    .AddEnvironmentVariables()
+    .AddCommandLine(args)
+    ;
+```
+It maybe is easier to have an `appsettings.Development.json` (and a `appsettings.Production.json` for that matter) file, excluding the development file from source control, than to deal with the [Secret Manager](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets).
