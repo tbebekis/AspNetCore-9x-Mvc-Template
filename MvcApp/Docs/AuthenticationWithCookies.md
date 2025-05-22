@@ -1,19 +1,14 @@
-# Cookie Authentication
+# Authentication with Cookies
 
 > This text is part of a group of texts describing an [Asp.Net Core MVC template project](ReadMe.md).
 
-[**Authentication**](https://en.wikipedia.org/wiki/Authentication) is a term denoting a process that verifies the identity of an application user.
-
-[**Authorization**](https://en.wikipedia.org/wiki/Authorization) is a term denoting a process that decides if a user has the required permissions in order to access a certain resource provided by an application.
-
-[**Principal**](https://en.wikipedia.org/wiki/Principal_(computer_security)) is a software entity that can be authenticated by an application, computer or network and it may represent a person, an application, a computer and the like.
-
-[**Identity Provider**](https://en.wikipedia.org/wiki/Identity_provider) is a term denoting a software component that issues, maintains and manages identity information for `Principals`.
-
 Asp.Net Core provides a number of ways to deal with [Authentication](https://learn.microsoft.com/en-us/aspnet/core/security/authentication) and a list of [Identity solutions](https://learn.microsoft.com/en-us/aspnet/core/security/how-to-choose-identity-solution) to choose from.
 
-This text describes a solution using [Cookie Authentication](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/cookie)
+In Asp.Net Core after the `Authentication`, i.e. verification of the identity of a user or application, comes the creation of a `ClaimsPrincipal` instance and the creation of its `ClaimsIdentity` instance or instancies, with the right claims. `Authentication` happens before `Authorization`. `Authentication` and `Authorization` are two distinct operations.
 
+This text describes an authentication solution using [Cookie Authentication](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/cookie).
+
+ 
 ## Configuring Cookie Authentication
 
 ```
