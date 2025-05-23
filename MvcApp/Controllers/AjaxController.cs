@@ -1,9 +1,8 @@
 ﻿namespace MvcApp.Controllers
 {
+    [AuthorizeAjax]
     public class AjaxController: ControllerMvcAjax
     {
-
-
         [HttpPost("/Ajax/PlainAjaxCall")]
         public async Task<JsonResult> PlainAjaxCall([FromBody] AjaxModel M)
         {

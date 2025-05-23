@@ -60,8 +60,6 @@
 
             return Json(Result);
         }
-
-
     }
 
 }

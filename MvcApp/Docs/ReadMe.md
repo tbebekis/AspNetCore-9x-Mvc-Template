@@ -17,6 +17,7 @@ Following is a list of topics covered by this text.
 - [Middlewares](Middlewares.md)
 - [Configuration](Configuration.md)
 - [Claims and Identity](Claims.md)
+- [Authentication Schemes](AuthenticationSchemes.md)
 - [Authentication with a Cookie](AuthenticationWithCookies.md)
 - [Authorization](Authorization.md)
 - [Static Files and File Providers](StaticFilesAndFileProviders.md)

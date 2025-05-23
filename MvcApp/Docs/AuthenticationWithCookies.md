@@ -2,6 +2,8 @@
 
 > This text is part of a group of texts describing an [Asp.Net Core MVC template project](ReadMe.md).
 
+[**Authentication**](https://en.wikipedia.org/wiki/Authentication) is a  process that verifies the identity of an application user.
+
 Asp.Net Core provides a number of ways to deal with [Authentication](https://learn.microsoft.com/en-us/aspnet/core/security/authentication) and a list of [Identity solutions](https://learn.microsoft.com/en-us/aspnet/core/security/how-to-choose-identity-solution) to choose from.
 
 In Asp.Net Core after the `Authentication`, i.e. verification of the identity of a user or application, comes the creation of a `ClaimsPrincipal` instance and the creation of its `ClaimsIdentity` instance or instancies, with the right claims. `Authentication` happens before `Authorization`. `Authentication` and `Authorization` are two distinct operations.
@@ -64,46 +66,6 @@ The `options` parameter in `AddAuthentication()` is of type [AuthenticationOptio
 The `options` parameter in `AddCookie()` is of type [CookieAuthenticationOptions](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.authentication.cookies.cookieauthenticationoptions).
 
 The developer has to carefully review the properties of these `options` objects and decide what is the best configuration for an application.
-
-## Authentication Schemes
-
-An `Authentication Scheme` is a specific way of authenticating users and client applications. 
-
-An `Authentication Scheme` consists of the following:
-
-- an authenction scheme name, which is just a string
-- an authentication handler, which should inherit from [AuthenticationHandler](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.authentication.authenticationhandler-1) class or implement the [IAuthenticationHandler](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.authentication.iauthenticationhandler) interface
-- an authentication options class, which should inherit from [AuthenticationSchemeOptions](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.authentication.authenticationschemeoptions) class.
-
-> If `Cookie` or `JWT` authentication is all an application needs then there is no need to implement the three above elements. Asp.Net Core provides everything for authentication types like these.
-
-An Asp.Net Core application should have set the application's **default** authentication scheme. All the `AddAuthentication()` method does is just this, it adds a scheme name as the application's **default** authentication scheme.
-
-> **NOTE**: always set a default authentication scheme, especially if working with Asp.Net Core 6 and earlier.
-
-An application may implement **more than one** authentication types, each one with its own authentication scheme.
-
-```
-AuthenticationBuilder AuthBuilder = builder.Services.AddAuthentication(options => {
-    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-});
-
-AuthBuilder.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options => {
-    // ...
-});
-
-AuthBuilder.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options => {
-    // ...
-});
-```
-
-### Custom Authentication Scheme
-
-A Custom Authentication Scheme has to fullfil the three requirements of an authentication scheme as described above:
-
-- an authentication scheme name
-- an authentication handler class
-- an authentication options class.
 
 ## Login
 

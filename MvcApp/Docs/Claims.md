@@ -2,17 +2,21 @@
 
 > This text is part of a group of texts describing an [Asp.Net Core MVC template project](ReadMe.md).
  
-[**Authentication**](https://en.wikipedia.org/wiki/Authentication) is a term denoting a process that verifies the identity of an application user.
+[**Identity**](https://en.wikipedia.org/wiki/Digital_identity) is a software entity comprised of information about a person, an application, a device, etc. It is a collection of attributes and characteristics that identify an entity. 
 
-[**Authorization**](https://en.wikipedia.org/wiki/Authorization) is a term denoting a process that decides if a user has the required permissions in order to access a certain resource provided by an application.
-
-[**Principal**](https://en.wikipedia.org/wiki/Principal_(computer_security)) is a software entity that can be authenticated by an application, computer or network and it may represent a user, an application, a computer and the like.
+[**Principal**](https://en.wikipedia.org/wiki/Principal_(computer_security)) is a software entity that can be authenticated by an application, computer or network and it represents the identity of a user, application, computer, etc.
 
 [**Identity Provider**](https://en.wikipedia.org/wiki/Identity_provider) is a term denoting a software component that issues, maintains and manages identity information for `Principals`.
 
-## .Net Core Identity
+[**Identity Information**](https://en.wikipedia.org/wiki/Identity_and_access_management) is information, i.e. data, that identifies an entity. That entity could be a person, an application, a device, etc. 
 
-`Identity Information` is information, i.e. data, that identifies an entity. That entity could be a person or an application. `Authentication` is the verification of an `Identity`.
+[**Authentication**](https://en.wikipedia.org/wiki/Authentication) is a process that verifies the identity of a user, application, etc.
+
+[**Authorization**](https://en.wikipedia.org/wiki/Authorization) is a process that decides if a user has the required permissions in order to access a certain resource provided by an application.  
+
+
+
+## .Net Core Identity
 
 As `Identity Information`, the .Net Core and Asp.Net Core, uses [Claims-based Identity](https://en.wikipedia.org/wiki/Claims-based_identity). The relevant .Net Core classes are part of the [System.Security.Claims](https://learn.microsoft.com/en-us/dotnet/api/system.security.claims) namespace.
 
@@ -30,6 +34,8 @@ The `Type` property contains the *name* of the claim, such as `Role`, where a po
 A `Claim` is actually a `Key-Value` pair. The `Claim.Type` property is the `Key` where the `Claim.Value` property is the `Value`.
 
 A claim is a statement that an entity, such as a user or an application, makes about itself. Claims are used in both `Authentication` and `Authorization`.
+
+A claim may store the Id, Name, Email, Role, etc. of a user, but **never a secret** such as a password.
 
 ## ClaimsIdentity
 
@@ -49,8 +55,16 @@ One of these identities is considered the **primary Identity** and is accessible
 
 The `ClaimsPrincipal` class also provides a collection of all the claims of all of its Identities. The `ClaimsPrincipal.Claims` property is a consolidation of all the claims of all the identities of a principal.
 
-## A claims example
+## The process
 
+- a requestor user or a service wants to access an application
+- the application presents a login UI to a user or an authentication [End Point](https://en.wikipedia.org/wiki/Web_API#Endpoints) to a service
+- the requestor user/service provides authentication credentials
+- the application goes on to verify the provided credentials. That verification maybe performed by the application itself or an external `Identity Provider`
+- on success the application permits the requestor to enter and prepares a collection of claims about the requestor. These claims may come from the application itself or from an external provider
+- after entering the requestor wants to access an application resource, such as a list of Invoices. The application decides if the requestor is authorized to access the resource based on its claims.
+
+## A claims example
 
 A `using System.Security.Claims;` directive is required when working with claims.
 

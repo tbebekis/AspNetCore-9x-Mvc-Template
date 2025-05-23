@@ -58,4 +58,27 @@ Tag Helpers                 https://learn.microsoft.com/en-us/aspnet/core/mvc/vi
 Display and Editor templates https://learn.microsoft.com/en-us/aspnet/core/mvc/views/display-templates
 
 
+
+
+
+
+public virtual Microsoft.AspNetCore.Identity.IdentityBuilder AddRoleManager<TRoleManager>() where TRoleManager : class;
+
+IAuthorizationFilter		AuthorizeFilter 
+IAuthorizationHandler
+
+AuthorizationPolicyBuilder.RequireRole
+ IClaimsTransformation
+
+JwtRegisteredClaimNames
+
+https://stackoverflow.com/questions/31464359/how-do-you-create-a-custom-authorizeattribute-in-asp-net-core
+https://code-maze.com/custom-authorize-attribute-aspnetcore/
+
+https://codewithmukesh.com/blog/permission-based-authorization-in-aspnet-core/
+
+https://developer.auth0.com/resources/code-samples/api/aspnet-core/basic-role-based-access-control
+https://github.com/auth0-developer-hub/api_aspnet-core_csharp_hello-world
+
+
  
