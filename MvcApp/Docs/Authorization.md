@@ -2,19 +2,19 @@
 
 > This text is part of a group of texts describing an [Asp.Net Core MVC template project](ReadMe.md).
 
-[**Authorization**](https://en.wikipedia.org/wiki/Authorization) is a process that decides if a user has the required permissions in order to access a certain resource provided by an application. 
+[**Authorization**](https://en.wikipedia.org/wiki/Authorization) is a process that decides if a user has the required permissions in order to access a certain protected resource provided by an application. 
 
 ## Authorization types
 
 Regarding authorization Asp.Net Core provides a number of options.
 
-- Simple Authorization.
-- Policy-based Authorization.
-- Scheme-based Authorization.
-- Claims-based Authorization.
-- Role-based Authorization.
-- Resource-based Authorization.
-- Custom Authorization. https://learn.microsoft.com/en-us/aspnet/core/security/authorization/iard
+- [Simple Authorization](https://learn.microsoft.com/en-us/aspnet/core/security/authorization/simple).
+- [Policy-based Authorization](https://learn.microsoft.com/en-us/aspnet/core/security/authorization/policies).
+- [Role-based Authorization](https://learn.microsoft.com/en-us/aspnet/core/security/authorization/roles).
+- [Claims-based Authorization](https://learn.microsoft.com/en-us/aspnet/core/security/authorization/claims).
+- [Scheme-based Authorization](https://learn.microsoft.com/en-us/aspnet/core/security/authorization/limitingidentitybyscheme).
+- [Resource-based Authorization](https://learn.microsoft.com/en-us/aspnet/core/security/authorization/resourcebased).
+- [Custom Authorization](https://learn.microsoft.com/en-us/aspnet/core/security/authorization/iard). 
 
 ## Simple Authorization
 
@@ -56,7 +56,7 @@ public class MyController : Controller
 
 Only the `Action2` of the above controller require authenticated requests.
 
-The [AllowAnonymousAttribute](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.authorization.allowanonymousattribute) attribute allows access to an `Action` of a protected controller to a non-authenticated request.
+The [AllowAnonymousAttribute](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.authorization.allowanonymousattribute) attribute allows access to an `Action` of a protected controller, by a non-authenticated request.
 
 ```
 [Authorize]
@@ -77,15 +77,17 @@ All the actions of the above controller, and its descendants, require authentica
 
 The `AuthorizeAttribute` provides the following properties.
 
-- `AuthenticationSchemes`. A comma-delimited list of strings of the authentication schemes that required in order to gain access.
+- `AuthenticationSchemes`. A comma-delimited list of strings of the authentication schemes that required in order to gain access. Applied using an **or** logic.
 - `Policy`. A string with the name of the policy that required in order to gain access.
-- `Roles`. A comma-delimited list of strings of the roles that required in order to gain access.
+- `Roles`. A comma-delimited list of strings of the roles that required in order to gain access. Applied using an **or** logic.
 
 The `Simple Authentication` does not uses these properties.
 
 ## Policy-based Authorization.
 
 In Asp.Net Core all authorization methods end up to be implemented as policies.
+
+A `Policy` is a code entity which represents a collection of requirements. For a policy evaluation to succeed all of its requirements must meet.
 
 A `Requirement` is a code entity which represents a condition that the current `Identity`, i.e. user, must meet, in order to access a protected resource.
 
@@ -97,11 +99,10 @@ Common requirements are
 
 Besides the above nothing prohibits a requirement from specifying a condition that does not involve claims. That is a requirement may specify a condition that comes from any other source and not from a claim.
 
-A `Policy` is a code entity which represents a collection of requirements. For a policy evaluation to succeed all of its requirements must meet.
 
 #### Applying a Policy
 
-Here is how to apply a policy.
+A policy is applied using the `AuthorizeAttribute`.
 
 ```
 [Authorize(Policy = "Policy1")]
@@ -123,7 +124,7 @@ public class MyController : Controller
     }        
 }
 ```
-When multiple policies are applied to a controller or action, then all of them are required to be satisfied. Multiple policies work like boolean conditions with the and operator.
+When multiple policies are applied to a controller or action, then all of them are required to be satisfied. Multiple policies work like boolean conditions with the **and** operator.
 
 In the above code
 
@@ -132,7 +133,7 @@ In the above code
 - `Action3` requires `Policy1`, `Policy2`, `Policy3` and `Policy4`
 
 
-Here is how to apply a policy in [Minimal API](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis/overview) end point.
+Policies can also be used in [Minimal API](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis/overview) end points.
 
 ```
 app.MapGet("/get-item", () => { ...})
@@ -141,7 +142,9 @@ app.MapGet("/get-item", () => { ...})
 
 #### Creating a Policy
 
-Here is, a totally valid but not common way, of how to create a policy that requires users to be authenticated, using the [AuthorizationPolicy](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.authorization.authorizationpolicy) class.
+A policy can be created using the [AuthorizationPolicy](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.authorization.authorizationpolicy) class. This is a totally valid but not a common way.
+
+In the following example a policy created using the `AuthorizationPolicy` class requires users to be authenticated. 
 
 ```
 List<IAuthorizationRequirement> Requirements = new() { new DenyAnonymousAuthorizationRequirement() };
@@ -150,37 +153,48 @@ List<string> RequiredAuthenticationSchemes = new();
 var MyPolicy = new AuthorizationPolicy(Requirements, RequiredAuthenticationSchemes);
 ```
 
-In creating a policy a common way is to use the [AuthorizationPolicyBuilder](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.authorization.authorizationpolicybuilder
+A common way in creating a policy is to use the [AuthorizationPolicyBuilder](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.authorization.authorizationpolicybuilder
 ) class.
 
-The use of the `AuthorizationPolicyBuilder` class provides properties and methods thus allowing to easily add requirements regarding authentication schemes, claims, roles and even use assertion functions of the form `Func<AuthorizationHandlerContext, bool>`.
+The `AuthorizationPolicyBuilder` class provides properties and methods allowing to easily add requirements regarding authentication schemes, claims, roles and even use assertion functions of the form `Func<AuthorizationHandlerContext, bool>`.
 
 ```
-var policy = new AuthorizationPolicyBuilder()
-  .AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme)
-  .RequireAuthenticatedUser()
-  .RequireRole("Admininstrator")
-  .RequireClaim("Department", "IT")  
-  .RequireAssertion(ctx =>
-  {
-    return ctx.User.HasClaim("Specialty", "SystemEngineer");
-  })
-  .Build();
+AuthorizationPolicy policy = new AuthorizationPolicyBuilder()
+    .AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme)
+    .RequireAuthenticatedUser()
+    .RequireRole("Admininstrator")
+    .RequireClaim("Department", "IT")  
+    .RequireAssertion(ctx =>
+    {
+        return ctx.User.HasClaim("Specialty", "SystemEngineer");
+    })
+    .Build();
 ```
 
 The `Build()` method returns an `AuthorizationPolicy` instance.
 
 #### Registering a Policy
 
-A policy must be registered with the authorization middleware under a unique name.
+A policy must be registered with the authorization middleware **under a unique name**.
 
-The `policy` parameter in the following example is an instance of the `AuthorizationPolicyBuilder` class.
+In the following example 
+- the `options` parameter is an instance of the [AuthorizationOptions](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.authorization.authorizationoptions) class, while
+-  the `policy` parameter is an instance of the `AuthorizationPolicyBuilder` class.
+
+The following example illustrates the most common way in creating a policy and registering it at the same time.
 
 ```
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("POLIY_NAME", policy => { 
-        // code here
+    options.AddPolicy("POLICY_NAME", policy => { 
+        .AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme)
+        .RequireAuthenticatedUser()
+        .RequireRole("Admininstrator")
+        .RequireClaim("Department", "IT")  
+        .RequireAssertion(ctx =>
+        {
+            return ctx.User.HasClaim("Specialty", "SystemEngineer");
+        })
     });
 });
 ```
@@ -191,11 +205,13 @@ It is possible to check programmatically if a policy is met using the [IAuthoriz
 
 That method gets the following parameters.
 
-- ClaimsPrincipal user. The `Identity` to check.
-- object? resource. Optional. A resouce that may required in policy evaluation.
-- string policyName. The policy name.
+- `ClaimsPrincipal user`. The `Identity` to check.
+- `object? resource`. Optional. A resouce that may required in policy evaluation.
+- `string policyName`. The policy name.
  
 Here is how to programmatically check a policy in a controller.
+
+A policy check can be done in a controller.
 
 ```
 public class MyController : Controller
@@ -216,8 +232,7 @@ public class MyController : Controller
     }  
 }
 ```
-
-Here is how to programmatically check a policy in a view.
+A policy check can be done in a view.
 
 ```
 @inject IAuthorizationService AuthService
@@ -245,11 +260,10 @@ The above example requires a using in the `_ViewImports.cshtml` as
 
 A policy requirement is comprised of two components.
 
-- a requirement class that is just data
-- an authorization handler that evaluates that requirement data against the current `Identity` 
+- a requirement class, which is just a plain class, with some data used when evaluating the requirement
+- an [AuthorizationHandler](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.authorization.authorizationhandler-1) authorization handler that evaluates that requirement data against the current `Identity` 
 
-Here is a custom requirement class.
-
+A custom requirement class is an [IAuthorizationRequirement](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.authorization.iauthorizationrequirement) interface  implementor. The truth is that regarding the `IAuthorizationRequirement` there is nothing to implement as it is merely act just as a marker. 
 
 ```
 public class PermissionRequirement : IAuthorizationRequirement
@@ -263,11 +277,20 @@ public class PermissionRequirement : IAuthorizationRequirement
 }
 ```
 
-And here is its associated `AuthorizationHandler`.
+The following example illustrates the registration of a policy with the requirement implemented above.
 
-The passing in `context` is a [AuthorizationHandlerContext](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.authorization.authorizationhandlercontext) instance.
+```
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Item.Create", policy => { policy.Requirements.Add(new PermissionRequirement("Item.Create")); });
+});
+```
 
-The `DataStore.GetUserPermissions(Id)` returns a list of permissions, from a database table, associated to a `Identity`, i.e. user or application, `Id` 
+A requirement class has to be associated to a `AuthorizationHandler`. The handler provides the `HandleRequirementAsync()` overridable method where the requirement evaluation takes place. 
+
+The `context` parameter in the `HandleRequirementAsync()` method is a [AuthorizationHandlerContext](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.authorization.authorizationhandlercontext) instance.
+
+In the following example the `DataStore.GetUserPermissions(Id)` returns a list of permissions, from a database table, associated to an `Identity`, i.e. user or application.
 
 ```
 public class PermissionRequirementHandler : AuthorizationHandler<PermissionRequirement>
@@ -275,26 +298,39 @@ public class PermissionRequirementHandler : AuthorizationHandler<PermissionRequi
     protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionRequirement requirement)
     {
         var IdClaim = context.User.FindFirst(c => c.Type == ClaimTypes.Sid);
-        if (IdClaim is null)
+        if (IdClaim != null)
         {
-            return Task.CompletedTask;
-        }
+            string UserId = IdClaim.Value;
+            List<string> Permissions = DataStore.GetUserPermissions(UserId);
 
-        string Id = IdClaim.Value;
-        List<string> Permissions = DataStore.GetUserPermissions(Id);
-
-        foreach (var Permission in Permissions)
-        {
-            if (string.Compare(Permission, requirement.Permission, StringComparison.OrdinalIgnoreCase) == 0)
+            foreach (var Permission in Permissions)
             {
-                context.Succeed(requirement);
-                return Task.CompletedTask;
-            }
-        } 
+                if (string.Compare(Permission, requirement.Permission, StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    context.Succeed(requirement);
+                    break;
+                }
+            } 
+        }
 
         return Task.CompletedTask;
     }
 }
+```
+
+When a controller action is called then all applied policies are evaluated which is that all associated authorization handlers are called.
+
+By default all authorization handlers will be called even if a previous policy fails. This allows authorization handlers to execute side effects, such as logging.
+
+To change that long-circuit behavior to a short-circuit one the `InvokeHandlersAfterFailure` should be set to `false`.
+
+```
+builder.Services.AddAuthorization(options =>
+{
+    options.InvokeHandlersAfterFailure = false;
+
+    // ...
+});
 ```
 
 The `AuthorizationHandler` must be registered with the Dependency Injection container.
@@ -303,42 +339,154 @@ The `AuthorizationHandler` must be registered with the Dependency Injection cont
 services.AddSingleton<IAuthorizationHandler, PermissionRequirementHandler>();
 ```
 
-Here is the registration of a policy with the above requirement.
+
+#### Policy considerations
+
+- There is no  guarantee that the policy evaluation order is that of the policy registration order.
+- There can be [multiple](https://learn.microsoft.com/en-us/aspnet/core/security/authorization/policies?#why-would-i-want-multiple-handlers-for-a-requirement) `AuthorizationHandler`s for a single requirement.
+- There can be a single `AuthorizationHandler` for [multiple](https://learn.microsoft.com/en-us/aspnet/core/security/authorization/policies?#use-a-handler-for-multiple-requirements) requirements.
+- the `AuthorizationOptions.DefaultPolicy` property defines what policy should be evaluated when the `AuthorizeAttribute` is used without specifying a policy. By default requires authenticated users.
+- the `AuthorizationOptions.FallbackPolicy` property defines what policy should be evaluated when no policies are specified for a resource. Defaults to `null`. 
+- When a policy is applied to a controller action it seems that its associated authorization handler will be called even if the request, i.e. the user, is **not** authenticated. The `policy.RequireAuthenticatedUser()` when registering a policy ensures that the policy will fail if the user is **not** authenticated. Adding the `AuthorizeAttribute` to a controller class or using the `RequireAuthorization()` with a Minimal API end point seems that it has the same effect.
+
+
+## Role-based Authorization.
+
+Role-based Authorization in Asp.Net Core is very simple. It just requires the existence of a claim type in the authenticated request, before access is granted.
+
+An `Identity`, i.e. a user, may have one or more roles, e.g. `Administrator`, `User`, `Guest`, etc.
+
+In the Asp.Net Core it is very easy to enforce authorization when a claim of the `ClaimTypes.Role` type exists in the claim list of an identity.
+
+```
+[Authorize(Roles = "Administrator")]
+public class MyController : Controller
+{
+    public IActionResult Action1()
+    {        
+    }
+}
+```
+
+Multiple roles may specified
+
+- in a single `AuthorizeAttribute` attribute as a comma separated list. In this case roles are used as conditions defined with the **or** operator.
+- using multiple `AuthorizeAttribute` attributes. In this case roles are used as conditions defined with the **and** operator.
+
+```
+
+[Authorize(Roles = "Administrator, Manager")]
+public class MyController : Controller
+{
+    public IActionResult Action1()
+    {        
+    } 
+
+    [Authorize(Roles = "Administrator, CEO")]
+    public IActionResult Action2()
+    {        
+    }
+
+    [Authorize(Roles = "Administrator")]
+    [Authorize(Roles = "Manager")]    
+    public IActionResult Action3()
+    {        
+    }     
+}
+```
+In the above code
+
+- the `Action1` can be accessed by an identity having any of the `Administrator` **or** `Manager` roles
+- the `Action2` can be accessed by an identity having any of the `Administrator` **or** `Manager` **or** `CEO` roles
+- the `Action3` can be accessed by an identity having both the `Administrator` **and** `Manager` roles
+
+A policy can be used to enforce Role-base authorization using the `policy.RequireRole()` when registering a policy. The `RequireRole()` accepts a number of roles and enforces them with the **or** operator.
 
 ```
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("Item.Create", policy => { policy.Requirements.Add(new PermissionRequirement("Item.Create")); });
+    options.AddPolicy("Policy1", policy =>
+          policy.RequireRole("Role1", "Role2", "Role3"));
 });
 ```
-#### Policy considerations
+
+#### Role-based access control (RBAC)
+
+[Role-based access control (RBAC)](https://en.wikipedia.org/wiki/Role-based_access_control) or `Role-based access security` is a widely used method in allowing access to protected resources to authorized requestors only, based on Roles.
+
+Asp.Net Core's `Role-based` authorization is **not** `RBAC`. 
+
+It is possible to apply `RBAC` authorization in Asp.Net Core using `Policy-based` authorization.
+
+Generally an `RBAC` system involves the following.
+
+- `Permission`. A string denoting what an identity can do, such as `Item.Create`, `Item.Edit`, `Item.Delete`, etc.
+- `Role`. A string denoting a set of permissions, such as `Administrator`, `Manager`, etc.
+- `RolePermissions`. A list of permissions assigned to a particular role.
+- `User`. An identity.
+- `UserRoles`. A list of roles assigned to a perticular identity.
+
+Permissions are not assigned directly to users. A user aquires permissions indirectlry via the roles he is a member of.
 
 
+## Claims-based Authorization
 
+Claims authorization is policy based. The application has to register a policy expressing the claims requirements.
 
+```
+var builder = WebApplication.CreateBuilder(args);
 
+// some services here
+// ... 
 
+// ● Authorization
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Administrator", policy => policy.RequireClaim(ClaimTypes.Role, "Administrator"));
 
+    options.AddPolicy("Manager", policy => policy.RequireClaim(ClaimTypes.Role, "Manager"));
+});
 
+//...
 
+var app = builder.Build();
 
+// some middlewares here
+// ...
 
+app.UseAuthentication();
+app.UseAuthorization();
 
+app.MapControllerRoute(...);
 
+app.Run();
+```
 
+Although the above example uses the `ClaimTypes.Role` claim type, claims-based authorization works with any claim type, as long as a policy is registered expressing a requirement about a claim.
 
+Here an overload of the `RequireClaim(string claimType, params string[] allowedValues)` method is used which accepts both the claim type and its possible values. In this overload both the claim type and its possible values is the requirement.
 
+There is another overload as `RequireClaim(string claimType)` where only the existence of a specified claim type is the requirement. 
 
+Here is how to authorize access based on claims enforced by policies.
 
+When multiple policies are applied to a controller or action, then all of them are required to be satisfied. Multiple policies work like boolean conditions with the **and** operator.
 
+```
+[Authorize(Policy = "Administrator")]
+[Authorize(Policy = "Manager")]
+public class AllController : Controller
+{
+    //...
+}
 
+[Authorize(Policy = "Administrator")]
+public class AdminOnlyController : Controller
+{
+    //...
+} 
+```
 
-
-
-
-
-
- 
 ## Scheme-based Authorization
 
 There are cases where an application has to use multiple authentication methods, i.e. [Authentication Schemes](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/#authentication-scheme).
@@ -399,7 +547,7 @@ There are two ways to enforce authorization using an `Authentication Scheme`.
 - using the `AuthorizeAttribute`
 - using a `Policy`
 
-#### Enforce Authentication Scheme using the AuthorizeAttribute attribute
+#### Enforce Scheme-based Authorization using the AuthorizeAttribute attribute
 
 Here is how to authorize access based on an authentication scheme.
 
@@ -422,7 +570,7 @@ public class JwtOnlyController : Controller
     //...
 }
 ```
-#### Enforce Authentication Scheme using Policies 
+#### Enforce Scheme-based Authorization using Policies 
 
 Policies may added using the `AddAuthorization()`.
 
@@ -503,74 +651,198 @@ public class JwtOnlyController : Controller
 ```
 
 
+## Resource-based Authorization
 
+Resource-based authorization depends in both, the requestor identity **and** the resource.
 
-## Claims-based Authorization
+This means that the resource must first be retrieved from the data store and then the authorization evaluation must be applied.
 
-Claims authorization is policy based. The application has to register a policy expressing the claims requirements.
+Resource-based authorization can not be applied using `declarative` authorization, i.e. the `AuthorizeAttribute`.
+
+Instead it is applied using `imperative` authorization, i.e. using an authorization handler.
+
+The following examples use a `BlogPost` entity, as resource and its `AuthorIdList` property in the evaluation process.
 
 ```
-var builder = WebApplication.CreateBuilder(args);
+public class BlogPost
+{
+    public string Id { get; set; }
+    public string Title { get; set; }
+    public string Text { get; set; }
 
-// some services here
-// ... 
+    // ...
 
-// ● Authorization
+    public List<string> AuthorIdList { get; set; }
+}
+```
+
+A requirement is needed, which is just an empty class.
+
+```
+public class BlogPostAuthorRequirement : IAuthorizationRequirement 
+{     
+}
+```
+
+A policy with that requirement should be registered.
+
+```
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("Administrator", policy => policy.RequireClaim(ClaimTypes.Role, "Administrator"));
+    options.AddPolicy("BlogPostAuthorPolicy", policy => { 
+        .AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme)
+        .RequireAuthenticatedUser()
+        .Requirements.Add(new BlogPostAuthorRequirement())
+        ;
+    });
 
-    options.AddPolicy("Manager", policy => policy.RequireClaim(ClaimTypes.Role, "Manager"));
 });
-
-//...
-
-var app = builder.Build();
-
-// some middlewares here
-// ...
-
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.MapControllerRoute(...);
-
-app.Run();
 ```
 
-Although the above example uses the `ClaimTypes.Role` claim type, claims-based authorization works with any claim type, as long as a policy is registered expressing a requirement about a claim.
-
-Here an overload of the `RequireClaim(string claimType, params string[] allowedValues)` method is used which accepts both the claim type and its possible values. In this overload both the claim type and its possible values is the requirement.
-
-There is another overload as `RequireClaim(string claimType)` where only the existence of a specified claim type is the requirement. 
-
-Here is how to authorize access based on claims enforced by policies.
-
-When multiple policies are applied to a controller or action, then all of them are required to be satisfied. Multiple policies work like boolean conditions with the **and** operator.
+The evaluation is performed by a custom authorization handler. In this handler the second overload of the `HandleRequirementAsync()` method should be used, the one that accepts a resource too.
 
 ```
-[Authorize(Policy = "Administrator")]
-[Authorize(Policy = "Manager")]
-public class AllController : Controller
+public class BlogPostAuthorAuthorizationHandler : AuthorizationHandler<BlogPostAuthorRequirement, BlogPost>
 {
-    //...
+    protected override Task HandleRequirementAsync(
+        AuthorizationHandlerContext context,
+        BlogPostAuthorRequirement requirement,
+        BlogPost resource)
+    {
+        var IdClaim = context.User.FindFirst(c => c.Type == ClaimTypes.Sid);
+        if (IdClaim != null)
+        {
+            string UserId = IdClaim.Value;
+
+            foreach (string AuthorId in resource.AuthorIdList)
+            {
+                if (string.Compare(UserId, AuthorId, StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    context.Succeed(requirement);
+                    break;
+                }
+            }  
+        }
+
+        return Task.CompletedTask; 
+    }
 }
+```
 
-[Authorize(Policy = "Administrator")]
-public class AdminOnlyController : Controller
+The authorization handler has to be registered too.
+
+```
+builder.Services.AddTransient<IAuthorizationHandler, BlogPostAuthorAuthorizationHandler>();
+```
+
+The controller action method that returns the resource for editing has to use the `IAuthorizationService` and call its `AuthorizeAsync()` passing the resource too. That way the authorization handler is called and the evaluation takes place.
+
+```
+public class BlogController : Controller
 {
-    //...
-} 
+    IAuthorizationService AuthService;
+
+    public BlogController(IAuthorizationService authorizationService)
+    {
+        AuthService = authorizationService;
+    }
+
+    [HttpGet("/blog/update/{blogpostid}", Name = "UpdateBlogPost")]
+    public async Task<IActionResult> UpdateBlogPost(string BlogPostId) 
+    {
+        BlogPost Entity =  DataStore.GetBlobPost(BlogPostId);
+
+        AuthorizationResult AuthResult = await AuthService.AuthorizeAsync(User, Entity, "BlogPostAuthorPolicy");
+        if (!AuthResult.Succeeded)
+            return new ForbiddenResult();
+
+        // ...
+
+        return View(Entity);
+    }  
+}
 ```
 
 
+## Custom Authorization
 
-## Role-based Authorization.
+Asp.Net Core docs talk about `Custom Authorization` but what it describes is not very different from what is already presented in this text.
 
-Role-based Authorization in Asp.Net Core is very simple. It just requires the existence of a claim type in the authenticated request before access is granted.
+The difference is that docs propose to create `AuthorizeAttribute` derived classes that implement the `IAuthorizationRequirement` and [IAuthorizationRequirementData](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.authorization.iauthorizationrequirementdata) interfaces.
 
+```
+public class CustomAuthorizeAttribute: AuthorizeAttribute, 
+    IAuthorizationRequirement, IAuthorizationRequirementData
+{
+
+    public CustomAuthorizeAttribute()
+    {        
+    }
+
+    public string Term1 { get; set; }
+    public decimal Term2 { get; set; }
+    // etc
+
+    public IEnumerable<IAuthorizationRequirement> GetRequirements()
+    {
+        yield return this;
+    }  
+}
+```
+
+An authorization handler is required.
+
+```
+public class CustomAuthorizationHandler : AuthorizationHandler<CustomAuthorizeAttribute>
+{
+    protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, CustomAuthorizeAttribute requirement)
+    {
+        // ...
+    }
+}
+```
+
+Handler registration is required.
+
+```
+builder.Services.AddSingleton<IAuthorizationHandler, CustomAuthorizationHandler>();
+```
+
+The custom authorization attribute can be used everywhere an `AuthorizeAttribute` can be used.
+
+```
  
+public class MyController : Controller
+{
+    [CustomAuthorize(Term1 = "Some Value", Term2 = 123.45)]
+    public ActionResult Action1() 
+    {
+    }
+}
+```
+
+The new consept in what docs refer to as `Custom Authorization` is that there is an `AuthorizeAttribute` derived class which is a requirement too, since it implements the `IAuthorizationRequirement` interface, and because it is also a `IAuthorizationRequirementData` interface instance, is able to return that requirement by its `GetRequirements()` method.
 
 
 
-[Role-based access control (RBAC)](https://en.wikipedia.org/wiki/Role-based_access_control) or `Role-based access security` is a widely used method in allowing access to protected resources to authorized requestors only, based on Roles.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
