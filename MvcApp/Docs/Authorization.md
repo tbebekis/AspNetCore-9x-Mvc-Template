@@ -18,7 +18,7 @@ Regarding authorization Asp.Net Core provides a number of options.
 
 ## Simple Authorization
 
-The [AuthorizeAttribute](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.authorization.authorizeattribute) attribute controlls authorization.
+The [AuthorizeAttribute](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.authorization.authorizeattribute) attribute controls authorization.
 
 When placed on a controller then all controller actions required an authenticated request.
 
@@ -208,8 +208,7 @@ That method gets the following parameters.
 - `ClaimsPrincipal user`. The `Identity` to check.
 - `object? resource`. Optional. A resouce that may required in policy evaluation.
 - `string policyName`. The policy name.
- 
-Here is how to programmatically check a policy in a controller.
+
 
 A policy check can be done in a controller.
 
@@ -263,7 +262,7 @@ A policy requirement is comprised of two components.
 - a requirement class, which is just a plain class, with some data used when evaluating the requirement
 - an [AuthorizationHandler](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.authorization.authorizationhandler-1) authorization handler that evaluates that requirement data against the current `Identity` 
 
-A custom requirement class is an [IAuthorizationRequirement](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.authorization.iauthorizationrequirement) interface  implementor. The truth is that regarding the `IAuthorizationRequirement` there is nothing to implement as it is merely act just as a marker. 
+A custom requirement class is an [IAuthorizationRequirement](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.authorization.iauthorizationrequirement) interface  implementor. The truth is that regarding the `IAuthorizationRequirement` there is nothing to implement as it merely acts as just a marker. 
 
 ```
 public class PermissionRequirement : IAuthorizationRequirement
@@ -297,20 +296,26 @@ public class PermissionRequirementHandler : AuthorizationHandler<PermissionRequi
 {
     protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionRequirement requirement)
     {
-        var IdClaim = context.User.FindFirst(c => c.Type == ClaimTypes.Sid);
-        if (IdClaim != null)
-        {
-            string UserId = IdClaim.Value;
-            List<string> Permissions = DataStore.GetUserPermissions(UserId);
+        var User = context.User;
+        bool IsAuthenticated = User != null && User.Identity != null ? User.Identity.IsAuthenticated : false;
 
-            foreach (var Permission in Permissions)
+        if (IsAuthenticated)
+        {
+            var IdClaim = context.User.FindFirst(c => c.Type == ClaimTypes.Sid);
+            if (IdClaim != null)
             {
-                if (string.Compare(Permission, requirement.Permission, StringComparison.OrdinalIgnoreCase) == 0)
+                string UserId = IdClaim.Value;
+                List<string> Permissions = DataStore.GetUserPermissions(UserId);
+
+                foreach (var Permission in Permissions)
                 {
-                    context.Succeed(requirement);
-                    break;
-                }
-            } 
+                    if (string.Compare(Permission, requirement.Permission, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        context.Succeed(requirement);
+                        break;
+                    }
+                } 
+            }
         }
 
         return Task.CompletedTask;
@@ -420,8 +425,8 @@ It is possible to apply `RBAC` authorization in Asp.Net Core using `Policy-based
 
 Generally an `RBAC` system involves the following.
 
-- `Permission`. A string denoting what an identity can do, such as `Item.Create`, `Item.Edit`, `Item.Delete`, etc.
-- `Role`. A string denoting a set of permissions, such as `Administrator`, `Manager`, etc.
+- `Permission`. A string, such as `Item.Create`, `Item.Edit`, `Item.Delete`, etc. denoting what an identity can do,
+- `Role`. A string, such as `Administrator`, `Manager`, etc. containing a list of permissions.
 - `RolePermissions`. A list of permissions assigned to a particular role.
 - `User`. An identity.
 - `UserRoles`. A list of roles assigned to a perticular identity.
@@ -536,7 +541,7 @@ app.MapControllerRoute(...);
 app.Run();
 ```
 
-Every authentication scheme added to configuration service has its own discrete name.
+Every authentication scheme added to authentication service has its own discrete name.
  
 The above code adds two authentication schemes under specific names.
 
@@ -661,7 +666,7 @@ Resource-based authorization can not be applied using `declarative` authorizatio
 
 Instead it is applied using `imperative` authorization, i.e. using an authorization handler.
 
-The following examples use a `BlogPost` entity, as resource and its `AuthorIdList` property in the evaluation process.
+The following examples use a `BlogPost` entity, as resource, and its `AuthorIdList` property in the evaluation process.
 
 ```
 public class BlogPost
@@ -689,13 +694,7 @@ A policy with that requirement should be registered.
 ```
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("BlogPostAuthorPolicy", policy => { 
-        .AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme)
-        .RequireAuthenticatedUser()
-        .Requirements.Add(new BlogPostAuthorRequirement())
-        ;
-    });
-
+    options.AddPolicy("BlogPostAuthorPolicy", policy => policy.Requirements.Add(new BlogPostAuthorRequirement()));
 });
 ```
 
@@ -709,19 +708,26 @@ public class BlogPostAuthorAuthorizationHandler : AuthorizationHandler<BlogPostA
         BlogPostAuthorRequirement requirement,
         BlogPost resource)
     {
-        var IdClaim = context.User.FindFirst(c => c.Type == ClaimTypes.Sid);
-        if (IdClaim != null)
-        {
-            string UserId = IdClaim.Value;
 
-            foreach (string AuthorId in resource.AuthorIdList)
+        var User = context.User;
+        bool IsAuthenticated = User != null && User.Identity != null ? User.Identity.IsAuthenticated : false;
+
+        if (IsAuthenticated)
+        {
+            var IdClaim = context.User.FindFirst(c => c.Type == ClaimTypes.Sid);
+            if (IdClaim != null)
             {
-                if (string.Compare(UserId, AuthorId, StringComparison.OrdinalIgnoreCase) == 0)
+                string UserId = IdClaim.Value;
+
+                foreach (string AuthorId in resource.AuthorIdList)
                 {
-                    context.Succeed(requirement);
-                    break;
-                }
-            }  
+                    if (string.Compare(UserId, AuthorId, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        context.Succeed(requirement);
+                        break;
+                    }
+                }  
+            }
         }
 
         return Task.CompletedTask; 
