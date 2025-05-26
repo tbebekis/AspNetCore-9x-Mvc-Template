@@ -22,7 +22,8 @@
  
             if (!string.IsNullOrWhiteSpace(Id))
             {
-                Result = DataStore.GetRequestorById(Id);
+                ItemDataResult<IRequestor> ItemResult = DataStore.GetAppUserById(Id);
+                Result = ItemResult.Succeeded ? ItemResult.Item : null;
             }  
 
             return Result;
@@ -35,8 +36,7 @@
         /// </summary>
         public UserRequestContext(IHttpContextAccessor HttpContextAccessor)
             : base(HttpContextAccessor)
-        {           
-            bool xxx = IsAuthenticated;
+        {       
         }
 
         // ● public 
@@ -85,7 +85,7 @@
             {
                 if (fRequestor == null)
                 {
-                    string Id = UserRequestor.GetRequestorId(UserClaimList);  // we have Requestor.Id stored in ClaimTypes.NameIdentifier claim
+                    string Id = UserRequestor.GetUserId(UserClaimList);  // we have Requestor.Id stored in ClaimTypes.Sid claim
                     fRequestor = !string.IsNullOrWhiteSpace(Id) ? GetRequestor(Id) : UserRequestor.Default;
                 }
 
@@ -125,7 +125,7 @@
         /// </summary>
         public bool IsImpersonation
         {
-            get { return UserRequestor.GetRequestorIsImpersonation(UserClaimList); }   
+            get { return UserRequestor.GetIsUserImpersonation(UserClaimList); }   
             private set {  Session.Set<bool>("IsImpersonation", value);  }
         }
 

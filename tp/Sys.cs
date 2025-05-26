@@ -7,10 +7,13 @@ namespace tp
     /// </summary>
     static public class Sys
     {
+        // ● constants
         /// <summary>
         /// Used when calling async methods as synchronous
         /// </summary>
         static public readonly TaskFactory TaskFactory = new TaskFactory(CancellationToken.None, TaskCreationOptions.None, TaskContinuationOptions.None, TaskScheduler.Default);
+        
+        public const string SDefaultId = "00000000-0000-0000-0000-000000000000";
 
         // ● construction 
         /// <summary>
@@ -154,6 +157,24 @@ namespace tp
 
             byte[] Data = Convert.FromBase64String(Value);
             return Enc.GetString(Data);
+        }
+
+        // ● miscs 
+        /// <summary>
+        /// Creates and returns a new Guid.
+        /// <para>If UseBrackets is true, the new guid is surrounded by {}</para>
+        /// </summary>
+        static public string GenId(bool UseBrackets)
+        {
+            string format = UseBrackets ? "B" : "D";
+            return Guid.NewGuid().ToString(format).ToUpper();
+        }
+        /// <summary>
+        /// Creates and returns a new Guid WITHOUT surrounding brackets, i.e. {}
+        /// </summary>
+        static public string GenId()
+        {
+            return GenId(false);
         }
 
         // ● properties

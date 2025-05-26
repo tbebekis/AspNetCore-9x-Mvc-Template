@@ -7,6 +7,8 @@ global using System.IO;
 global using System.Text;
 global using System.Text.Encodings.Web;
 global using System.ComponentModel;
+global using System.ComponentModel.DataAnnotations;
+global using System.ComponentModel.DataAnnotations.Schema;
 global using System.Data;
 global using System.Linq;
 global using System.Security.Claims;
@@ -31,6 +33,8 @@ global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.FileProviders;
 global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.Localization;
+
+global using Microsoft.EntityFrameworkCore;
 
 global using Newtonsoft.Json;
 global using Newtonsoft.Json.Converters;

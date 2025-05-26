@@ -1,5 +1,6 @@
 ﻿namespace MvcApp.Library
 {
+    /*
     static public partial class DataStore
     {
         // ● private
@@ -8,20 +9,7 @@
         /// </summary>
         static bool ValidatePassword(string PlainTextPassword, string Base64SaltKey, string Base64HashedPassword)
         {
-            return true;
-
-            /* TODO: ValidatePassword - Password should come from database
-             
-            if (string.IsNullOrWhiteSpace(PlainTextPassword) || string.IsNullOrWhiteSpace(Base64SaltKey))
-                return false;
-
-            var Settings = GetSettings();
-            string SuperUserPassword = Settings.General.SuperUserPassword;
-            if (!string.IsNullOrWhiteSpace(SuperUserPassword) && (PlainTextPassword == SuperUserPassword))
-                return true;
-
-            return Hasher.Validate(PlainTextPassword, Base64HashedPassword, Base64SaltKey);
-            */
+            return true; 
         }
  
         // ● public
@@ -108,4 +96,6 @@
             return false;
         }
     }
+
+    */
 }

@@ -26,16 +26,16 @@
             {
                 if (context.Principal.Identity.IsAuthenticated)
                 {
-                    Claim Claim = context.Principal.FindFirst(ClaimTypes.NameIdentifier); // we have Requestor.Id stored in ClaimTypes.NameIdentifier claim
+                    Claim Claim = context.Principal.FindFirst(ClaimTypes.Sid); // we have Requestor.Id stored in ClaimTypes.Sid claim
                     string RequestorId = WLib.GetClaimValue<string>(Claim);
-                    IRequestor Requestor = DataStore.GetRequestorById(RequestorId); 
+                    ItemDataResult<IRequestor> ItemResult = DataStore.GetAppUserById(RequestorId); 
 
                     // it is the Id claim and must be there
-                    if (Claim != null && Requestor != null)
+                    if (Claim != null && ItemResult.Succeeded)
                     {
                         // Requestor is blocked  but we still have a logged-in Requestor
                         // so we must sign-out and return
-                        if (Requestor.IsBlocked)
+                        if (ItemResult.Item.IsBlocked)
                         {
                             context.RejectPrincipal();
 

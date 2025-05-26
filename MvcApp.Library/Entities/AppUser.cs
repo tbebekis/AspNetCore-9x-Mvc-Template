@@ -1,37 +1,47 @@
 ﻿namespace MvcApp.Library
 {
-    /// <summary>
-    /// Represents a user of this application
-    /// </summary>
     public class AppUser: IRequestor
     {
         static AppUser fDefault;
+
+        public AppUser()
+        {
+        }
+        public AppUser(string Id, string UserName, string Email, string PlainTextPassword)
+        {
+            this.Id = Id;
+            this.UserName = UserName;
+            this.Name = Name;
+            this.Email = Email;
+            this.PasswordSalt = Hasher.GenerateSalt();
+            this.Password = Hasher.Hash(PlainTextPassword, this.PasswordSalt);
+        }
  
+        public override string ToString()
+        {
+            return Name;
+        }
+
         // ● properties
         /// <summary>
         /// Required. 
         /// <para><strong>Unique.</strong></para>
         /// <para>Database Id or something similar.</para>
         /// </summary>
+        [Key]
         public string Id { get; set; } = "";
         /// <summary>
-        /// The level of a user, i.e. Guest, Admin, User, etc.
+        /// Required. 
+        /// <para><strong>Unique.</strong></para>
         /// </summary>
-        public UserLevel Level { get; set; }
+        public string UserName { get; set; }
         /// <summary>
         /// Required. 
         /// <para><strong>Unique.</strong></para>
-        /// <para><c>Email</c> or <c>UserName</c>, when <see cref="Level"/> is <see cref="UserLevel.User"/>, <see cref="UserLevel.Admin"/> or <see cref="UserLevel.Guest"/>.</para>
-        /// <para><c>ClientId</c> when <see cref="Level"/> is <see cref="UserLevel.ClientApp"/> or <see cref="UserLevel.Service"/>.</para>
+        /// <para>Email or UserName when this is a person.</para>
+        /// <para>ClientId when this is a client application or service.</para>
         /// </summary> 
-        public string AccountId { get; set; }
-        /// <summary>
-        /// Required. 
-        /// <para><strong>Unique.</strong></para>
-        /// <para><c>Email</c> or <c>UserName</c>, when <see cref="Level"/> is <see cref="UserLevel.User"/>, <see cref="UserLevel.Admin"/> or <see cref="UserLevel.Guest"/>.</para>
-        /// <para><c>ClientId</c> when <see cref="Level"/> is <see cref="UserLevel.ClientApp"/> or <see cref="UserLevel.Service"/>.</para>
-        /// </summary> 
-        public string UserId => AccountId;
+        public string AccountId { get { return UserName; } set { } }
         /// <summary>
         /// The user password encrypted
         /// </summary>
@@ -52,10 +62,6 @@
         /// True when requestor is blocked by admins
         /// </summary>
         public bool IsBlocked { get; set; }
-        /// <summary>
-        /// When true the user is activated
-        /// </summary>
-        public bool IsActivated { get; set; }
 
         /// <summary>
         /// Returns the default user. A fake user.
@@ -68,20 +74,17 @@
                 {
                     fDefault = new AppUser();
 
-                    fDefault.Id = DataStore.SDefaultId;
-                    fDefault.Level = UserLevel.Guest;
+                    fDefault.Id = Sys.SDefaultId;
 
-                    fDefault.AccountId = "Default";
                     fDefault.Name = "Default";
                     fDefault.Email = "";
                     fDefault.IsBlocked = false;
-                    fDefault.IsActivated = true;
                     fDefault.Password = "password";
                     fDefault.PasswordSalt = "salt";
                 }
-                    
+
                 return fDefault;
-            }             
+            }
         }
     }
 }

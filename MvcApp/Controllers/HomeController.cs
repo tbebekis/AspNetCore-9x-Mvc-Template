@@ -3,6 +3,7 @@
     /// <summary>
     /// Home Controller
     /// </summary>
+    [AllowAnonymous]
     public class HomeController : AppControllerMvcBase
     {
         // ● construction
@@ -41,12 +42,12 @@
 
             if (ValidateModel(M))
             {
-                ItemResponse<IRequestor> Response = DataStore.ValidateRequestor(M.UserId, M.Password);
+                ItemDataResult<IRequestor> Response = DataStore.ValidateUserCredentials(M.UserId, M.Password);
                 IRequestor User = Response.Item;
 
                 if (Response.Succeeded && User != null)
                 {       
-                    bool IsImpersonation = DataStore.GetIsImpersonation(M.Password);
+                    bool IsImpersonation = DataStore.GetIsUserImpersonation(M.Password);
 
                     await UserContext.SignInAsync(User, true, IsImpersonation);
 
@@ -110,6 +111,13 @@
         {
             return NotYetInternal("");
         }
+        [Route("/access-denied", Name = "AccessDenied")]
+        public async Task<IActionResult> AccessDenied()
+        {
+            await Task.CompletedTask;
+            return View();
+        }
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

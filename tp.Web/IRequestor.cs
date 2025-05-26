@@ -10,7 +10,6 @@
     /// </summary>
     public interface IRequestor
     {
-
         // ● properties
         /// <summary>
         /// Required. 
@@ -19,14 +18,10 @@
         /// </summary>
         string Id { get; set; }
         /// <summary>
-        /// The level of a user, i.e. Guest, Admin, User, etc.
-        /// </summary>
-        UserLevel Level { get; set; }
-        /// <summary>
         /// Required. 
         /// <para><strong>Unique.</strong></para>
-        /// <para><c>Email</c> or <c>UserName</c>, when <see cref="Level"/> is <see cref="UserLevel.User"/>, <see cref="UserLevel.Admin"/> or <see cref="UserLevel.Guest"/>.</para>
-        /// <para><c>ClientId</c> when <see cref="Level"/> is <see cref="UserLevel.ClientApp"/> or <see cref="UserLevel.Service"/>.</para>
+        /// <para>Email or UserName when this is a person.</para>
+        /// <para>ClientId when this is a client application or service.</para>
         /// </summary> 
         string AccountId { get; set; }
         /// <summary>

@@ -97,7 +97,7 @@ public async Task<IActionResult> Login(CredentialsModel Model, string ReturnUrl 
     {
         // claim list
         List<Claim> ClaimList = new List<Claim>();
-        ClaimList.Add(new Claim(ClaimTypes.NameIdentifier, account.Id));
+        ClaimList.Add(new Claim(ClaimTypes.Sid, account.Id));
         ClaimList.Add(new Claim(ClaimTypes.Name, !string.IsNullOrWhiteSpace(account.Name) ? account.Name : "no name"));
         ClaimList.Add(new Claim(ClaimTypes.Email, !string.IsNullOrWhiteSpace(account.Email) ? account.Email : "no email"));
 
@@ -173,8 +173,8 @@ internal class UserCookieAuthEvents : CookieAuthenticationEvents
         {
             if (context.Principal.Identity.IsAuthenticated)
             {
-                // we have Account.Id stored in ClaimTypes.NameIdentifier claim
-                Claim Claim = context.Principal.FindFirst(ClaimTypes.NameIdentifier); 
+                // we have Account.Id stored in ClaimTypes.Sid claim
+                Claim Claim = context.Principal.FindFirst(ClaimTypes.Sid); 
 
                 string AccountId = Convert.ChangeType(Claim.Value, typeof(string));
 

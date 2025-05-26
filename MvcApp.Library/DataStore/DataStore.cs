@@ -7,8 +7,6 @@
     /// </summary>
     static public partial class DataStore
     {
-        // ● constants
-        public const string SDefaultId = "00000000-0000-0000-0000-000000000000";
 
         // ● private
         /// <summary>
@@ -31,5 +29,54 @@
             // nothing
         }
 
+        static public AppDbContext GetDbContext()
+        {
+            HttpContext HttpContext = WLib.GetHttpContext();
+
+            IServiceScope Scope = HttpContext.RequestServices.CreateScope();
+            AppDbContext Result = Scope.ServiceProvider.GetService<AppDbContext>();
+
+            return Result;
+        }
+
+
+        /// <summary>
+        /// Returns a user from database found under a specified Id, if any, else null.
+        /// </summary>
+        static public ItemDataResult<IRequestor> GetAppUserById(string Id)
+        {
+            ItemDataResult<IRequestor> Result = new();
+
+            using (AppDbContext context = GetDbContext())
+            {
+                AppUser User = context.Users.FirstOrDefault(x => x.Id == Id);
+                if (User == null)
+                {
+                    Result.AddError($"User not found. Id {Id}");
+                }
+                else
+                {
+                    Result.Item = User;
+                }
+            }
+                
+            return Result;
+        }
+        /// <summary>
+        /// Validates the specified user credentials and returns a <see cref="IRequestor"/> on success, else null.
+        /// </summary>
+        static public ItemDataResult<IRequestor> ValidateUserCredentials(string UserId, string Password)
+        {
+            return null;
+        }
+        /// <summary>
+        /// Returns true if the requestor is impersonating another user, by using a super user password
+        /// </summary>
+        static public bool GetIsUserImpersonation(string PlainTextPassword)
+        {
+            // TODO: GetIsImpersonation() - Requestor should come from database
+            // bool IsImpersonation = !string.IsNullOrWhiteSpace(Settings.General.SuperUserPassword) && Settings.General.SuperUserPassword == M.Password;
+            return false;
+        }
     }
 }

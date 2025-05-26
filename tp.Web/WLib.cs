@@ -5,7 +5,7 @@
     /// </summary>
     static public partial class WLib
     {
-        static ObjectMapper fObjectMapper;
+        static IObjectMapper fObjectMapper;
 
         /// <summary>
         /// Initializes this class
@@ -184,16 +184,7 @@
         {
             return Res.GetString(Key, Key, WebContext.Culture);
         }
-        /// <summary>
-        /// Configures the <see cref="ObjectMapperInternal"/> by calling the <see cref="ObjectMapperInternal.Configure"/>() method.
-        /// <para>CAUTION: This method should be called after all interested parts of the application have called the <see cref="IObjectMapper.Add(Type, Type, bool)"/>
-        /// in order to add their object mappings to the mapper.</para>
-        /// <para>After this call, calling <see cref="IObjectMapper.Add(Type, Type, bool)"/> will throw an exception.</para>
-        /// </summary>
-        static public void ConfigureObjectMapper()
-        {
-            ObjectMapperInternal.Configure();
-        }
+ 
         /// <summary>
         /// Returns true when the request is an Ajax request
         /// </summary>
@@ -211,6 +202,9 @@
         static public IWebContext WebContext { get; private set; }
         /// <summary>
         /// Returns the <see cref="IObjectMapper"/> object mapper.
+        /// <para>The application may provide its own mapper.</para>
+        /// <para>The default mapper is a wrapper to the excellent AutoMaper library.</para>
+        /// <para>SEE: https://automapper.org/ </para>
         /// </summary>
         static public IObjectMapper ObjectMapper
         {
@@ -220,6 +214,10 @@
                     fObjectMapper = new ObjectMapper();
 
                 return fObjectMapper;
+            }
+            set
+            {
+                fObjectMapper = value;
             }
         }
  

@@ -772,38 +772,60 @@ public class BlogController : Controller
 
 ## Custom Authorization
 
-Asp.Net Core docs talk about `Custom Authorization` but what it describes is not very different from what is already presented in this text.
+In Asp.Net Core is possible to apply [Custom Authorization](https://learn.microsoft.com/en-us/aspnet/core/security/authorization/iard) using an `AuthorizeAttribute` derived class.
 
-The difference is that docs propose to create `AuthorizeAttribute` derived classes that implement the `IAuthorizationRequirement` and [IAuthorizationRequirementData](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.authorization.iauthorizationrequirementdata) interfaces.
+ That custom `AuthorizeAttribute` derived class
+ 
+ - is also a requirement, because it implements the `IAuthorizationRequirement` interface
+ - and should also implement the [IAuthorizationRequirementData](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.authorization.iauthorizationrequirementdata) interface which returns the requirement.
 
 ```
-public class CustomAuthorizeAttribute: AuthorizeAttribute, 
-    IAuthorizationRequirement, IAuthorizationRequirementData
+public class PermissionAttribute : AuthorizeAttribute,IAuthorizationRequirement, IAuthorizationRequirementData
 {
-
-    public CustomAuthorizeAttribute()
-    {        
+    public PermissionAttribute(string permissionName)
+    {
+        PermissionName = permissionName;
     }
 
-    public string Term1 { get; set; }
-    public decimal Term2 { get; set; }
-    // etc
+    public string PermissionName { get; set; }
 
     public IEnumerable<IAuthorizationRequirement> GetRequirements()
     {
         yield return this;
-    }  
+    }
 }
 ```
 
 An authorization handler is required.
 
 ```
-public class CustomAuthorizationHandler : AuthorizationHandler<CustomAuthorizeAttribute>
+public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionAttribute>
 {
-    protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, CustomAuthorizeAttribute requirement)
+    protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionAttribute requirement)
     {
-        // ...
+        var User = context.User;
+        bool IsAuthenticated = User != null && User.Identity != null ? User.Identity.IsAuthenticated : false;
+
+        if (IsAuthenticated)
+        {
+            var IdClaim = context.User.FindFirst(c => c.Type == ClaimTypes.Sid);
+            if (IdClaim != null)
+            {
+                string UserId = IdClaim.Value;
+                List<AppPermission> Permissions = DataStore.GetUserPermissions(UserId);
+
+                foreach (var Permission in Permissions)
+                {
+                    if (string.Compare(Permission.Name, requirement.PermissionName, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        context.Succeed(requirement);
+                        break;
+                    }
+                }
+            }
+        }
+
+        return Task.CompletedTask;
     }
 }
 ```
@@ -811,7 +833,7 @@ public class CustomAuthorizationHandler : AuthorizationHandler<CustomAuthorizeAt
 Handler registration is required.
 
 ```
-builder.Services.AddSingleton<IAuthorizationHandler, CustomAuthorizationHandler>();
+builder.Services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
 ```
 
 The custom authorization attribute can be used everywhere an `AuthorizeAttribute` can be used.
@@ -820,14 +842,14 @@ The custom authorization attribute can be used everywhere an `AuthorizeAttribute
  
 public class MyController : Controller
 {
-    [CustomAuthorize(Term1 = "Some Value", Term2 = 123.45)]
+    [Permission("SomePermission")]
     public ActionResult Action1() 
     {
     }
 }
 ```
 
-The new consept in what docs refer to as `Custom Authorization` is that there is an `AuthorizeAttribute` derived class which is a requirement too, since it implements the `IAuthorizationRequirement` interface, and because it is also a `IAuthorizationRequirementData` interface instance, is able to return that requirement by its `GetRequirements()` method.
+> Using Asp.Net Core `Custom Authorization` authorization makes it easy to implement [RBAC](https://en.wikipedia.org/wiki/Role-based_access_control).
 
 
 

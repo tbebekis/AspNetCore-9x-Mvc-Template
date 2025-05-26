@@ -149,6 +149,9 @@
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}")
                 .WithStaticAssets();
+
+
+            WLib.ObjectMapper.Configure();
         }
     }
 }

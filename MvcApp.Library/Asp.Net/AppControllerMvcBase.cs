@@ -5,8 +5,7 @@
     /// <summary>
     /// Base MVC controller of this application.
     /// <para>NOTE: Does NOT require authentication</para>
-    /// </summary>
-    [AllowAnonymous]
+    /// </summary>    
     public class AppControllerMvcBase : ControllerMvc
     {
         // ● construction

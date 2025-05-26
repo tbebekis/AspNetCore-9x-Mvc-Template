@@ -13,6 +13,7 @@ global using System.Data;
 global using System.Net;
 global using System.Xml;
 global using System.Xml.Serialization;
+global using System.Security.Cryptography;
 
 
 global using Newtonsoft.Json;

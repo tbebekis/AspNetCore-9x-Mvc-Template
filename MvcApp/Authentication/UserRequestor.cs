@@ -1,9 +1,6 @@
 ﻿namespace MvcApp.Authentication
 {
-    /// <summary>
-    /// Since this is an MVC application, the Requestor is a user or something like a <see cref="HttpClient"/> requesting an MVC resource, using user credentials.
-    /// </summary>
-    internal class UserRequestor : IRequestor 
+    public class UserRequestor: IRequestor
     {
         // ● private
         static IRequestor fDefault;
@@ -24,36 +21,45 @@
         /// When true the user is impersonating another user
         /// </summary>
         public const string SIsImpersonationClaimType = "IsImpersonation";
- 
+
+
+
+        public UserRequestor() 
+        {
+        }
+        public UserRequestor(AppUser AppUser) 
+        {
+            Id = AppUser.Id;
+            AccountId = AppUser.UserName;
+            Name = AppUser.Name;
+            Email = AppUser.Email;
+            IsBlocked = AppUser.IsBlocked;
+        }
+
         // ● get values from user claims
         /// <summary>
-        /// Returns the id of the requestor
+        /// Returns the user id from claims.
+        /// <para>This is a database table Id.</para>
         /// </summary>
-        static public string GetRequestorId(IEnumerable<Claim> Claims)
+        static public string GetUserId(IEnumerable<Claim> Claims)
         {
-            return WLib.GetClaimValue<string>(Claims, ClaimTypes.NameIdentifier);
-        }
-        /// <summary>
-        /// Returns the <see cref="UserLevel"/> of the requestor
-        /// </summary>
-        static public UserLevel GetRequestorLevel(IEnumerable<Claim> Claims)
-        {
-            return WLib.GetClaimValue<UserLevel>(Claims, SUserLevelClaimType);
+            return WLib.GetClaimValue<string>(Claims, ClaimTypes.Sid);
         }
         /// <summary>
         /// Returns true if the requestor is impersonating another user
         /// </summary>
-        static public bool GetRequestorIsImpersonation(IEnumerable<Claim> Claims)
+        static public bool GetIsUserImpersonation(IEnumerable<Claim> Claims)
         {
             return WLib.GetClaimValue<bool>(Claims, SIsImpersonationClaimType);
         }
         /// <summary>
         /// Returns the authentication scheme of the requestor
         /// </summary>
-        static public string GetRequestorAuthenticationScheme(IEnumerable<Claim> Claims)
+        static public string GetUserAuthenticationScheme(IEnumerable<Claim> Claims)
         {
             return WLib.GetClaimValue<string>(Claims, SAuthenticationSchemeClaimType);
         }
+
 
         // ● properties
         /// <summary>
@@ -63,14 +69,10 @@
         /// </summary>
         public string Id { get; set; } = "";
         /// <summary>
-        /// The level of a user, i.e. Guest, Admin, User, etc.
-        /// </summary>
-        public UserLevel Level { get; set; }
-        /// <summary>
         /// Required. 
         /// <para><strong>Unique.</strong></para>
-        /// <para><c>Email</c> or <c>UserName</c>, when <see cref="Level"/> is <see cref="UserLevel.User"/>, <see cref="UserLevel.Admin"/> or <see cref="UserLevel.Guest"/>.</para>
-        /// <para><c>ClientId</c> when <see cref="Level"/> is <see cref="UserLevel.ClientApp"/> or <see cref="UserLevel.Service"/>.</para>
+        /// <para>Email or UserName when this is a person.</para>
+        /// <para>ClientId when this is a client application or service.</para>
         /// </summary> 
         public string AccountId { get; set; }
         /// <summary>
@@ -89,7 +91,7 @@
         /// <summary>
         /// The id of the default requestor
         /// </summary>
-        static public string DefaultId => DataStore.SDefaultId;
+        static public string DefaultId => Sys.SDefaultId;
         /// <summary>
         /// The default requestor
         /// </summary>
@@ -105,12 +107,10 @@
                     fDefault.Name = "Default";
                     fDefault.Email = "";
                     fDefault.IsBlocked = false;
-                    fDefault.Level = UserLevel.Guest;
                 }
 
                 return fDefault;
             }
         }
-
     }
 }

@@ -3,7 +3,7 @@
     /// <summary>
     /// Data store response
     /// </summary>
-    public class DataStoreResponse
+    public class DataResult
     {
         // ● public
         /// <summary>

@@ -1,4 +1,6 @@
-﻿namespace MvcApp
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace MvcApp
 {
     static public partial class App
     {
@@ -18,9 +20,17 @@
             App.AppSettings.Loaded += AppSettings_Loaded;
             AppSettings_Loaded(null, null);
 
+            builder.Services.AddDbContext<AppDbContext>(context => { context.UseInMemoryDatabase(AppDbContext.SMemoryDatabase); });
+
+            AppDbContext.AddDemoData();
+
+            // ● Add object mappings
+            WLib.ObjectMapper.Add(typeof(Product), typeof(ProductModel), TwoWay: true);
+
             // ● custom services 
             builder.Services.AddScoped<IUserRequestContext, UserRequestContext>();
             builder.Services.AddScoped<PageBuilderService>();
+            builder.Services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
 
             // ● HttpContext - NOTE: is singleton
             builder.Services.AddHttpContextAccessor();
@@ -48,6 +58,7 @@
 
                     options.LoginPath = "/login";
                     options.LogoutPath = "/logout";
+                    options.AccessDeniedPath = "/access-denied";
                     options.ReturnUrlParameter = "ReturnUrl";
                     options.EventsType = typeof(UserCookieAuthEvents);
                     options.ExpireTimeSpan = Expiration;

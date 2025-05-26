@@ -1,9 +1,9 @@
 ﻿namespace MvcApp.Library
 {
     /// <summary>
-    /// A <see cref="DataStoreResponse"/> response for a single item
+    /// A <see cref="DataResult"/> response for a single item
     /// </summary>
-    public class ItemResponse<T> : DataStoreResponse
+    public class ItemDataResult<T> : DataResult
     {
         /// <summary>
         /// The item
