@@ -49,13 +49,28 @@ header {
     padding: var(--Page-Padding);    
     color: var(--White);
     font-weight: var(--SemiBold);
+    height: 30px;
     min-height: 30px;
-    gap: 6px;
+    gap: 8px;
+}
+
+.header-zone > a {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    gap: 4px;
+}
+
+.header-zone > :hover {
+  background-color: var(--Yellow);
+  padding: 0 4px;
+  color: black;
 }
 
 .header-zone-border {
     border-top: 1px solid var(--Gray);
 }
+
 
 /*---------------------------------------------------------------------------------------
   footer
@@ -162,4 +177,100 @@ a.button:hover {
 .language-selector {
     background-color: inherit;
     border-color: transparent;
+}
+
+/*---------------------------------------------------------------------------------------
+ 
+---------------------------------------------------------------------------------------*/
+
+table.data-list  { 
+    border-collapse: collapse;
+}
+
+table.data-list th {
+  text-align: left;
+  background-color: var(--Color2) ; /* #04AA6D */
+  color: white;
+}
+
+table.data-list th,
+table.data-list td {
+  border: 1px solid #dddddd;
+  padding: 8px;
+} 
+
+table.data-list tr:nth-child(even){
+    background-color: #f2f2f2;
+}
+
+table.data-list tr:hover {
+    background-color: #dddddd;
+}
+
+table.data-list .actions {
+    gap: 8px;
+} 
+
+table.data-list .actions > * {
+    padding: 0 4px;
+    
+}
+
+table.data-list .actions > *:hover {
+     background-color: var(--Yellow);
+}
+
+
+/*---------------------------------------------------------------------------------------
+                                      paging
+---------------------------------------------------------------------------------------*/
+.pager-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 120px;
+    padding: 0 30px
+}
+
+.pager {
+    position: relative;
+    display: flex;
+    gap: 3px;
+}
+
+.pager > * {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 30px;
+    border: none;
+    background-color: transparent;
+    outline: none;
+    cursor: pointer;    
+}
+
+.pager .fa {
+    font-size: 28px;
+}
+
+.pager .btn-page-number {
+    font-size: 15px;
+    font-weight: bold;
+    padding: 0 0 2px 0;
+}
+
+.pager .current-page {
+    border: 1px solid var(--Yellow);
+/*
+    text-decoration: underline var(--Yellow) solid; 
+    text-decoration-thickness: 4px;
+    text-decoration-skip-ink: none;
+    text-underline-offset: 8px;
+*/
+}
+
+.pager .tp-Disabled {
+    color: var(--GrayDark);
 }

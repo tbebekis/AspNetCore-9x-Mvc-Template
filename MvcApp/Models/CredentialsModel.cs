@@ -3,8 +3,8 @@
     public class CredentialsModel
     {
         [RequiredEx]
-        [Title("UserId")]
-        public string UserId { get; set; }
+        [Title("UserName")]
+        public string UserName { get; set; }
 
         [RequiredEx]
         [DataType(DataType.Password)]

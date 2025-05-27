@@ -3,6 +3,7 @@ Cache
 Themes
 AjaxController
 ObjectMapper
+Menus
 
 HSTS                        https://aka.ms/aspnetcore-hsts.
 ----------------------------------------------------------------------

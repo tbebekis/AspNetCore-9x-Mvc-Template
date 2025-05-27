@@ -10,11 +10,12 @@
         /// <summary>
         /// Initializes the library
         /// </summary>
-        static public void Initialize(IMvcAppContext AppContext)
+        static public void Initialize(IMvcAppContext AppContext, IWebAppCache Cache)
         {
             if (Lib.AppContext == null)
             {
-                Lib.AppContext = AppContext;                 
+                Lib.AppContext = AppContext;  
+                Lib.Cache = Cache;
             }
         }
 
@@ -57,5 +58,9 @@
         /// Application settings, coming from appsettings.json
         /// </summary>
         static public AppSettings AppSettings => AppContext.AppSettings;
+        /// <summary>
+        /// The Cache. It is provided by <see cref="Initialize()"/>
+        /// </summary>
+        static public IWebAppCache Cache { get; private set; }
     }
 }

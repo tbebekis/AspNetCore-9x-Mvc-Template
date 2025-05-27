@@ -9,6 +9,7 @@
     --White: white;
 
     --Gray: #9E9E9E;
+    --Gray2: #DDDDDD;
     --LightGray: #F1F1F1;
 
     --Red: #F44336;
@@ -28,7 +29,7 @@
     --Khaki: #F0E68C;
 
     --Color1: var(--Blue);  /* Primary - blue */
-    --Color2: #00b7fc;      /* Secondary - blue */     
+    --Color2: #5499c7;      /* Secondary - blue */     
 
     /* Font colors */
     --FontColor: #777777;

@@ -3,7 +3,7 @@
 @{
 }
 
-<div>
+<div class="page">
     <h2>Product List</h2>
 
     @if (Model.Count == 0)
@@ -12,14 +12,12 @@
     }
     else
     {
-        <table class="table">
+        <table class="data-list">
             <thead>
                 <tr>
                     <th>@Html.DisplayNameFor(model => model[0].Name)</th>
                     <th>@Html.DisplayNameFor(model => model[0].Price)</th>
-                    <th>View</th>
-                    <th>Edit</th>
-                    <th>Delete</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -28,9 +26,8 @@
                     <tr>
                         <td>@Item.Name</td>
                         <td>@Item.Price</td>
-                        <td>@Html.ActionLink("View", "Details", new { Id = Item.Id }) </td>
-                        <td>@Html.ActionLink("Edit", "Edit", new { Id = Item.Id }) </td>
-                        <td>@Html.ActionLink("Delete", "Delete", new { Id = Item.Id }) </td>
+                        <td class="actions">@Html.ActionLink("View", "Details", new { Id = Item.Id }) @Html.ActionLink("Edit", "Edit", new { Id = Item.Id }) @Html.ActionLink("Delete", "Delete", new { Id = Item.Id }) </td>
+ 
                     </tr>
                 }
             </tbody>

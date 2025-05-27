@@ -42,7 +42,7 @@
 
             if (ValidateModel(M))
             {
-                ItemDataResult<IRequestor> Response = DataStore.ValidateUserCredentials(M.UserId, M.Password);
+                ItemDataResult<IRequestor> Response = DataStore.ValidateUserCredentials(M.UserName, M.Password);
                 IRequestor User = Response.Item;
 
                 if (Response.Succeeded && User != null)
@@ -123,6 +123,12 @@
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        [HttpGet("/plugin-test", Name = "PluginTest")]
+        public IActionResult PluginTest()
+        {
+            return View();
         }
 
         [HttpGet("/ajax-demos", Name = "AjaxDemos")]

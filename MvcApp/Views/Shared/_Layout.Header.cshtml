@@ -1,13 +1,15 @@
 ﻿<header>
     <div class="header-zone"></div>
-    <div class="header-zone header-zone-border">      
-        <div>
-            <a class="" href="/ajax-demos">Ajax Demos</a>
-        </div>
+    <div class="header-zone header-zone-border">
+        
+        <a class="" href="/plugin-test"><span>Plugin Test</span></a>    
+        <a class="" href="/ajax-demos"><span>Ajax Demos</span></a>       
+        <a class="" href="product/list" title='Product List'><i class="fa-brands fa-instagram"></i> <span>Product List</span></a>
+
         <div class="tp-FlexFill"></div> @* fill *@
 
         @if (App.AppSettings.UseAuthentication)
-        {
+        {            
             if (!Lib.AppContext.IsAuthenticated)
             {
                 <a class="login" href="/login">
@@ -19,9 +21,9 @@
                 <a class="logout" href="/logout">
                     <span class="tp-Hide-sm tp-Hide-xs">@L("Logout")</span>
                 </a>
-            }
+            }            
         }
-
+            
         @await Component.InvokeAsync("LanguageSelector")
     </div>
 </header>

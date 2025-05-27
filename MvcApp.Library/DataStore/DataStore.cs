@@ -20,6 +20,11 @@
             return S;
         }
 
+        /// <summary>
+        /// The Cache. It is provided by the Lib
+        /// </summary>
+        static IWebAppCache Cache => Lib.Cache;
+
         // ● public
         /// <summary>
         /// Initializes the data store
@@ -29,6 +34,11 @@
             // nothing
         }
 
+        // IWebAppCache Cache
+
+        /// <summary>
+        /// Returns application's <see cref="DbContext"/>
+        /// </summary>
         static public AppDbContext GetDbContext()
         {
             HttpContext HttpContext = WLib.GetHttpContext();
@@ -65,9 +75,21 @@
         /// <summary>
         /// Validates the specified user credentials and returns a <see cref="IRequestor"/> on success, else null.
         /// </summary>
-        static public ItemDataResult<IRequestor> ValidateUserCredentials(string UserId, string Password)
+        static public ItemDataResult<IRequestor> ValidateUserCredentials(string UserName, string Password)
         {
-            return null;
+            ItemDataResult<IRequestor> Result = new();
+
+            using (AppDbContext context = GetDbContext())
+            {
+                AppUser User = context.Users.FirstOrDefault(x => x.UserName == UserName);
+                if (User != null)
+                {
+                    if (Hasher.Validate(Password, User.Password, User.PasswordSalt))
+                        Result.Item = User;
+                }
+            }
+
+            return Result;
         }
         /// <summary>
         /// Returns true if the requestor is impersonating another user, by using a super user password
