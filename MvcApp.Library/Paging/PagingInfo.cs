@@ -1,6 +1,4 @@
-﻿using tp;
-
-namespace MvcApp.Library
+﻿namespace MvcApp.Library
 {
     /// <summary>
     /// Paging information, for category etc. pages

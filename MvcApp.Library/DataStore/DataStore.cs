@@ -111,7 +111,6 @@
         }
 
         // ● properties
-
         /// <summary>
         /// The <see cref="CultureInfo"/> culture of the current request.
         /// </summary>

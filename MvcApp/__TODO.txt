@@ -4,6 +4,7 @@ Themes
 AjaxController
 ObjectMapper
 Menus
+Breadcrumb
 
 HSTS                        https://aka.ms/aspnetcore-hsts.
 ----------------------------------------------------------------------

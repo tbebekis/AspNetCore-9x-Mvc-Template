@@ -62,9 +62,13 @@ header {
 }
 
 .header-zone > :hover {
+/*
   background-color: var(--Yellow);
   padding: 0 4px;
   color: black;
+*/
+  padding: 0 4px;
+  border: 1px solid var(--Yellow);
 }
 
 .header-zone-border {
@@ -273,4 +277,83 @@ table.data-list .actions > *:hover {
 
 .pager .tp-Disabled {
     color: var(--GrayDark);
+}
+
+/*---------------------------------------------------------------------------------------
+                                      menu
+---------------------------------------------------------------------------------------*/
+
+.menu {
+  overflow: hidden;
+}
+
+.menu > a {
+  float: left;  
+  color: white;
+  text-align: center;
+  text-decoration: none;
+}
+
+.menu .item-list-container {
+  float: left;
+  overflow: hidden;
+}
+
+.menu .item-list-container .button-down {
+  border: none;
+  outline: none;
+  color: white;
+  background-color: inherit;
+  font-family: inherit;
+  margin: 0;
+}
+
+.menu > a:hover {
+    /* color: black; */
+} 
+
+.menu > * > .button-down:hover {
+    /* color: black; */
+} 
+
+.menu .item-list-container:hover .button-down {
+  /* background-color: red; */
+  background-color: inherit;
+}
+
+
+
+.menu .item-list {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.menu .item-list > a {
+  float: none;
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+
+.menu .item-list a:hover {
+  background-color: #ddd;
+}
+
+.menu .item-list-container:hover > .item-list {
+  display: block;
+}
+
+.menu a.separator {
+    height: 2px;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #e5e5e5;
+    font-size: 1px;
 }

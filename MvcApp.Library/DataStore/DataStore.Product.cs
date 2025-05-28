@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace MvcApp.Library
+﻿namespace MvcApp.Library
 {
     static public partial class DataStore
     {

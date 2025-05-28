@@ -5,9 +5,13 @@
     {
  
         [Permission("Product.View")]
-        [HttpGet("list")]
+        [HttpGet("list", Name = "Product.List")]
         public ActionResult Index()
         {
+            //Endpoint endpoint = HttpContext.Features.Get<IEndpointFeature>()?.Endpoint;
+
+            //var S = endpoint?.Metadata.GetMetadata<IRouteValuesAddressMetadata>()?.RouteName;
+
             // get the data
             ListDataResult<Product> ListResult = DataStore.GetAllProducts();
 

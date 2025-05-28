@@ -45,3 +45,5 @@ global using tp;
 global using tp.Web;
 global using tp.Web.Controllers;
 
+global using MvcApp.Library;
+global using MvcApp.Models;
