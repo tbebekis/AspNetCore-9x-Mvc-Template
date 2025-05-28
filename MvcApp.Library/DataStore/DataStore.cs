@@ -24,6 +24,16 @@
         /// The Cache. It is provided by the Lib
         /// </summary>
         static IWebAppCache Cache => Lib.Cache;
+        /// <summary>
+        /// The eviction timeout of an entry from the cache, in minutes. 
+        /// <para>Defaults to 0 which means "use the timeouts of the internal implementation".</para>
+        /// </summary>
+        static int CacheTimeoutMinutes => Lib.AppSettings.Defaults.CacheTimeoutMinutes;
+        /// <summary>
+        /// The number of items in a page when paging is involved.
+        /// </summary>
+        static int DefaultPageSize => Lib.AppSettings.Defaults.PageSize;
+
 
         // ● public
         /// <summary>
@@ -33,8 +43,7 @@
         {
             // nothing
         }
-
-        // IWebAppCache Cache
+ 
 
         /// <summary>
         /// Returns application's <see cref="DbContext"/>
@@ -100,5 +109,13 @@
             // bool IsImpersonation = !string.IsNullOrWhiteSpace(Settings.General.SuperUserPassword) && Settings.General.SuperUserPassword == M.Password;
             return false;
         }
+
+        // ● properties
+
+        /// <summary>
+        /// The <see cref="CultureInfo"/> culture of the current request.
+        /// </summary>
+        static public CultureInfo Culture => Lib.AppContext.Culture;
+ 
     }
 }

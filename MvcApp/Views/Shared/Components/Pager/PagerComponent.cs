@@ -1,6 +1,6 @@
 ﻿namespace MvcApp.Components
 {
-    public class PagerComponent : ViewComponent
+    public class Pager : ViewComponent
     {
         /// <summary>
         /// Invokes the component and returns a view

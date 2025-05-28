@@ -1,7 +1,7 @@
 ﻿@model ProductListModel
  
 <div class="page">
-    <h2>Product List</h2>
+    <h2>Product List with Paging</h2>
 
     @if (Model.Products.Count == 0)
     {
@@ -10,6 +10,8 @@
     else
     {
         @await Html.PartialAsync("_ProductList", Model)
+
+        @await Component.InvokeAsync("Pager", Model.PagingInfo)
     }
 
 </div>

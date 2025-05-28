@@ -10,6 +10,8 @@
         string fCurrencyCode;
         string fCurrencySymbol;
         string fMoneyFormat;
+        int fCacheTimeoutMinutes;
+        int fPageSize;
 
         /// <summary>
         /// The default culture, i.e. el-GR
@@ -49,6 +51,18 @@
         /// The eviction timeout of an entry from the cache, in minutes. 
         /// <para>Defaults to 0 which means "use the timeouts of the internal implementation".</para>
         /// </summary>
-        public int CacheTimeoutMinutes { get; set; }
+        public int CacheTimeoutMinutes
+        {
+            get => fCacheTimeoutMinutes >= 5 ? fCacheTimeoutMinutes : 5;
+            set => fCacheTimeoutMinutes = value;
+        }
+        /// <summary>
+        /// The number of items in a page when paging is involved.
+        /// </summary>
+        public int PageSize
+        {
+            get => fPageSize >= 10 ? fPageSize : 10;
+            set => fPageSize = value;
+        } 
     }
 }

@@ -1,5 +1,6 @@
 ﻿namespace MvcApp.Library
 {
+
     public class Product
     {
         public Product(string Name, double Price)
@@ -18,4 +19,5 @@
         public string Name { get; set; }
         public double Price { get; set; }
     }
+
 }

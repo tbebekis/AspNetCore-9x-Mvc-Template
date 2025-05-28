@@ -1,26 +1,28 @@
 ﻿@model ErrorViewModel
 @{
-    ViewData["Title"] = "Error";
+    ViewData["Title"] = "Error"; 
 }
 
-<div style="display: flex; justify-content: center; padding: 25px; min-height: 400px;">
-    <div style="display: flex; flex-direction: column;">
-        <h1>Oups! something went wrong.</h1>
-        <br />
+<div class="page">
+    <h2>Error</h2>
 
-        <h2>An error occurred while processing your request. </h2>
-        <br />
-
-        <p>We apologize for the error. </p>
-        <br />
-
-        <p>Our staff will be immediately informed regarding the problem and we will try to resolved it as soon as possible. </p>
-        <br />
-
-        @if (!string.IsNullOrWhiteSpace(Model.RequestId)){
-            <p><strong>Reference Id:</strong> <code>@ViewData["RequestId"]</code></p>
-        }
-    </div>
+    <p><strong>Oups! something went wrong.</strong></p>
+    <p><strong>An error occurred while processing your request.</strong></p>
+    <p>We apologize for the error. </p>
+    <p>Our staff will be immediately informed regarding the problem and we will try to resolved it as soon as possible. </p>
+    @if (!string.IsNullOrWhiteSpace(Model.RequestId))
+    {
+        <p><strong>Reference Id:</strong> <code>@Model.RequestId</code></p>
+    }
+    @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+    {
+        <p><strong>Error Message:</strong></p>
+        <pre>
+            @Model.ErrorMessage
+        </pre>
+    }
 </div>
+
+        
 
 

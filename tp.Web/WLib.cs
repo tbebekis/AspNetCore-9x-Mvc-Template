@@ -1,4 +1,6 @@
-﻿namespace tp.Web
+﻿using Microsoft.AspNetCore.Localization;
+
+namespace tp.Web
 {
     /// <summary>
     /// Represents this library
@@ -220,6 +222,40 @@
                 fObjectMapper = value;
             }
         }
- 
+        /// <summary>
+        /// The <see cref="CultureInfo"/> culture of the current request.
+        /// </summary>
+        static public CultureInfo Culture
+        {
+            get
+            {
+                CultureInfo Result = CultureInfo.GetCultureInfo("en-US");
+
+                HttpContext HttpContext = GetHttpContext();
+                if (HttpContext != null)
+                {
+                    IRequestCultureFeature Feature = HttpContext.Features.Get<IRequestCultureFeature>();
+                    if (Feature != null)
+                        Result = Feature.RequestCulture.Culture;
+                }
+
+                return Result;
+
+            }
+        }
+        /// <summary>
+        /// Returns the Id of the current HTTP request
+        /// </summary>
+        static public string RequestId
+        {
+            get
+            {
+                string Result = Activity.Current?.Id ?? GetHttpContext().TraceIdentifier;
+                if (!string.IsNullOrWhiteSpace(Result) && Result.StartsWith('|'))
+                    Result = Result.Remove(0, 1);
+                return Result;
+
+            }
+        }
     }
 }

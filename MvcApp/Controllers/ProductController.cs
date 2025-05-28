@@ -1,23 +1,57 @@
 ﻿namespace MvcApp.Controllers
 {
     [Route("product")]
-    public class ProductController : Controller
+    public class ProductController : AppControllerMvcBase
     {
-        // GET: ProductController
+ 
         [Permission("Product.View")]
         [HttpGet("list")]
         public ActionResult Index()
         {
-            ListDataResult<Product> ListResult = DataStore.GetProducts();
+            // get the data
+            ListDataResult<Product> ListResult = DataStore.GetAllProducts();
+
             if (ListResult.Succeeded)
             {
+                // map entities to models
                 List<ProductModel> ModelList = WLib.ObjectMapper.Map<List<ProductModel>>(ListResult.List);
-                return View(ModelList);
+
+                // create the model
+                ProductListModel ListModel = new();
+                // ListModel.PagingInfo = new PagingInfo(ListResult.TotalItems); // no paging in this view
+                ListModel.Products = ModelList;
+ 
+                return View(ListModel);
             }
 
-            return RedirectToAction("Error", "Home", new { area = "" });
+            return RedirectToErrorPage(ListResult.ErrorText); 
         }
 
+        [Permission("Product.View")]
+        [HttpGet("paging")]
+        public ActionResult Paging()
+        {
+            int PageIndex = PagingInfo.GetQueryStringPageIndex();
+            int PageSize = PagingInfo.GetQueryStringPageSize();
+
+            // get the data
+            ListDataResult<Product> ListResult = DataStore.GetAllProductsWithPaging(PageIndex, PageSize);
+
+            if (ListResult.Succeeded)
+            {
+                // map entities to models
+                List<ProductModel> ModelList = WLib.ObjectMapper.Map<List<ProductModel>>(ListResult.List);
+
+                // create the model
+                ProductListModel ListModel = new();
+                ListModel.PagingInfo = new PagingInfo(ListResult.TotalItems);
+                ListModel.Products = ModelList;
+
+                return View(ListModel);
+            }
+
+            return RedirectToErrorPage(ListResult.ErrorText);
+        }
 
         public ActionResult Create()
         {

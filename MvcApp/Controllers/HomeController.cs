@@ -80,8 +80,7 @@
 
         [Route("/set-language", Name = "SetLanguage")]
         public IActionResult SetLanguage(string CultureCode, string ReturnUrl = "")
-        {
- 
+        { 
             Response.Cookies.Append(
                 CookieRequestCultureProvider.DefaultCookieName,
                 CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(CultureCode)),
@@ -122,7 +121,21 @@
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            ErrorViewModel Model = null;
+            string JsonText = TempData["ErrorModel"] as string;
+            if (!string.IsNullOrWhiteSpace(JsonText))
+            {
+                Model = tp.Json.Deserialize<ErrorViewModel>(JsonText);
+            }
+ 
+            if (Model == null)
+            {
+                Model = new ErrorViewModel();
+                Model.ErrorMessage = "Unknown Error";
+                Model.RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+            }
+ 
+            return View(Model);
         }
 
         [HttpGet("/plugin-test", Name = "PluginTest")]

@@ -25,7 +25,7 @@
             if (Errors != null)
                 Errors.Clear();
         }
-
+ 
         // ● properties
         /// <summary>
         /// True if there are no errors
@@ -41,6 +41,25 @@
         /// The list of errors
         /// </summary>
         public List<string> Errors { get; set; }
+        /// <summary>
+        /// Returns the text of all errors.
+        /// </summary>
+        [JsonIgnore]
+        public string ErrorText
+        {
+            get
+            {
+                if (Succeeded)
+                    return "";
+
+                StringBuilder SB = new();
+
+                foreach (var error in Errors)
+                    SB.AppendLine(error.ToString());
+
+                return SB.ToString();
+            }
+        }
     }
  
 }

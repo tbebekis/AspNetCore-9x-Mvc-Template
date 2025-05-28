@@ -1,4 +1,4 @@
-﻿namespace MvcApp.Library.Product
+﻿namespace MvcApp.Library
 {
 
     /// <summary>
