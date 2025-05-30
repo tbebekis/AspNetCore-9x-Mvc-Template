@@ -15,7 +15,7 @@
     --Red: #F44336;
     --Green: #4CAF50;
     --Blue: #1B5299; /*#2196F3;*/
-    --Yellow: #FFEB3B;
+    --Yellow: #F8D31D; /* #FFEB3B;  */
 
     --Pink: #E91E63;
     --Teal: #009688;
@@ -40,7 +40,7 @@
     --SuccessColor: var(--Green);
     --ErrorColor: var(--Red);
     --InfoColor: var(--Yellow);
-    --HoverColor: var(--Yellow);
+    --HoverColor: yellow;
     --DisabledColor: var(--LightGray);
     --SelectedColor: lightgoldenrodyellow; 
     --SelectedListItemColor: lightblue;
@@ -58,7 +58,7 @@
  
     --ControlLineHeight: 1.5em; 
 
-    --SemiBold: 400;
+    --SemiBold: 500;
     --HeavyBold: 800;
 
 }

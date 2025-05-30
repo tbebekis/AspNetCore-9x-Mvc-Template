@@ -1,7 +1,27 @@
-﻿namespace MvcApp.Library
+﻿ 
+
+namespace MvcApp.Library
 {
     static public partial class DataStore
     {
+        static List<Product> GetPageChunk(List<Product> SourceList, int PageIndex, int PageSize)
+        {
+            if (SourceList.Count > 0)
+            {
+                List<Product> Result;
+
+                List<Product[]> Chunks = SourceList.Chunk(PageSize).ToList();
+                Result = Chunks[PageIndex].ToList();
+
+                // or
+                // Result = SourceList.Skip(PageIndex).Take(PageSize).ToList();
+
+                return Result;
+            }
+
+            return new List<Product>();
+        }
+
         static public ListDataResult<Product> GetAllProducts()
         {
             string CultureCode = DataStore.Culture.Name;
@@ -38,14 +58,31 @@
             {
                 List = context.Products.ToList();
                 Result.TotalItems = List.Count;
-            } 
+            }
 
-            List<Product[]> Chunks = List.Chunk(PageSize).ToList();
-            Result.List = Chunks[PageIndex].ToList();
+            Result.List = GetPageChunk(List, PageIndex, PageSize);
 
-            // or
-            Result.List = List.Skip(PageIndex).Take(PageSize).ToList();
- 
+
+            return Result;
+        }
+        static public ListDataResult<Product> GetProducts(ProductListFilter Filter)
+        {
+            ListDataResult<Product> Result = new();
+            List<Product> List;
+
+            using (AppDbContext context = GetDbContext())
+            {
+                List = context.Products.ToList();
+
+                // filter
+                List = List.Where(x => x.Name.Contains(Filter.Term, StringComparison.OrdinalIgnoreCase)).ToList();
+
+                Result.TotalItems = List.Count;
+            }            
+
+            Result.List = GetPageChunk(List, Filter.PageIndex, Filter.PageSize);
+
+
             return Result;
         }
     }

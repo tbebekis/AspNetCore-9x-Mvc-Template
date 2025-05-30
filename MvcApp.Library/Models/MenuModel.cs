@@ -1,5 +1,9 @@
 ﻿namespace MvcApp.Models
 {
+    /// <summary>
+    /// Represents a menu item.
+    /// <para>Used by the menu component.</para>
+    /// </summary>
     public class MenuModel: IList
     {
         protected List<MenuModel> list = new List<MenuModel>();
@@ -233,15 +237,18 @@
         /// Returns the number of elements in the collection.
         /// </summary>
         [JsonIgnore]
-        public int Count
-        {
-            get { return list.Count; }
-        }
+        public int Count => list.Count;
+ 
         /// <summary>
         /// Indexer
         /// </summary>
         [JsonIgnore]
         public MenuModel this[int Index] { get { return list[Index]; } }
+        /// <summary>
+        /// Returns the children of this instance.
+        /// </summary>
+        [JsonIgnore]
+        public MenuModel[] Children => list.ToArray();
         /// <summary>
         /// Returns the root of the tree this MenuItem may belong to.
         /// </summary>
@@ -265,27 +272,27 @@
         /// <summary>
         /// Returns true if this MenuItem is the root in a tree.
         /// </summary>
-        public bool IsRoot { get { return (Root == this) || (Root == null); } }
+        public bool IsRoot => Root == this || Root == null;
         /// <summary>
         /// Returns the parent of this MenuItem, if any, else null.
         /// </summary>
         [JsonIgnore]
-        public MenuModel Parent { get { return fParent; } }
+        public MenuModel Parent => fParent;
         /// <summary>
         /// Returns true if this MenuItem has child items.
         /// </summary>
         [JsonIgnore]
-        public bool HasChildNodes { get { return list.Count > 0; } }
+        public bool HasChildNodes => list.Count > 0;
         /// <summary>
         /// Returns the level of this MenuItem. A root node has level 0, its children have level 1 and so on.
         /// </summary>
         [JsonIgnore]
-        public int Level { get { return fParent == null ? 0 : fParent.Level + 1; } }
+        public int Level => fParent == null ? 0 : fParent.Level + 1;
         /// <summary>
         /// Returns the index of this MenuItem in the list of its parent, if any, else -1
         /// </summary>
         [JsonIgnore]
-        public int Index { get { return fParent == null ? -1 : fParent.list.IndexOf(this); } }
+        public int Index => fParent == null ? -1 : fParent.list.IndexOf(this);
         /// <summary>
         /// Returns the total number of items of this node and its child items.
         /// </summary>

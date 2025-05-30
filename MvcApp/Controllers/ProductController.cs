@@ -3,15 +3,41 @@
     [Route("product")]
     public class ProductController : AppControllerMvcBase
     {
+
+        [Permission("Product.View")]
+        [HttpGet("search", Name = "Product.Search")]
+        public ActionResult Search(string Term = "", string CategoryId = "", bool IncludeSubCategories = false)
+        {
+            ProductListFilter Filter = new ();
+            Filter.FullProductInfo = true;
+            Filter.Term = Term;
+            Filter.CategoryId = CategoryId;                         // "376"; // CategoryId;
+            Filter.IncludeSubCategories = IncludeSubCategories;     // true;  // IncludeSubCategories;
+
+            // get the data
+            ListDataResult<Product> ListResult = DataStore.GetProducts(Filter);
+
+            if (ListResult.Succeeded)
+            {
+                // map entities to models
+                List<ProductModel> ModelList = WLib.ObjectMapper.Map<List<ProductModel>>(ListResult.List);
+
+                // create the model
+                ProductListModel ListModel = new();
+                ListModel.PagingInfo = new PagingInfo(ListResult.TotalItems);
+                ListModel.Products = ModelList;
+
+                return View(ListModel);
+            }
+
+
+            return RedirectToErrorPage(ListResult.ErrorText);
+        }
  
         [Permission("Product.View")]
         [HttpGet("list", Name = "Product.List")]
         public ActionResult Index()
         {
-            //Endpoint endpoint = HttpContext.Features.Get<IEndpointFeature>()?.Endpoint;
-
-            //var S = endpoint?.Metadata.GetMetadata<IRouteValuesAddressMetadata>()?.RouteName;
-
             // get the data
             ListDataResult<Product> ListResult = DataStore.GetAllProducts();
 

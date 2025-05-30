@@ -1,3 +1,9 @@
+:root {
+    --MenuItemVerticalPadding: 14px;
+    --MenuItemHorizontalPadding: 16px;
+    --MenuBackColor: #005871;  /* #2E5283;   DodgerBlue*/ 
+}
+
 html {
   position: relative;
   min-height: 100%;
@@ -49,38 +55,111 @@ header {
     padding: var(--Page-Padding);    
     color: var(--White);
     font-weight: var(--SemiBold);
-    height: 30px;
-    min-height: 30px;
-    gap: 8px;
-}
-
-.header-zone > a {
-    display: flex;
-    align-items: center;
-    height: 100%;
-    gap: 4px;
-}
-
-.header-zone > :hover {
-/*
-  background-color: var(--Yellow);
-  padding: 0 4px;
-  color: black;
-*/
-  padding: 0 4px;
-  border: 1px solid var(--Yellow);
-}
+} 
 
 .header-zone-border {
     border-top: 1px solid var(--Gray);
 }
 
+.slim-zone {
+    height: 35px;
+}
+
+.zone-items > * {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0 12px;
+}
+
+.zone-items > :not(.tp-FlexFill):not(.search-component):hover {
+    background-color: var(--HoverColor);
+    color: black;
+} 
+
+
+.search-component input {
+    position: relative;
+    background-color: inherit;
+    border: 0 !important;
+    color: inherit !important;
+    font-weight: normal;
+    outline: none;    
+}
+
+.search-component .search-icon {
+    cursor: pointer;
+}
+
+/*---------------------------------------------------------------------------------------
+                                      menu
+---------------------------------------------------------------------------------------*/
+
+.menu {   
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+} 
+
+.menu > *:not(.list-container) {
+    display: flex;
+    align-items: center; 
+    padding: var(--MenuItemVerticalPadding) var(--MenuItemHorizontalPadding);
+    text-decoration: none;
+}
+
+.menu .list-container {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction:column;
+    overflow: hidden;
+    padding: var(--MenuItemVerticalPadding) var(--MenuItemHorizontalPadding);
+}
+
+.menu .list-container > .list {
+    display: none;
+    background-color: var(--Color1);
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.menu .list-container:hover > .list {
+    display: flex;
+    flex-direction :column;
+    position: absolute;
+    margin-top: calc(var(--MenuItemVerticalPadding) * 2);       /* double the padding of the list-container */
+    margin-left: calc(var(--MenuItemHorizontalPadding) * -1);   /* margin-left: calc(var(--MenuItemHorizontalPadding) * -1);  minus the padding of the list-container */
+    color: white;
+}
+
+.menu .list-container:hover > .list > *:not(.separator) {
+    display: flex;
+    align-items: center; 
+    padding: var(--MenuItemVerticalPadding) var(--MenuItemHorizontalPadding);
+    text-decoration: none;
+}
+
+.menu > :hover,
+.menu .list > *:hover {
+    background-color: var(--HoverColor);
+    color: black;
+} 
+
+.menu .separator {
+    height: 1px;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #a7a3a3;
+    font-size: 1px;
+}
 
 /*---------------------------------------------------------------------------------------
   footer
 ---------------------------------------------------------------------------------------*/
 footer {
-    background-color: var(--Black);
+    background-color: var(--Color1);
     min-height: 40px;
 }
 
@@ -277,83 +356,4 @@ table.data-list .actions > *:hover {
 
 .pager .tp-Disabled {
     color: var(--GrayDark);
-}
-
-/*---------------------------------------------------------------------------------------
-                                      menu
----------------------------------------------------------------------------------------*/
-
-.menu {
-  overflow: hidden;
-}
-
-.menu > a {
-  float: left;  
-  color: white;
-  text-align: center;
-  text-decoration: none;
-}
-
-.menu .item-list-container {
-  float: left;
-  overflow: hidden;
-}
-
-.menu .item-list-container .button-down {
-  border: none;
-  outline: none;
-  color: white;
-  background-color: inherit;
-  font-family: inherit;
-  margin: 0;
-}
-
-.menu > a:hover {
-    /* color: black; */
-} 
-
-.menu > * > .button-down:hover {
-    /* color: black; */
-} 
-
-.menu .item-list-container:hover .button-down {
-  /* background-color: red; */
-  background-color: inherit;
-}
-
-
-
-.menu .item-list {
-  display: none;
-  position: absolute;
-  background-color: #f9f9f9;
-  min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1;
-}
-
-.menu .item-list > a {
-  float: none;
-  color: black;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
-  text-align: left;
-}
-
-.menu .item-list a:hover {
-  background-color: #ddd;
-}
-
-.menu .item-list-container:hover > .item-list {
-  display: block;
-}
-
-.menu a.separator {
-    height: 2px;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    background-color: #e5e5e5;
-    font-size: 1px;
 }

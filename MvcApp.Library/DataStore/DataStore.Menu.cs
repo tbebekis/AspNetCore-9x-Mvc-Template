@@ -17,7 +17,7 @@
             MenuModel mnuAjaxDemos = mnuDemos.Add("Ajax Demos", "/ajax-demos");
 
             // ● products
-            MenuModel mnuProductList = mnuProducts.Add("Product Lis", "/product/list");
+            MenuModel mnuProductList = mnuProducts.Add("Product List", "/product/list");
             MenuModel mnuProductListPaging = mnuProducts.Add("Product Lis with Paging", "/product/paging");
 
             return MenuBar;

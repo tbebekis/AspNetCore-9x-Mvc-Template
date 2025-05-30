@@ -192,6 +192,17 @@ namespace tp.Web
         /// </summary>
         static public bool IsAjaxRequest(HttpRequest R = null)
         {
+            /*
+            X-Requested-With -> XMLHttpRequest is invalid in cross-domain call
+           
+            Only the following headers are allowed across origins:
+                Accept
+                Accept-Language
+                Content-Language
+                Last-Event-ID
+                Content-Type
+            */
+
             R = R ?? GetHttpRequest();
             return string.Equals(R.Query[HeaderNames.XRequestedWith], "XMLHttpRequest", StringComparison.Ordinal) 
                 || string.Equals(R.Headers.XRequestedWith, "XMLHttpRequest", StringComparison.Ordinal);

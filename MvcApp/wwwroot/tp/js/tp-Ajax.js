@@ -52,6 +52,7 @@ tp.AjaxArgs = class {
         this.ContentType = 'application/x-www-form-urlencoded; charset=UTF-8';
         this.Context = null;                                                    // context for calling the two callbacks
         this.AntiForgeryToken = '';                                             // used when POST-ing an html form in Microsoft MVC framework
+        this.IsCrossDomain = false;
         this.OnSuccess = null;                                                  // function(Args: tp.AjaxArgs)
         this.OnFailure = null;                                                  // function(Args: tp.AjaxArgs)
         this.OnRequestHeaders = tp.AjaxOnRequestHeadersDefaultHandler;          // function(Args: tp.AjaxArgs)
@@ -154,6 +155,11 @@ tp.AjaxArgs.prototype.Context = null;
  @default ''
  */
 tp.AjaxArgs.prototype.AntiForgeryToken = '';
+/** Should be set to true when this is a cross-domain call
+ * @default false
+ * @type {boolean}
+ */
+tp.AjaxArgs.prototype.IsCrossDomain = false;
 /** A <code>function(Args: tp.AjaxArgs)</code> callback function to call on success  
  @default null
  @type {function}
@@ -358,7 +364,19 @@ tp.Ajax = function (Args) {
         // headers
         XHR.setRequestHeader('Content-Type', Args.ContentType);
         XHR.setRequestHeader("Accept", "*/*");
-        //XHR.setRequestHeader('X-Requested-With', 'XMLHttpRequest'); // invalid in cross-domain call
+
+        /*
+        Only the following headers are allowed across origins:
+        Accept
+        Accept-Language
+        Content-Language
+        Last-Event-ID
+        Content-Type
+        */
+        if (Args.IsCrossDomain === false)
+            XHR.setRequestHeader('X-Requested-With', 'XMLHttpRequest'); // invalid in cross-domain call
+   
+        // this.setRequestHeader('x-my-custom-header', 'some value');
         if (!tp.IsBlank(Args.AntiForgeryToken)) {
             XHR.setRequestHeader("__RequestVerificationToken", Args.AntiForgeryToken);
         }

@@ -15,6 +15,7 @@ function PlainAjaxCall() {
 
     XHR.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
     XHR.setRequestHeader("Accept", "*/*");
+    XHR.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
  
     XHR.onload = function (e) {
         if (XHR.readyState === XMLHttpRequest.DONE) {
@@ -24,6 +25,10 @@ function PlainAjaxCall() {
                 DisplayAjaxResponse(ResponseText);
             }
         }
+    };
+    XHR.onerror = function (e) {
+        let ResponseText = XHR.responseText;
+        DisplayAjaxResponse(ResponseText);     
     };
 
     let Model = {
