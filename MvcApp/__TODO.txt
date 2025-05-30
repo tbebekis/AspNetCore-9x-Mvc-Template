@@ -4,7 +4,18 @@ Themes
 AjaxController
 ObjectMapper
 Menus
+Paging
+Searching
 Breadcrumb
+ClosedXML - export to XML   https://github.com/ClosedXML/ClosedXML
+Email                       https://github.com/jstedfast/MailKit
+IP Geolocation              https://github.com/maxmind/GeoIP2-dotnet
+PDF                         https://github.com/QuestPDF/QuestPDF
+Image                       https://github.com/mono/SkiaSharp
+                            https://learn.microsoft.com/en-us/dotnet/api/skiasharp
+DB                          https://github.com/linq2db/linq2db
+JS CSS Minification         https://github.com/ligershark/WebOptimizer
+
 
 HSTS                        https://aka.ms/aspnetcore-hsts.
 ----------------------------------------------------------------------

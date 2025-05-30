@@ -1,5 +1,7 @@
 ﻿namespace MvcApp.Library
 {
+
+    [Table(nameof(AppRole))]
     public class AppRole
     {
 
@@ -18,6 +20,7 @@
 
         [Key]
         public string Id { get; set; }
+        [Required, MaxLength(96)]
         public string Name { get; set; }
 
     }

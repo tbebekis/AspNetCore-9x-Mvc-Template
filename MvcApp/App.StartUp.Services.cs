@@ -20,6 +20,12 @@ namespace MvcApp
             App.AppSettings.Loaded += AppSettings_Loaded;
             AppSettings_Loaded(null, null);
 
+
+            // ● DbContext
+            // AddDbContextPool() singleton service
+            // AddDbContext() scoped service
+            // SEE: https://learn.microsoft.com/en-us/ef/core/performance/advanced-performance-topics
+            builder.Services.AddDbContextPool<AppDbContext>(context => { context.UseInMemoryDatabase(AppDbContext.SMemoryDatabase); }, poolSize: 1024);
             builder.Services.AddDbContext<AppDbContext>(context => { context.UseInMemoryDatabase(AppDbContext.SMemoryDatabase); });
 
             AppDbContext.AddDemoData();

@@ -1,4 +1,7 @@
-﻿namespace MvcApp.Library
+﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.Reflection.Metadata;
+
+namespace MvcApp.Library
 {
     public class AppDbContext : DbContext
     {
@@ -8,8 +11,20 @@
         {
             optionsBuilder.UseInMemoryDatabase(SMemoryDatabase);
         }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            EntityTypeBuilder<Product> XXX = modelBuilder.Entity<Product>();
+ 
+        }
 
-
+        /// <summary>
+        /// If the DbContext subtype is itself intended to be inherited from, then it should expose a protected constructor taking a non-generic DbContextOptions
+        /// SEE: https://learn.microsoft.com/en-us/ef/core/dbcontext-configuration/#dbcontextoptions-versus-dbcontextoptionstcontext
+        /// </summary>
+        protected AppDbContext(DbContextOptions contextOptions)
+        : base(contextOptions)
+        {
+        }
 
         public AppDbContext()
             : this(new DbContextOptions<AppDbContext>())
@@ -20,13 +35,24 @@
         {
         }
 
+        static public AppDbContext Create()
+        {
+            // SEE: https://learn.microsoft.com/en-us/ef/core/dbcontext-configuration/#basic-dbcontext-initialization-with-new
+            var contextOptions = new DbContextOptionsBuilder<AppDbContext>()
+                                //.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=Test;ConnectRetryCount=0")
+                                 .UseInMemoryDatabase(AppDbContext.SMemoryDatabase) 
+                                 .Options;
+
+            return new AppDbContext(contextOptions);
+        }
+
         static public List<Product> CreateProductList()
         {
             Random R = new Random();
 
-            double GetPrice()
+            decimal GetPrice()
             {
-                double Result = R.NextDouble();
+                decimal Result = Convert.ToDecimal(R.NextDouble());
                 Result = Math.Round(Result, 2);
                 Result += R.Next(2, 40);
                 return Result;
@@ -266,6 +292,7 @@
             }
         }
 
+        // ● data handling
         public List<AppRole> GetUserRoles(string UserId)
         {
             List<AppRole> Result = new List<AppRole>();
@@ -320,5 +347,21 @@
         public DbSet<AppUserRole> UserRoles { get; set; }
 
         public DbSet<Product> Products { get; set; }
+    }
+
+
+    // Principal (parent)
+    public class Blog
+    {
+        public int Id { get; set; }
+        public ICollection<Post> Posts { get; } = new List<Post>(); // Collection navigation containing dependents
+    }
+
+    // Dependent (child)
+    public class Post
+    {
+        public int Id { get; set; }
+        public int BlogId { get; set; } // Required foreign key property
+        public Blog Blog { get; set; } = null!; // Required reference navigation to principal
     }
 }

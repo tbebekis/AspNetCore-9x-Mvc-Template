@@ -1,5 +1,6 @@
 ﻿namespace MvcApp.Library
 {
+    [Table(nameof(AppUserRole))]
     [PrimaryKey(nameof(UserId), nameof(RoleId))]
     public class AppUserRole
     {
@@ -9,8 +10,10 @@
             this.UserId = UserId;
             this.RoleId = RoleId;
         }
- 
-        public string UserId { get; set; } 
+
+        [MaxLength(40)]
+        public string UserId { get; set; }
+        [MaxLength(40)]
         public string RoleId { get; set; }
     }
 }

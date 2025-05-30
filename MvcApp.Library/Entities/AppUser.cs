@@ -1,5 +1,8 @@
-﻿namespace MvcApp.Library
+﻿using System.Runtime.Serialization;
+
+namespace MvcApp.Library
 {
+    [Table(nameof(AppUser))]
     public class AppUser: IRequestor
     {
         static AppUser fDefault;
@@ -13,7 +16,7 @@
             this.UserName = UserName;
             this.Name = Name;
             this.Email = Email;
-            this.PasswordSalt = Hasher.GenerateSalt();
+            this.PasswordSalt = Hasher.GenerateSalt(96);
             this.Password = Hasher.Hash(PlainTextPassword, this.PasswordSalt);
         }
  
@@ -28,12 +31,13 @@
         /// <para><strong>Unique.</strong></para>
         /// <para>Database Id or something similar.</para>
         /// </summary>
-        [Key]
+        [Key, MaxLength(40)]
         public string Id { get; set; } = "";
         /// <summary>
         /// Required. 
         /// <para><strong>Unique.</strong></para>
         /// </summary>
+        [Required, MaxLength(96)]
         public string UserName { get; set; }
         /// <summary>
         /// Required. 
@@ -41,22 +45,27 @@
         /// <para>Email or UserName when this is a person.</para>
         /// <para>ClientId when this is a client application or service.</para>
         /// </summary> 
+        [NotMapped]
         public string AccountId { get { return UserName; } set { } }
         /// <summary>
         /// The user password encrypted
         /// </summary>
+        [MaxLength(24)]
         public string Password { get; set; }
         /// <summary>
         /// The user password salt
         /// </summary>
+        [Column("Salt"), MaxLength(96)]
         public string PasswordSalt { get; set; }
         /// <summary>
         /// Optional. The requestor name
         /// </summary> 
+        [MaxLength(96)]
         public string Name { get; set; }
         /// <summary>
         /// Optional. The requestor email
         /// </summary> 
+        [MaxLength(96)]
         public string Email { get; set; }
         /// <summary>
         /// True when requestor is blocked by admins
