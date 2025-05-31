@@ -9,7 +9,8 @@
         "CurrencyCode": "EUR",
         "CurrencySymbol": "€",
         "MoneyFormat": "€ 0.00",
-        "CacheTimeoutMinutes": 15
+        "CacheTimeoutMinutes": 15,
+        "PageSize":  10
     },
 
     "UserCookie": {

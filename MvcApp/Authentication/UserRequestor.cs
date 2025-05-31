@@ -1,9 +1,9 @@
 ﻿namespace MvcApp.Authentication
 {
-    public class UserRequestor: IRequestor
+    public class UserRequestor: IUserRequestor
     {
         // ● private
-        static IRequestor fDefault;
+        static UserRequestor fDefault;
 
         // ● constants
         /// <summary>
@@ -30,7 +30,7 @@
         public UserRequestor(AppUser AppUser) 
         {
             Id = AppUser.Id;
-            AccountId = AppUser.UserName;
+            UserName = AppUser.UserName;
             Name = AppUser.Name;
             Email = AppUser.Email;
             IsBlocked = AppUser.IsBlocked;
@@ -71,10 +71,9 @@
         /// <summary>
         /// Required. 
         /// <para><strong>Unique.</strong></para>
-        /// <para>Email or UserName when this is a person.</para>
-        /// <para>ClientId when this is a client application or service.</para>
+        /// <para>Email or UserName.</para>
         /// </summary> 
-        public string AccountId { get; set; }
+        public string UserName { get; set; }
         /// <summary>
         /// Optional. The requestor name
         /// </summary> 
@@ -95,7 +94,7 @@
         /// <summary>
         /// The default requestor
         /// </summary>
-        static public IRequestor Default
+        static public IUserRequestor Default
         {
             get
             {
@@ -103,7 +102,7 @@
                 {
                     fDefault = new UserRequestor();
                     fDefault.Id = DefaultId;
-                    fDefault.AccountId = "Default";
+                    fDefault.UserName = "Default";
                     fDefault.Name = "Default";
                     fDefault.Email = "";
                     fDefault.IsBlocked = false;

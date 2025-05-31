@@ -22,7 +22,7 @@
  
             if (!string.IsNullOrWhiteSpace(Id))
             {
-                ItemDataResult<IRequestor> ItemResult = DataStore.GetAppUserById(Id);
+                ItemDataResult<IUserRequestor> ItemResult = DataStore.GetAppUserById(Id);
                 Result = ItemResult.Succeeded ? ItemResult.Item : null;
             }  
 
@@ -43,7 +43,7 @@
         /// <summary>
         /// Sign-in. Authenticates a specified, already validated, Visitor
         /// </summary>
-        public async Task SignInAsync(IRequestor R, bool IsPersistent, bool IsImpersonation)
+        public async Task SignInAsync(IUserRequestor R, bool IsPersistent, bool IsImpersonation)
         {
             // await Task.CompletedTask;
             this.IsImpersonation = IsImpersonation;

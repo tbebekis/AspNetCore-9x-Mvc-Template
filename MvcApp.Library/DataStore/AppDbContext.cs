@@ -1,7 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System.Reflection.Metadata;
-
-namespace MvcApp.Library
+﻿namespace MvcApp.Library
 {
     public class AppDbContext : DbContext
     {

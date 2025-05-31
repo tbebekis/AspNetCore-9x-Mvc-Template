@@ -42,8 +42,8 @@
 
             if (ValidateModel(M))
             {
-                ItemDataResult<IRequestor> Response = DataStore.ValidateUserCredentials(M.UserName, M.Password);
-                IRequestor User = Response.Item;
+                ItemDataResult<IUserRequestor> Response = DataStore.ValidateUserCredentials(M.UserName, M.Password);
+                IUserRequestor User = Response.Item;
 
                 if (Response.Succeeded && User != null)
                 {       

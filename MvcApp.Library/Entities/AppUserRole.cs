@@ -1,4 +1,4 @@
-﻿namespace MvcApp.Library
+﻿namespace MvcApp.Entities
 {
     [Table(nameof(AppUserRole))]
     [PrimaryKey(nameof(UserId), nameof(RoleId))]

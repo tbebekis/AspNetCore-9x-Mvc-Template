@@ -6,13 +6,13 @@
         /// Generates and returns a claim list regarding a <see cref="IRequestor"/>.
         /// <para>Claims are stored in the user cookie.</para>
         /// </summary>
-        static public List<Claim> GenerateUserClaimList(this IRequestor Requestor, string AuthenticationScheme, bool IsImpersonation = false)
+        static public List<Claim> GenerateUserClaimList(this IUserRequestor Requestor, string AuthenticationScheme, bool IsImpersonation = false)
         {
             if (string.IsNullOrWhiteSpace(Requestor.Id))
                 throw new ApplicationException("Cannot produce claims. No Id");
 
-            if (string.IsNullOrWhiteSpace(Requestor.AccountId))
-                throw new ApplicationException("Cannot produce claims. No AccountId");
+            if (string.IsNullOrWhiteSpace(Requestor.UserName))
+                throw new ApplicationException("Cannot produce claims. No UserName");
 
             List<Claim> ClaimList = new List<Claim>();
 
@@ -27,9 +27,9 @@
             return ClaimList;
         }
         /// <summary>
-        /// Creates and returns a <see cref="ClaimsPrincipal"/> along with a claim list for a specified <see cref="IRequestor"/>.
+        /// Creates and returns a <see cref="ClaimsPrincipal"/> along with a claim list for a specified <see cref="IUserRequestor"/>.
         /// </summary>
-        static public ClaimsPrincipal CreateUserPrincipal(this IRequestor Requestor, string AuthenticationScheme, bool IsImpersonation = false)
+        static public ClaimsPrincipal CreateUserPrincipal(this IUserRequestor Requestor, string AuthenticationScheme, bool IsImpersonation = false)
         {
             // create claim list
             List<Claim> ClaimList = GenerateUserClaimList(Requestor, AuthenticationScheme, IsImpersonation);

@@ -1,4 +1,4 @@
-﻿namespace MvcApp.Library
+﻿namespace MvcApp.Entities
 {
     [Table(nameof(Product))]
     public class Product

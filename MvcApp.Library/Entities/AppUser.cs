@@ -1,9 +1,7 @@
-﻿using System.Runtime.Serialization;
-
-namespace MvcApp.Library
+﻿namespace MvcApp.Entities
 {
     [Table(nameof(AppUser))]
-    public class AppUser: IRequestor
+    public class AppUser: IUserRequestor
     {
         static AppUser fDefault;
 
@@ -39,14 +37,6 @@ namespace MvcApp.Library
         /// </summary>
         [Required, MaxLength(96)]
         public string UserName { get; set; }
-        /// <summary>
-        /// Required. 
-        /// <para><strong>Unique.</strong></para>
-        /// <para>Email or UserName when this is a person.</para>
-        /// <para>ClientId when this is a client application or service.</para>
-        /// </summary> 
-        [NotMapped]
-        public string AccountId { get { return UserName; } set { } }
         /// <summary>
         /// The user password encrypted
         /// </summary>

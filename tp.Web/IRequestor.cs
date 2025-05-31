@@ -17,21 +17,11 @@
         /// <para>Database Id or something similar.</para>
         /// </summary>
         string Id { get; set; }
-        /// <summary>
-        /// Required. 
-        /// <para><strong>Unique.</strong></para>
-        /// <para>Email or UserName when this is a person.</para>
-        /// <para>ClientId when this is a client application or service.</para>
-        /// </summary> 
-        string AccountId { get; set; }
+
         /// <summary>
         /// Optional. The requestor name
         /// </summary> 
         string Name { get; set; }
-        /// <summary>
-        /// Optional. The requestor email
-        /// </summary> 
-        string Email { get; set; }
         /// <summary>
         /// True when requestor is blocked by admins
         /// </summary>

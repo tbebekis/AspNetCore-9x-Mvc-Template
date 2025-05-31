@@ -1,4 +1,4 @@
-﻿namespace MvcApp.Library
+﻿namespace MvcApp.Entities
 {
     /// <summary>
     /// Product attribute along with its value.

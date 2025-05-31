@@ -28,7 +28,7 @@
                 {
                     Claim Claim = context.Principal.FindFirst(ClaimTypes.Sid); // we have Requestor.Id stored in ClaimTypes.Sid claim
                     string RequestorId = WLib.GetClaimValue<string>(Claim);
-                    ItemDataResult<IRequestor> ItemResult = DataStore.GetAppUserById(RequestorId); 
+                    ItemDataResult<IUserRequestor> ItemResult = DataStore.GetAppUserById(RequestorId); 
 
                     // it is the Id claim and must be there
                     if (Claim != null && ItemResult.Succeeded)

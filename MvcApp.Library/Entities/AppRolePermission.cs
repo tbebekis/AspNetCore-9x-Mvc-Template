@@ -1,4 +1,4 @@
-﻿namespace MvcApp.Library
+﻿namespace MvcApp.Entities
 {
     [Table(nameof(AppRolePermission))]
     [PrimaryKey(nameof(RoleId), nameof(PermissionId))]

@@ -62,9 +62,9 @@
         /// <summary>
         /// Returns a user from database found under a specified Id, if any, else null.
         /// </summary>
-        static public ItemDataResult<IRequestor> GetAppUserById(string Id)
+        static public ItemDataResult<IUserRequestor> GetAppUserById(string Id)
         {
-            ItemDataResult<IRequestor> Result = new();
+            ItemDataResult<IUserRequestor> Result = new();
 
             using (AppDbContext context = GetDbContext())
             {
@@ -84,9 +84,9 @@
         /// <summary>
         /// Validates the specified user credentials and returns a <see cref="IRequestor"/> on success, else null.
         /// </summary>
-        static public ItemDataResult<IRequestor> ValidateUserCredentials(string UserName, string Password)
+        static public ItemDataResult<IUserRequestor> ValidateUserCredentials(string UserName, string Password)
         {
-            ItemDataResult<IRequestor> Result = new();
+            ItemDataResult<IUserRequestor> Result = new();
 
             using (AppDbContext context = GetDbContext())
             {

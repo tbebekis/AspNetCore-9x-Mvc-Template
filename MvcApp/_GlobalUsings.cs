@@ -48,8 +48,11 @@ global using tp.Web.Ajax;
 global using MvcApp.ModelBinders;
 global using MvcApp.Filters;
 global using MvcApp.Authentication;
-global using MvcApp.Models;
 global using MvcApp.Library;
+global using MvcApp.Entities;
+global using MvcApp.Models;
+
+
 
 
 

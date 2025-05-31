@@ -9,7 +9,7 @@
         /// <summary>
         /// Sign-in. Authenticates a specified, already validated, Visitor
         /// </summary>
-        Task SignInAsync(IRequestor V, bool IsPersistent, bool IsImpersonation);
+        Task SignInAsync(IUserRequestor V, bool IsPersistent, bool IsImpersonation);
         /// <summary>
         /// Sign-out.
         /// </summary>

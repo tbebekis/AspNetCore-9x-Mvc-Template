@@ -35,6 +35,7 @@ global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.Localization;
 
 global using Microsoft.EntityFrameworkCore;
+global using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 global using Newtonsoft.Json;
 global using Newtonsoft.Json.Converters;
@@ -46,6 +47,7 @@ global using tp.Web;
 global using tp.Web.Controllers;
 
 global using MvcApp.Library;
+global using MvcApp.Entities;
 global using MvcApp.Models;
 
- 
+
