@@ -45,21 +45,7 @@
         /// Returns the text of all errors.
         /// </summary>
         [JsonIgnore]
-        public string ErrorText
-        {
-            get
-            {
-                if (Succeeded)
-                    return "";
-
-                StringBuilder SB = new();
-
-                foreach (var error in Errors)
-                    SB.AppendLine(error.ToString());
-
-                return SB.ToString();
-            }
-        }
+        public string ErrorText => Succeeded ? string.Empty : string.Join(Environment.NewLine, Errors.ToArray());
     }
  
 }
