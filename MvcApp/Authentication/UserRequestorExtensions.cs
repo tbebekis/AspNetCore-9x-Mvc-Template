@@ -16,7 +16,7 @@
 
             List<Claim> ClaimList = new List<Claim>();
 
-            ClaimList.Add(new Claim(ClaimTypes.Sid, Requestor.Id));
+            ClaimList.Add(new Claim(ClaimTypes.NameIdentifier, Requestor.Id));
             ClaimList.Add(new Claim(ClaimTypes.Name, !string.IsNullOrWhiteSpace(Requestor.Name) ? Requestor.Name : "no name"));
             ClaimList.Add(new Claim(ClaimTypes.Email, !string.IsNullOrWhiteSpace(Requestor.Email) ? Requestor.Email : "no email"));
 

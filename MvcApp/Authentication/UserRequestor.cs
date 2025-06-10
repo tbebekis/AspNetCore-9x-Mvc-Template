@@ -43,7 +43,7 @@
         /// </summary>
         static public string GetUserId(IEnumerable<Claim> Claims)
         {
-            return WLib.GetClaimValue<string>(Claims, ClaimTypes.Sid);
+            return WLib.GetClaimValue<string>(Claims, ClaimTypes.NameIdentifier);
         }
         /// <summary>
         /// Returns true if the requestor is impersonating another user

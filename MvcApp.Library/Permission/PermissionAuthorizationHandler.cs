@@ -9,7 +9,7 @@
 
             if (IsAuthenticated)
             {
-                var IdClaim = context.User.FindFirst(c => c.Type == ClaimTypes.Sid);
+                var IdClaim = context.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier);
                 if (IdClaim != null)
                 {
                     string UserId = IdClaim.Value;

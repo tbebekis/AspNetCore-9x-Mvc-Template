@@ -14,7 +14,7 @@ namespace MvcApp.Library
                 Result = Chunks[PageIndex].ToList();
 
                 // or
-                // Result = SourceList.Skip(PageIndex).Take(PageSize).ToList();
+                // Result = SourceList.Skip(PageIndex * PageSize).Take(PageSize).ToList();
 
                 return Result;
             }

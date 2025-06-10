@@ -26,7 +26,7 @@
             {
                 if (context.Principal.Identity.IsAuthenticated)
                 {
-                    Claim Claim = context.Principal.FindFirst(ClaimTypes.Sid); // we have Requestor.Id stored in ClaimTypes.Sid claim
+                    Claim Claim = context.Principal.FindFirst(ClaimTypes.NameIdentifier); // we have Requestor.Id stored in this claim
                     string RequestorId = WLib.GetClaimValue<string>(Claim);
                     ItemDataResult<IUserRequestor> ItemResult = DataStore.GetAppUserById(RequestorId); 
 

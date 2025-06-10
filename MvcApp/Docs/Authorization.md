@@ -301,7 +301,7 @@ public class PermissionRequirementHandler : AuthorizationHandler<PermissionRequi
 
         if (IsAuthenticated)
         {
-            var IdClaim = context.User.FindFirst(c => c.Type == ClaimTypes.Sid);
+            var IdClaim = context.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier);
             if (IdClaim != null)
             {
                 string UserId = IdClaim.Value;
@@ -425,13 +425,15 @@ It is possible to apply `RBAC` authorization in Asp.Net Core using `Policy-based
 
 Generally an `RBAC` system involves the following.
 
-- `Permission`. A string, such as `Item.Create`, `Item.Edit`, `Item.Delete`, etc. denoting what an identity can do,
+- `Permission`. A string, such as `Item.Create`, `Item.Edit`, `Item.Delete`, etc. denoting what an identity can do. 
 - `Role`. A string, such as `Administrator`, `Manager`, etc. containing a list of permissions.
 - `RolePermissions`. A list of permissions assigned to a particular role.
 - `User`. An identity.
 - `UserRoles`. A list of roles assigned to a perticular identity.
 
 Permissions are not assigned directly to users. A user aquires permissions indirectlry via the roles he is a member of.
+
+> The term `Scope`, used in [OAuth](https://en.wikipedia.org/wiki/OAuth), defines a specific action an application is allowed to do on behalf of a user. A `Scope` is actually a `Permission`
 
 
 ## Claims-based Authorization
@@ -714,7 +716,7 @@ public class BlogPostAuthorAuthorizationHandler : AuthorizationHandler<BlogPostA
 
         if (IsAuthenticated)
         {
-            var IdClaim = context.User.FindFirst(c => c.Type == ClaimTypes.Sid);
+            var IdClaim = context.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier);
             if (IdClaim != null)
             {
                 string UserId = IdClaim.Value;
@@ -808,7 +810,7 @@ public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionAtt
 
         if (IsAuthenticated)
         {
-            var IdClaim = context.User.FindFirst(c => c.Type == ClaimTypes.Sid);
+            var IdClaim = context.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier);
             if (IdClaim != null)
             {
                 string UserId = IdClaim.Value;
@@ -850,6 +852,9 @@ public class MyController : Controller
 ```
 
 > Using Asp.Net Core `Custom Authorization` authorization makes it easy to implement [RBAC](https://en.wikipedia.org/wiki/Role-based_access_control).
+> The above code example may serve as a starting point.
+>
+> The `GetUserPermissions(UserId)` would be get a list of User Permissions from a database having the required `RBAC` tables, as noted above in the this text.
 
 
 

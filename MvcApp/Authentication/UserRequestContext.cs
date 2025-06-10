@@ -85,7 +85,7 @@
             {
                 if (fRequestor == null)
                 {
-                    string Id = UserRequestor.GetUserId(UserClaimList);  // we have Requestor.Id stored in ClaimTypes.Sid claim
+                    string Id = UserRequestor.GetUserId(UserClaimList);  // we have Requestor.Id stored in ClaimTypes.NameIdentifier claim
                     fRequestor = !string.IsNullOrWhiteSpace(Id) ? GetRequestor(Id) : UserRequestor.Default;
                 }
 
