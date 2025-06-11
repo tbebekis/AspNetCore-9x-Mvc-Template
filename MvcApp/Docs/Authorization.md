@@ -854,7 +854,7 @@ public class MyController : Controller
 > Using Asp.Net Core `Custom Authorization` authorization makes it easy to implement [RBAC](https://en.wikipedia.org/wiki/Role-based_access_control).
 > The above code example may serve as a starting point.
 >
-> The `GetUserPermissions(UserId)` would be get a list of User Permissions from a database having the required `RBAC` tables, as noted above in the this text.
+> The `GetUserPermissions(UserId)` would be get a list of User Permissions from a database having the required `RBAC` tables, as noted earlier in the this text.
 
 
 
